@@ -78,7 +78,7 @@ EXE 不要求安装 Python，也不会打开外部浏览器。它使用 Windows 
 | 基础治疗加成 | 百分数 | 仅在“治疗计算”中显示，进入 `1 + 治疗加成` 区。 |
 | 角色等级 | 整数 | 进入防御区公式。 |
 | 敌人等级 | 整数 | 进入防御区公式。 |
-| 敌人基础抗性 | 百分数，例如 `20` 代表 20% | 抗性区为 `1 - 基础抗性 + 抗性削弱`。敌人各属性抗性可参考[敌人数据表一](https://docs.qq.com/sheet/DUGxzWGhNc2RsZ3B0?tab=dfjfo3)和[敌人数据表二](https://docs.qq.com/sheet/DUFFaVGFDRmxaRUF6?tab=000001)。 |
+| 敌人基础抗性 | 百分数，例如 `20` 代表 20% | 抗性区为 `1 - 基础抗性 + 抗性削弱`。敌人各属性抗性可参考[敌人数据表一](https://docs.qq.com/sheet/DUGxzWGhNc2RsZ3B0?tab=dfjfo3)和[敌人数据表二](https://docs.qq.com/sheet/DUFFaVGFDRmxaRUF6?tab=000001)。 测试建议选择高危委托6“何处是归乡”挑战，此怪物抗性为0.2|
 | 基础环合强度 | 直接填写数值 | 只有存在创生花技能或启用浸染乘区时显示。 |
 
 ### 3. 基础乘区
