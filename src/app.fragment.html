@@ -7,6 +7,7 @@
       min-width: 0;
       max-width: 100%;
     }
+    #compact-damage-calculator [hidden] { display: none !important; }
     #compact-damage-calculator .compact-fields {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
@@ -14,7 +15,7 @@
     }
     #compact-damage-calculator .result-row {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 8px;
     }
     #compact-damage-calculator details { border-top: 1px solid var(--border); padding-top: 8px; }
@@ -124,6 +125,11 @@
     <div class="text-small result-meta" id="cdc-profile-status" aria-live="polite">自动记忆当前草稿</div>
   </div>
 
+  <div class="mode-row" role="group" aria-label="计算类型">
+    <button class="btn btn-primary" type="button" data-calculator-type="damage" aria-pressed="true">伤害计算</button>
+    <button class="btn" type="button" data-calculator-type="heal" aria-pressed="false">治疗计算</button>
+  </div>
+
   <details open id="cdc-panel-section">
     <summary>角色与目标面板</summary>
     <div class="compact-fields">
@@ -136,14 +142,20 @@
       <label class="form-label">基础战斗攻击加成（%）
         <input class="form-control" id="cdc-atk-bonus" type="number" step="0.01" value="20">
       </label>
-      <label class="form-label">角色等级
+      <label class="form-label" data-heal-only hidden>基础治疗加成（%）
+        <input class="form-control" id="cdc-heal-bonus" type="number" step="0.01" value="0">
+      </label>
+      <label class="form-label" data-damage-only>角色等级
         <input class="form-control" id="cdc-char-level" type="number" min="1" step="1" value="80">
       </label>
-      <label class="form-label">敌人等级
+      <label class="form-label" data-damage-only>敌人等级
         <input class="form-control" id="cdc-enemy-level" type="number" min="1" step="1" value="80">
       </label>
-      <label class="form-label">敌人基础抗性（%）
+      <label class="form-label" data-damage-only>敌人基础抗性（%）
         <input class="form-control" id="cdc-resistance" type="number" step="0.01" value="20">
+      </label>
+      <label class="form-label" data-fusion-field hidden>基础环合强度
+        <input class="form-control" id="cdc-fusion" type="number" min="0" step="0.01" value="600">
       </label>
     </div>
   </details>
@@ -152,23 +164,28 @@
   <details open id="cdc-effect-section">
     <summary>乘区、候选觉醒与武器效果</summary>
     <div class="compact-fields">
-      <label class="form-label">基础防御穿透（%）
+      <label class="form-label" data-damage-only>基础防御穿透（%）
         <input class="form-control" id="cdc-penetration" type="number" step="0.01" value="15">
       </label>
-      <label class="form-label">基础抗性削弱（%）
+      <label class="form-label" data-damage-only>基础抗性削弱（%）
         <input class="form-control" id="cdc-res-shred" type="number" step="0.01" value="10">
       </label>
-      <label class="form-label">通用增伤（%）
+      <label class="form-label" data-damage-only>通用增伤（%）
         <input class="form-control" id="cdc-general" type="number" step="0.01" value="30">
       </label>
-      <label class="form-label">属性增伤（%）
+      <label class="form-label" data-damage-only>属性增伤（%）
         <input class="form-control" id="cdc-elemental" type="number" step="0.01" value="20">
       </label>
-      <label class="form-label">额外增伤（%）
+      <label class="form-label" data-damage-only>额外增伤（%）
         <input class="form-control" id="cdc-extra" type="number" step="0.01" value="10">
       </label>
-      <label class="form-label">基础暴击伤害（%）
+      <label class="form-label" data-damage-only>基础暴击伤害（%）
         <input class="form-control" id="cdc-crit" type="number" min="0" step="0.01" value="150">
+      </label>
+      <label class="form-check" data-damage-only><input class="form-check-input" id="cdc-infusion-enabled" type="checkbox"><span class="form-check-label">启用浸染乘区</span></label>
+      <label class="form-check" data-damage-only><input class="form-check-input" id="cdc-special-enabled" type="checkbox"><span class="form-check-label">启用特殊独立乘区</span></label>
+      <label class="form-label" id="cdc-special-field" hidden>特殊独立倍率（倍）
+        <input class="form-control" id="cdc-special-multiplier" type="number" min="0" step="0.01" value="1">
       </label>
     </div>
 
@@ -180,7 +197,7 @@
   </details>
 
   <div class="skills-workspace">
-  <details open id="cdc-skill-section">
+  <details open id="cdc-skill-section" data-damage-only>
     <summary>伤害技能、倍率与实测伤害</summary>
     <div class="entry-list" id="cdc-skills"></div>
     <div class="pagination-bar">
@@ -191,7 +208,7 @@
     </div>
   </details>
 
-  <details open id="cdc-heal-section">
+  <details open id="cdc-heal-section" data-heal-only hidden>
     <summary>治疗技能、倍率与实测治疗</summary>
     <div class="entry-list" id="cdc-heals"></div>
     <div class="viz-controls">
@@ -201,7 +218,7 @@
   </div>
   </div>
 
-  <div class="mode-row" role="group" aria-label="验算模式">
+  <div class="mode-row" id="cdc-verification-modes" role="group" aria-label="验算模式" data-damage-only>
     <button class="btn btn-primary" type="button" data-verification-mode="normal" aria-pressed="true">常规验算</button>
     <button class="btn" type="button" data-verification-mode="rage" aria-pressed="false">狂暴溯源</button>
   </div>
@@ -212,6 +229,13 @@
     <div class="text-small result-meta">自动尝试全部已启用伤害技能、创生伤害、暴击/非暴击和其他技能倍率来源；同一来源可重复。</div>
   </div>
   <div class="viz-controls">
+    <label class="form-label">搜索强度
+      <select class="form-select" id="cdc-search-strength">
+        <option value="standard">标准 · 完整 18 / 限宽 5,000</option>
+        <option value="deep" selected>深度 · 完整 20 / 限宽 20,000</option>
+        <option value="extreme">极限 · 完整 22 / 限宽 50,000</option>
+      </select>
+    </label>
     <button class="btn btn-primary" id="cdc-run-verification" type="button">确定并开始验算</button>
     <span class="text-small result-meta" id="cdc-run-status" aria-live="polite">数据已就绪，等待验算</span>
   </div>
@@ -222,7 +246,7 @@
       <div class="viz-stat-value result-main" id="cdc-best-combination">—</div>
       <div class="text-small result-meta" id="cdc-combination-count">—</div>
     </div>
-    <div class="card viz-stat">
+    <div class="card viz-stat" data-damage-only>
       <div class="text-muted">技能倍率异常</div>
       <div class="viz-stat-value result-main" id="cdc-multiplier-status">—</div>
       <div class="text-small result-meta">同误差时优先本技能倍率</div>
@@ -264,6 +288,7 @@
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
       })[character]);
       let rowCounter = 0;
+      let calculatorType = 'damage';
       let verificationMode = 'normal';
       let skillPage = 0;
       let detailPage = 0;
@@ -273,6 +298,12 @@
       const SKILL_PAGE_SIZE = 3;
       const DETAIL_PAGE_SIZE = 3;
       const REPORT_ERROR_LIMIT = 20;
+      const SEARCH_PRESETS = {
+        standard: { label: '标准', exactLimit: 18, beamWidth: 5000 },
+        deep: { label: '深度', exactLimit: 20, beamWidth: 20000 },
+        extreme: { label: '极限', exactLimit: 22, beamWidth: 50000 }
+      };
+      const EXACT_RESULT_KEEP = 300;
       const PROFILE_STORAGE_KEY = 'game-calculator-profiles-v1';
       const DRAFT_STORAGE_KEY = 'game-calculator-draft-v1';
 
@@ -285,15 +316,18 @@
         row.innerHTML = `
           <label class="form-label">名称<input class="form-control" data-effect-name type="text" value="${escapeHtml(name)}"></label>
           <label class="form-label">攻击加成（%）<input class="form-control" data-effect-attack type="number" step="0.01" value="${values.attack || 0}"></label>
-          <label class="form-label">防御穿透（%）<input class="form-control" data-effect-penetration type="number" step="0.01" value="${values.penetration || 0}"></label>
-          <label class="form-label">抗性削弱（%）<input class="form-control" data-effect-res-shred type="number" step="0.01" value="${values.resShred || 0}"></label>
-          <label class="form-label">增伤（%）<input class="form-control" data-effect-damage type="number" step="0.01" value="${values.damage || 0}"></label>
-          <label class="form-label">暴击伤害（%）<input class="form-control" data-effect-crit type="number" step="0.01" value="${values.crit || 0}"></label>
-          <label class="form-label">技能倍率（%）<input class="form-control" data-effect-skill type="number" step="0.01" value="${values.skill || 0}"></label>
-          <label class="form-check"><input class="form-check-input" data-effect-skill-multiply type="checkbox" ${values.skillMultiply ? 'checked' : ''}><span class="form-check-label">技能倍率乘算</span></label>
-          <label class="form-label">治疗倍率（%）<input class="form-control" data-effect-heal type="number" step="0.01" value="${values.heal || 0}"></label>
+          <label class="form-label" data-effect-damage-field>防御穿透（%）<input class="form-control" data-effect-penetration type="number" step="0.01" value="${values.penetration || 0}"></label>
+          <label class="form-label" data-effect-damage-field>抗性削弱（%）<input class="form-control" data-effect-res-shred type="number" step="0.01" value="${values.resShred || 0}"></label>
+          <label class="form-label" data-effect-damage-field>增伤（%）<input class="form-control" data-effect-damage type="number" step="0.01" value="${values.damage || 0}"></label>
+          <label class="form-label" data-effect-damage-field>暴击伤害（%）<input class="form-control" data-effect-crit type="number" step="0.01" value="${values.crit || 0}"></label>
+          <label class="form-label" data-effect-damage-field>技能倍率（%）<input class="form-control" data-effect-skill type="number" step="0.01" value="${values.skill || 0}"></label>
+          <label class="form-check" data-effect-damage-field><input class="form-check-input" data-effect-skill-multiply type="checkbox" ${values.skillMultiply ? 'checked' : ''}><span class="form-check-label">技能倍率乘算</span></label>
+          <label class="form-label" data-effect-fusion-field hidden>环合强度提升（%）<input class="form-control" data-effect-fusion-percent type="number" step="0.01" value="${values.fusionPercent || 0}"></label>
+          <label class="form-label" data-effect-fusion-field hidden>环合强度固定提升<input class="form-control" data-effect-fusion-flat type="number" step="0.01" value="${values.fusionFlat || 0}"></label>
+          <label class="form-label" data-effect-heal-field hidden>治疗加成（%）<input class="form-control" data-effect-heal-bonus type="number" step="0.01" value="${values.healBonus ?? values.heal ?? 0}"></label>
           <button class="btn btn-ghost" type="button" data-remove-effect>删除此效果</button>`;
         byId('cdc-effects').appendChild(row);
+        updateCalculatorType();
       }
 
       function addSkill(name = '', model = 'skill', multiplier = 0, observed = 0, critical = false, enabled = true) {
@@ -337,7 +371,9 @@
           crit: Number(row.querySelector('[data-effect-crit]').value) / 100 || 0,
           skill: Number(row.querySelector('[data-effect-skill]').value) / 100 || 0,
           skillMultiply: row.querySelector('[data-effect-skill-multiply]').checked,
-          heal: Number(row.querySelector('[data-effect-heal]').value) / 100 || 0
+          fusionPercent: Number(row.querySelector('[data-effect-fusion-percent]').value) / 100 || 0,
+          fusionFlat: Number(row.querySelector('[data-effect-fusion-flat]').value) || 0,
+          healBonus: Number(row.querySelector('[data-effect-heal-bonus]').value) / 100 || 0
         }));
       }
 
@@ -370,22 +406,47 @@
           .filter((value) => Number.isFinite(value) && value >= 0);
       }
 
+      function needsFusionStrength() {
+        return calculatorType === 'damage' && (byId('cdc-infusion-enabled').checked
+          || Array.from(root.querySelectorAll('[data-skill-model]')).some((select) => select.value === 'creation'));
+      }
+
+      function updateCalculatorType() {
+        const damageMode = calculatorType === 'damage';
+        if (!damageMode) verificationMode = 'normal';
+        root.querySelectorAll('[data-calculator-type]').forEach((button) => {
+          const active = button.dataset.calculatorType === calculatorType;
+          button.classList.toggle('btn-primary', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        root.querySelectorAll('[data-damage-only]').forEach((element) => { element.hidden = !damageMode; });
+        root.querySelectorAll('[data-heal-only]').forEach((element) => { element.hidden = damageMode; });
+        root.querySelectorAll('[data-effect-damage-field]').forEach((element) => { element.hidden = !damageMode; });
+        root.querySelectorAll('[data-effect-heal-field]').forEach((element) => { element.hidden = damageMode; });
+        const showFusion = needsFusionStrength();
+        root.querySelectorAll('[data-fusion-field], [data-effect-fusion-field]').forEach((element) => {
+          element.hidden = !showFusion;
+        });
+        byId('cdc-special-field').hidden = !damageMode || !byId('cdc-special-enabled').checked;
+        updateVerificationMode();
+      }
+
       function updateVerificationMode() {
         root.querySelectorAll('[data-verification-mode]').forEach((button) => {
           const active = button.dataset.verificationMode === verificationMode;
           button.classList.toggle('btn-primary', active);
           button.setAttribute('aria-pressed', String(active));
         });
-        byId('cdc-rage-input').hidden = verificationMode !== 'rage';
+        byId('cdc-rage-input').hidden = calculatorType !== 'damage' || verificationMode !== 'rage';
         root.querySelectorAll('[data-normal-skill-field]').forEach((field) => {
           field.hidden = verificationMode === 'rage';
         });
         root.querySelectorAll('[data-skill-enabled-label]').forEach((label) => {
           label.textContent = verificationMode === 'rage' ? '作为候选来源' : '纳入验算';
         });
-        byId('cdc-run-verification').textContent = verificationMode === 'rage'
-          ? '确定并开始溯源'
-          : '确定并开始验算';
+        byId('cdc-run-verification').textContent = calculatorType === 'heal'
+          ? '确定并开始治疗验算'
+          : verificationMode === 'rage' ? '确定并开始溯源' : '确定并开始验算';
       }
 
       function updateSkillPagination(goToLast = false) {
@@ -413,8 +474,9 @@
 
       function captureData() {
         const scalarIds = ['cdc-character', 'cdc-version', 'cdc-panel', 'cdc-base', 'cdc-atk-bonus',
-          'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-penetration', 'cdc-res-shred',
-          'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit', 'cdc-rage-values'];
+          'cdc-heal-bonus', 'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-fusion',
+          'cdc-penetration', 'cdc-res-shred', 'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit',
+          'cdc-special-multiplier', 'cdc-rage-values', 'cdc-search-strength'];
         const scalars = {};
         scalarIds.forEach((id) => { scalars[id] = byId(id).value; });
         const effects = Array.from(root.querySelectorAll('[data-effect-row]')).map((row) => ({
@@ -426,7 +488,9 @@
           crit: Number(row.querySelector('[data-effect-crit]').value) || 0,
           skill: Number(row.querySelector('[data-effect-skill]').value) || 0,
           skillMultiply: row.querySelector('[data-effect-skill-multiply]').checked,
-          heal: Number(row.querySelector('[data-effect-heal]').value) || 0
+          fusionPercent: Number(row.querySelector('[data-effect-fusion-percent]').value) || 0,
+          fusionFlat: Number(row.querySelector('[data-effect-fusion-flat]').value) || 0,
+          healBonus: Number(row.querySelector('[data-effect-heal-bonus]').value) || 0
         }));
         const skills = Array.from(root.querySelectorAll('[data-skill-row]')).map((row) => ({
           name: row.querySelector('[data-skill-name]').value,
@@ -442,24 +506,42 @@
           observed: Number(row.querySelector('[data-heal-observed]').value) || 0,
           enabled: row.querySelector('[data-heal-enabled]').checked
         }));
-        return { schema: 2, mode: verificationMode, scalars, effects, skills, heals };
+        return {
+          schema: 3,
+          calculatorType,
+          mode: verificationMode,
+          scalars,
+          options: {
+            infusionEnabled: byId('cdc-infusion-enabled').checked,
+            specialEnabled: byId('cdc-special-enabled').checked
+          },
+          effects,
+          skills,
+          heals
+        };
       }
 
       function applyData(data) {
         if (!data || !data.scalars) return false;
         restoring = true;
+        byId('cdc-heal-bonus').value = '0';
+        byId('cdc-fusion').value = '600';
+        byId('cdc-special-multiplier').value = '1';
         Object.entries(data.scalars).forEach(([id, value]) => {
           const element = byId(id);
           if (element) element.value = value;
         });
+        byId('cdc-infusion-enabled').checked = Boolean(data.options?.infusionEnabled);
+        byId('cdc-special-enabled').checked = Boolean(data.options?.specialEnabled);
         byId('cdc-effects').innerHTML = '';
         byId('cdc-skills').innerHTML = '';
         byId('cdc-heals').innerHTML = '';
         (data.effects || []).forEach((effect) => addEffect(effect.name, effect));
         (data.skills || []).forEach((skill) => addSkill(skill.name, skill.model, skill.multiplier, skill.observed, skill.critical, skill.enabled));
         (data.heals || []).forEach((heal) => addHeal(heal.name, heal.multiplier, heal.observed, heal.enabled));
-        verificationMode = data.mode === 'rage' ? 'rage' : 'normal';
-        updateVerificationMode();
+        calculatorType = data.calculatorType === 'heal' ? 'heal' : 'damage';
+        verificationMode = calculatorType === 'damage' && data.mode === 'rage' ? 'rage' : 'normal';
+        updateCalculatorType();
         skillPage = 0;
         detailPage = 0;
         updateSkillPagination();
@@ -472,11 +554,14 @@
       function clearCurrentConfiguration() {
         if (!window.confirm('清空当前输入和当前草稿？已保存的角色/版本配置不会删除。')) return;
         const scalarIds = ['cdc-character', 'cdc-version', 'cdc-panel', 'cdc-base', 'cdc-atk-bonus',
-          'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-penetration', 'cdc-res-shred',
-          'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit', 'cdc-rage-values'];
+          'cdc-heal-bonus', 'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-fusion',
+          'cdc-penetration', 'cdc-res-shred', 'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit',
+          'cdc-special-multiplier', 'cdc-rage-values', 'cdc-search-strength'];
         const scalars = {};
         scalarIds.forEach((id) => { scalars[id] = ''; });
-        applyData({ schema: 2, mode: 'normal', scalars, effects: [], skills: [], heals: [] });
+        scalars['cdc-search-strength'] = 'deep';
+        scalars['cdc-special-multiplier'] = '1';
+        applyData({ schema: 3, calculatorType: 'damage', mode: 'normal', scalars, options: {}, effects: [], skills: [], heals: [] });
         clearTimeout(draftTimer);
         try {
           localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(captureData()));
@@ -526,29 +611,43 @@
       }
 
       const baseAtoms = [
-        { id: 'base-attack', label: '基础攻击加成', component: 'baseAttack', expected: true },
-        { id: 'base-penetration', label: '基础防御穿透', component: 'basePenetration', expected: true },
-        { id: 'base-res-shred', label: '基础抗性削弱', component: 'baseResShred', expected: true },
-        { id: 'base-general', label: '通用增伤', component: 'baseGeneral', expected: true },
-        { id: 'base-elemental', label: '属性增伤', component: 'baseElemental', expected: true },
-        { id: 'base-extra', label: '额外增伤', component: 'baseExtra', expected: true },
-        { id: 'base-crit', label: '基础暴击伤害', component: 'baseCrit', expected: true },
-        { id: 'zone-defense', label: '防御区整体', component: 'zoneDefense', expected: true },
-        { id: 'zone-resistance', label: '抗性区整体', component: 'zoneResistance', expected: true },
-        { id: 'zone-damage', label: '增伤区整体', component: 'zoneDamage', expected: true },
-        { id: 'zone-crit', label: '暴击区整体', component: 'zoneCrit', expected: true },
-        { id: 'zone-skill', label: '技能倍率区整体', component: 'zoneSkill', expected: true },
-        { id: 'zone-heal', label: '治疗倍率区整体', component: 'zoneHeal', expected: true }
+        { id: 'base-attack', label: '基础攻击加成', component: 'baseAttack', modes: ['damage', 'heal'] },
+        { id: 'base-penetration', label: '基础防御穿透', component: 'basePenetration', modes: ['damage'] },
+        { id: 'base-res-shred', label: '基础抗性削弱', component: 'baseResShred', modes: ['damage'] },
+        { id: 'base-general', label: '通用增伤', component: 'baseGeneral', modes: ['damage'] },
+        { id: 'base-elemental', label: '属性增伤', component: 'baseElemental', modes: ['damage'] },
+        { id: 'base-extra', label: '额外增伤', component: 'baseExtra', modes: ['damage'] },
+        { id: 'base-crit', label: '基础暴击伤害', component: 'baseCrit', modes: ['damage'] },
+        { id: 'zone-defense', label: '防御区整体', component: 'zoneDefense', modes: ['damage'] },
+        { id: 'zone-resistance', label: '抗性区整体', component: 'zoneResistance', modes: ['damage'] },
+        { id: 'zone-damage', label: '增伤区整体', component: 'zoneDamage', modes: ['damage'] },
+        { id: 'zone-crit', label: '暴击区整体', component: 'zoneCrit', modes: ['damage'] },
+        { id: 'zone-skill', label: '技能倍率区整体', component: 'zoneSkill', modes: ['damage'] },
+        { id: 'base-fusion', label: '基础环合强度', component: 'baseFusion', modes: ['damage'], conditional: 'fusion' },
+        { id: 'zone-fusion', label: '环合强度独立乘区', component: 'zoneFusion', modes: ['damage'], conditional: 'fusion' },
+        { id: 'base-special', label: '特殊独立乘区', component: 'baseSpecial', modes: ['damage'], conditional: 'special' },
+        { id: 'base-heal-bonus', label: '基础治疗加成', component: 'baseHealBonus', modes: ['heal'] },
+        { id: 'zone-heal-bonus', label: '治疗加成区整体', component: 'zoneHealBonus', modes: ['heal'] }
       ];
       const componentLabels = {
         attack: '攻击加成', penetration: '防御穿透', resShred: '抗性削弱', damage: '增伤',
-        crit: '暴击伤害', skill: '技能倍率', heal: '治疗倍率'
+        crit: '暴击伤害', skill: '技能倍率', fusionPercent: '环合强度百分比提升',
+        fusionFlat: '环合强度固定提升', healBonus: '治疗加成'
       };
 
       function createAtoms(effects) {
-        const atoms = baseAtoms.map((atom) => ({ ...atom, kind: 'base' }));
+        const fusionNeeded = needsFusionStrength();
+        const atoms = baseAtoms
+          .filter((atom) => atom.modes.includes(calculatorType))
+          .filter((atom) => atom.conditional !== 'fusion' || fusionNeeded)
+          .filter((atom) => atom.conditional !== 'special' || byId('cdc-special-enabled').checked)
+          .map((atom) => ({ ...atom, expected: true, kind: 'base' }));
+        const components = calculatorType === 'heal'
+          ? ['attack', 'healBonus']
+          : ['attack', 'penetration', 'resShred', 'damage', 'crit', 'skill']
+            .concat(fusionNeeded ? ['fusionPercent', 'fusionFlat'] : []);
         effects.forEach((effect, effectIndex) => {
-          ['attack', 'penetration', 'resShred', 'damage', 'crit', 'skill', 'heal'].forEach((component) => {
+          components.forEach((component) => {
             if (!effect[component]) return;
             atoms.push({
               id: `effect-${effectIndex}-${component}`,
@@ -578,7 +677,10 @@
           critDamage: enabled('base-crit') ? percent('cdc-crit') : 1,
           skillAdd: 0,
           skillProduct: 1,
-          healAdd: 0,
+          healBonus: enabled('base-heal-bonus') ? percent('cdc-heal-bonus') : 0,
+          fusionBase: enabled('base-fusion') ? number('cdc-fusion') : 0,
+          fusionPercent: 0,
+          fusionFlat: 0,
           active,
           baseFailures: atoms.filter((atom) => atom.kind === 'base' && !active.has(atom.id)).map((atom) => atom.label),
           activeEffectAtoms: atoms.filter((atom) => atom.kind === 'effect' && active.has(atom.id))
@@ -591,9 +693,12 @@
           if (atom.component === 'crit') state.critDamage += atom.value;
           if (atom.component === 'skill' && atom.skillMultiply) state.skillProduct *= 1 + atom.value;
           if (atom.component === 'skill' && !atom.skillMultiply) state.skillAdd += atom.value;
-          if (atom.component === 'heal') state.healAdd += atom.value;
+          if (atom.component === 'healBonus') state.healBonus += atom.value;
+          if (atom.component === 'fusionPercent') state.fusionPercent += atom.value;
+          if (atom.component === 'fusionFlat') state.fusionFlat += atom.value;
         });
         state.combatAttack = number('cdc-panel') + number('cdc-base') * state.attackBonus;
+        state.fusionStrength = state.fusionBase * (1 + state.fusionPercent) + state.fusionFlat;
         const characterFactor = 100 + number('cdc-char-level');
         const enemyFactor = (100 + number('cdc-enemy-level')) * (1 - state.penetration);
         const calculatedDefense = characterFactor / (characterFactor + enemyFactor);
@@ -603,7 +708,14 @@
         state.damageZone = enabled('zone-damage') ? 1 + state.damageBonus : 1;
         state.critZoneEnabled = enabled('zone-crit');
         state.skillZoneEnabled = enabled('zone-skill');
-        state.healZoneEnabled = enabled('zone-heal');
+        state.healBonusZone = enabled('zone-heal-bonus') ? 1 + state.healBonus : 1;
+        state.infusionZone = byId('cdc-infusion-enabled').checked && enabled('zone-fusion')
+          ? 1.2 * state.fusionStrength / 600
+          : 1;
+        state.creationFusionZone = enabled('zone-fusion') ? 1 + state.fusionStrength / 600 : 1;
+        state.specialZone = byId('cdc-special-enabled').checked && enabled('base-special')
+          ? number('cdc-special-multiplier')
+          : 1;
         return state;
       }
 
@@ -625,11 +737,12 @@
       function predictSkill(target, source, state) {
         let exact;
         if (target.model === 'creation') {
-          exact = 9000 * state.defenseZone * state.resistanceZone;
+          exact = 9000 * state.defenseZone * state.resistanceZone * state.creationFusionZone;
         } else {
           const calculatedMultiplier = (source.multiplier + state.skillAdd) * state.skillProduct;
           const finalMultiplier = state.skillZoneEnabled ? calculatedMultiplier : 1;
-          exact = state.combatAttack * state.defenseZone * state.resistanceZone * state.damageZone * finalMultiplier;
+          exact = state.combatAttack * state.defenseZone * state.resistanceZone * state.damageZone
+            * finalMultiplier * state.infusionZone * state.specialZone;
         }
         if (target.critical && state.critZoneEnabled) exact *= state.critDamage;
         return { exact, displayed: Math.round(exact) };
@@ -666,8 +779,7 @@
         });
 
         heals.filter((heal) => heal.enabled).forEach((heal) => {
-          const healMultiplier = state.healZoneEnabled ? heal.multiplier + state.healAdd : 1;
-          const exact = state.combatAttack * healMultiplier;
+          const exact = state.combatAttack * heal.multiplier * state.healBonusZone;
           const displayed = Math.round(exact);
           const error = Math.abs(displayed - heal.observed);
           normalizedScore += error / Math.max(1, heal.observed);
@@ -774,24 +886,37 @@
           || a.effectFailureCount - b.effectFailureCount;
       }
 
+      function keepRankedResult(results, result, limit) {
+        let low = 0;
+        let high = results.length;
+        while (low < high) {
+          const middle = (low + high) >> 1;
+          if (compareResults(result, results[middle]) < 0) high = middle;
+          else low = middle + 1;
+        }
+        if (low >= limit) return;
+        results.splice(low, 0, result);
+        if (results.length > limit) results.pop();
+      }
+
       function searchHypotheses(atoms, effects, skills, heals, rageValues) {
+        const preset = SEARCH_PRESETS[byId('cdc-search-strength').value] || SEARCH_PRESETS.deep;
         const evaluateState = (activeIds) => verificationMode === 'rage'
           ? evaluateRageCombination(activeIds, atoms, effects, skills, rageValues)
           : evaluateCombination(activeIds, atoms, effects, skills, heals);
         const totalLabel = atoms.length <= 52 ? (2 ** atoms.length).toLocaleString('zh-CN') : `2^${atoms.length}`;
-        if (atoms.length <= 18) {
+        if (atoms.length <= preset.exactLimit) {
           const results = [];
           const combinations = 2 ** atoms.length;
           for (let mask = 0; mask < combinations; mask += 1) {
             const activeIds = new Set();
             atoms.forEach((atom, index) => { if ((mask & (1 << index)) !== 0) activeIds.add(atom.id); });
-            results.push(evaluateState(activeIds));
+            keepRankedResult(results, evaluateState(activeIds), EXACT_RESULT_KEEP);
           }
-          results.sort(compareResults);
-          return { results, tested: combinations, totalLabel, mode: '完整枚举' };
+          return { results, tested: combinations, totalLabel, mode: `${preset.label} · 完整枚举` };
         }
 
-        const width = 5000;
+        const width = preset.beamWidth;
         const visited = new Set();
         let beam = [new Set(atoms.filter((atom) => atom.expected).map((atom) => atom.id))];
         atoms.forEach((atom) => {
@@ -809,15 +934,15 @@
         });
         const results = beam.map((activeIds) => evaluateState(activeIds));
         results.sort(compareResults);
-        return { results, tested: visited.size, totalLabel, mode: `全生效起点逐项排除 · 限宽 ${width}` };
+        return { results, tested: visited.size, totalLabel, mode: `${preset.label} · 全生效起点逐项排除 · 限宽 ${width.toLocaleString('zh-CN')}` };
       }
 
       function verify() {
         const effects = readEffects();
-        const skills = readSkills();
-        const heals = readHeals();
+        const skills = calculatorType === 'damage' ? readSkills() : [];
+        const heals = calculatorType === 'heal' ? readHeals() : [];
         const rageValues = readRageValues();
-        const observationCount = verificationMode === 'rage'
+        const observationCount = calculatorType === 'damage' && verificationMode === 'rage'
           ? rageValues.length
           : skills.filter((skill) => skill.enabled).length + heals.filter((heal) => heal.enabled).length;
         if (!observationCount) {
@@ -831,7 +956,7 @@
           byId('cdc-combination-results').innerHTML = '';
           byId('cdc-verification-note').textContent = verificationMode === 'rage'
             ? '请输入至少一个未知来源的实测伤害。'
-            : '请至少选择一项伤害或治疗数据。';
+            : calculatorType === 'heal' ? '请至少选择一项治疗数据。' : '请至少选择一项伤害数据。';
           return;
         }
         if (verificationMode === 'rage' && !skills.some((skill) => skill.enabled)) {
@@ -899,7 +1024,7 @@
             const modelName = detail.target.model === 'creation' ? '创生伤害' : detail.target.name;
             const critName = detail.target.critical ? '暴击' : '非暴击';
             const multiplierName = detail.target.model === 'creation'
-              ? '固定基础值 9000'
+              ? '固定基础值 9000 × 环合强度修正'
               : detail.wrongSource ? `倍率疑似来自：${detail.source.name}` : '本技能倍率';
             return `<div class="entry-row">
               <div><div class="text-small text-muted">实测项目</div><div>未知伤害 ${detail.index + 1} · ${detail.observed.toLocaleString('zh-CN')}</div></div>
@@ -910,7 +1035,7 @@
             </div>`;
           }
           const source = detail.target.model === 'creation'
-            ? '固定基础值 9000'
+            ? '固定基础值 9000 × 环合强度修正'
             : detail.wrongSource ? `疑似误用：${detail.source.name}` : '本技能倍率';
           return `<div class="entry-row">
             <div><div class="text-small text-muted">实测项目</div><div>${escapeHtml(detail.target.name)}</div></div>
@@ -939,9 +1064,9 @@
 
       function markDirty() {
         if (restoring) return;
-        byId('cdc-run-status').textContent = verificationMode === 'rage'
-          ? '数据已修改，点击“确定并开始溯源”'
-          : '数据已修改，点击“确定并开始验算”';
+        byId('cdc-run-status').textContent = calculatorType === 'heal'
+          ? '数据已修改，点击“确定并开始治疗验算”'
+          : verificationMode === 'rage' ? '数据已修改，点击“确定并开始溯源”' : '数据已修改，点击“确定并开始验算”';
         byId('cdc-best-combination').textContent = '等待验算';
         byId('cdc-combination-count').textContent = '当前结果尚未计算';
         byId('cdc-multiplier-status').textContent = '—';
@@ -961,7 +1086,9 @@
         setTimeout(() => {
           try {
             verify();
-            byId('cdc-run-status').textContent = verificationMode === 'rage' ? '溯源完成' : '验算完成';
+            byId('cdc-run-status').textContent = calculatorType === 'heal'
+              ? '治疗验算完成'
+              : verificationMode === 'rage' ? '溯源完成' : '验算完成';
           } catch (_error) {
             byId('cdc-run-status').textContent = verificationMode === 'rage' ? '溯源过程中出现错误' : '验算过程中出现错误';
           } finally {
@@ -978,6 +1105,9 @@
       });
       root.addEventListener('change', (event) => {
         if (event.target.matches('input, select, textarea')) {
+          if (event.target.matches('[data-skill-model], #cdc-infusion-enabled, #cdc-special-enabled')) {
+            updateCalculatorType();
+          }
           if (event.target.id !== 'cdc-profile-select') markDirty();
           scheduleDraftSave();
         }
@@ -1008,6 +1138,14 @@
       byId('cdc-detail-prev').addEventListener('click', () => { detailPage -= 1; renderDetailPage(); });
       byId('cdc-detail-next').addEventListener('click', () => { detailPage += 1; renderDetailPage(); });
       byId('cdc-run-verification').addEventListener('click', runVerification);
+      root.querySelectorAll('[data-calculator-type]').forEach((button) => {
+        button.addEventListener('click', () => {
+          calculatorType = button.dataset.calculatorType;
+          updateCalculatorType();
+          markDirty();
+          scheduleDraftSave();
+        });
+      });
       root.querySelectorAll('[data-verification-mode]').forEach((button) => {
         button.addEventListener('click', () => {
           verificationMode = button.dataset.verificationMode;
@@ -1051,7 +1189,7 @@
       byId('cdc-clear-current').addEventListener('click', clearCurrentConfiguration);
 
       refreshProfileSelect();
-      updateVerificationMode();
+      updateCalculatorType();
       let restoredDraft = false;
       try {
         const draft = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY) || 'null');
@@ -1066,6 +1204,7 @@
         addSkill('技能二', 'skill', 315, 5793, false);
         addHeal('治疗一', 120, 2520);
         updateSkillPagination();
+        updateCalculatorType();
         markDirty();
         scheduleDraftSave();
       }

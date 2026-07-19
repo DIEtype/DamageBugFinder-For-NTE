@@ -42,6 +42,13 @@ def self_test() -> int:
         "清空当前",
         "确定并开始验算",
         "狂暴溯源",
+        "搜索强度",
+        "极限 · 完整 22 / 限宽 50,000",
+        "治疗计算",
+        "基础治疗加成（%）",
+        "启用浸染乘区",
+        "特殊独立倍率（倍）",
+        "基础环合强度",
     )
     return 0 if all(marker in html for marker in required) else 2
 

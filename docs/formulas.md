@@ -1,4 +1,4 @@
-# 异环NTE伤害计算公式
+# 计算公式
 
 所有百分数在计算时转换为小数。例如 20% 使用 `0.2`，240% 使用 `2.4`。
 
@@ -56,6 +56,21 @@ SkillMultiplier = (BaseMultiplier + Σ AdditiveMultiplier)
 
 ## 常规伤害
 
+最终环合强度按百分比提升后再加固定值：
+
+```text
+FusionStrength = BaseFusionStrength × (1 + Σ FusionPercentBonus)
+                 + Σ FusionFlatBonus
+```
+
+启用浸染时：
+
+```text
+Infusion = 1.2 × FusionStrength / 600
+```
+
+未启用浸染时 `Infusion = 1`。特殊独立乘区直接填写倍数；未启用时为 `1`。
+
 非暴击：
 
 ```text
@@ -64,6 +79,8 @@ NormalDamage = A_combat
                × Resistance
                × DamageBonus
                × SkillMultiplier
+               × Infusion
+               × SpecialIndependentMultiplier
 ```
 
 暴击：
@@ -72,12 +89,13 @@ NormalDamage = A_combat
 CriticalDamage = NormalDamage × CriticalDamageMultiplier
 ```
 
-## 创生伤害
+## 创生花伤害
 
 非暴击：
 
 ```text
 CreationDamage = 9000 × Defense × Resistance
+                 × (1 + FusionStrength / 600)
 ```
 
 暴击：
@@ -86,15 +104,15 @@ CreationDamage = 9000 × Defense × Resistance
 CriticalCreationDamage = CreationDamage × CriticalDamageMultiplier
 ```
 
-创生伤害不读取面板攻击、常规增伤区或普通技能倍率。
+创生花不读取面板攻击、常规增伤区、普通技能倍率、浸染乘区或特殊独立乘区。
 
 ## 治疗量
 
 ```text
-Healing = A_combat × HealingMultiplier
+Healing = A_combat × HealingMultiplier × (1 + HealingBonus)
 ```
 
-伤害技能和治疗技能分别记录、分别计算。
+`HealingBonus` 为基础治疗加成与已生效觉醒、武器等候选治疗加成之和。伤害技能和治疗技能分别记录、分别计算；治疗不读取防御、抗性、增伤、暴击、浸染或特殊独立乘区。
 
 ## 精确值和显示值
 
@@ -139,8 +157,25 @@ ItemError = |round(ExactValue) - ObservedValue|
 - 基础抗性削弱未生效；
 - 通用、属性或额外增伤未生效；
 - 基础暴击伤害未生效；
-- 防御区、抗性区、增伤区、暴击区、技能倍率区或治疗倍率区整体未生效；
+- 基础环合强度、环合强度百分比提升或固定提升未生效；
+- 浸染、特殊独立或创生花环合强度修正未生效；
+- 基础治疗加成或候选治疗加成未生效；
+- 防御区、抗性区、增伤区、暴击区、技能倍率区或治疗加成区整体未生效；
 - 觉醒和武器的各项提升全部失效或部分失效；
 - 技能读取了其他已记录技能的倍率。
 
 搜索默认从所有基础乘区、觉醒和武器效果全部生效的状态开始，再逐项排除。
+
+## 搜索覆盖范围
+
+搜索强度决定完整枚举的判断项上限和超过上限后的限宽：
+
+| 档位 | 完整枚举上限 | 限宽 |
+| --- | ---: | ---: |
+| 标准 | 18 | 5,000 |
+| 深度 | 20 | 20,000 |
+| 极限 | 22 | 50,000 |
+
+判断项数量不超过对应上限时，程序会评估全部 `2^N` 个全局状态。为了控制内存，只在线保留排序最好的 300 个解释；排名第一和界面显示的零误差候选仍来自完整状态空间。
+
+判断项数量超过上限时，程序从“全部生效”开始逐项移除判断项，并在每一层保留最优的限宽路径。这种搜索不是完整枚举，不能保证覆盖全部理论状态。
