@@ -1,0 +1,2134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>游戏数值验算器</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:.5rem;background:inherit}iframe{display:block;width:100%;max-width:none;height:calc(100vh - 1rem);margin:0;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" title="游戏数值验算器" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;zh-CN&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;游戏数值验算器&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;compact-damage-calculator&quot;&gt;
+  &lt;style&gt;
+    #compact-damage-calculator {
+      display: grid;
+      gap: 12px;
+      color: var(--foreground);
+      min-width: 0;
+      max-width: 100%;
+    }
+    #compact-damage-calculator .compact-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+      gap: 8px 12px;
+    }
+    #compact-damage-calculator .result-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    #compact-damage-calculator details { border-top: 1px solid var(--border); padding-top: 8px; }
+    #compact-damage-calculator summary { cursor: pointer; font-weight: 500; margin-bottom: 8px; }
+    #compact-damage-calculator .section-label { font-weight: 500; margin: 10px 0 8px; }
+    #compact-damage-calculator .profile-bar,
+    #compact-damage-calculator .pagination-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 8px;
+      align-items: end;
+      min-width: 0;
+    }
+    #compact-damage-calculator .pagination-bar { grid-template-columns: repeat(4, auto); justify-content: start; align-items: center; }
+    #compact-damage-calculator .mode-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      max-width: 520px;
+    }
+    #compact-damage-calculator .numeric,
+    #compact-damage-calculator .result-main { font-variant-numeric: tabular-nums; }
+    #compact-damage-calculator .result-meta,
+    #compact-damage-calculator .verification-note { color: var(--muted-foreground); }
+    #compact-damage-calculator .entry-list { display: grid; gap: 10px; min-width: 0; }
+    #compact-damage-calculator .entry-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(138px, 100%), 1fr));
+      gap: 8px 12px;
+      align-items: end;
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+      min-width: 0;
+    }
+    #compact-damage-calculator .entry-row &gt; * { min-width: 0; }
+    #compact-damage-calculator .entry-row input,
+    #compact-damage-calculator .entry-row select { max-width: 100%; }
+    #compact-damage-calculator .detail-value { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    #compact-damage-calculator .main-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      min-width: 0;
+    }
+    #compact-damage-calculator .skills-workspace,
+    #compact-damage-calculator .results-workspace {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+    }
+    #compact-damage-calculator .results-workspace {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+    }
+    @media (max-width: 520px) {
+      #compact-damage-calculator .result-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 1099px) {
+      #compact-damage-calculator .main-workspace,
+      #compact-damage-calculator .results-workspace { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1100px) {
+      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr .7fr 1.4fr auto auto; }
+      #compact-damage-calculator .main-workspace { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+      #compact-damage-calculator #cdc-panel-section .compact-fields,
+      #compact-damage-calculator #cdc-effect-section .compact-fields { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+      #compact-damage-calculator #cdc-effects .entry-row {
+        grid-template-columns: 1.2fr repeat(6, minmax(50px, .65fr)) minmax(70px, .8fr) minmax(50px, .65fr) auto;
+        gap: 6px;
+      }
+      #compact-damage-calculator #cdc-skills .entry-row {
+        grid-template-columns: 1.15fr minmax(82px, .9fr) minmax(56px, .7fr) minmax(72px, .85fr) auto auto auto;
+        gap: 6px;
+      }
+      #compact-damage-calculator #cdc-heals .entry-row {
+        grid-template-columns: 1.2fr minmax(60px, .75fr) minmax(78px, .9fr) auto auto;
+        gap: 6px;
+      }
+      #compact-damage-calculator #cdc-best-details .entry-row {
+        grid-template-columns: 1fr 1.2fr 1.4fr .7fr .5fr;
+        gap: 6px;
+      }
+      #compact-damage-calculator #cdc-combination-results .entry-row {
+        grid-template-columns: 1.5fr .8fr .8fr;
+        gap: 6px;
+      }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;profile-bar&quot;&gt;
+    &lt;label class=&quot;form-label&quot;&gt;角色名称
+      &lt;input class=&quot;form-control&quot; id=&quot;cdc-character&quot; type=&quot;text&quot; value=&quot;测试角色&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot;&gt;版本
+      &lt;input class=&quot;form-control&quot; id=&quot;cdc-version&quot; type=&quot;text&quot; value=&quot;1.0&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot;&gt;已保存配置
+      &lt;select class=&quot;form-select&quot; id=&quot;cdc-profile-select&quot;&gt;&lt;/select&gt;
+    &lt;/label&gt;
+    &lt;div class=&quot;viz-controls&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-save-profile&quot; type=&quot;button&quot;&gt;保存/覆盖&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-load-profile&quot; type=&quot;button&quot;&gt;载入&lt;/button&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-delete-profile&quot; type=&quot;button&quot;&gt;删除&lt;/button&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-clear-current&quot; type=&quot;button&quot;&gt;清空当前&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;text-small result-meta&quot; id=&quot;cdc-profile-status&quot; aria-live=&quot;polite&quot;&gt;自动记忆当前草稿&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;details open id=&quot;cdc-panel-section&quot;&gt;
+    &lt;summary&gt;角色与目标面板&lt;/summary&gt;
+    &lt;div class=&quot;compact-fields&quot;&gt;
+      &lt;label class=&quot;form-label&quot;&gt;非战斗面板攻击
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-panel&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;2000&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础攻击
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-base&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;500&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础战斗攻击加成（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-atk-bonus&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;角色等级
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-char-level&quot; type=&quot;number&quot; min=&quot;1&quot; step=&quot;1&quot; value=&quot;80&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;敌人等级
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-enemy-level&quot; type=&quot;number&quot; min=&quot;1&quot; step=&quot;1&quot; value=&quot;80&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;敌人基础抗性（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-resistance&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+      &lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/details&gt;
+
+  &lt;div class=&quot;main-workspace&quot;&gt;
+  &lt;details open id=&quot;cdc-effect-section&quot;&gt;
+    &lt;summary&gt;乘区、候选觉醒与武器效果&lt;/summary&gt;
+    &lt;div class=&quot;compact-fields&quot;&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础防御穿透（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-penetration&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;15&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础抗性削弱（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-res-shred&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;通用增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-general&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;30&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;属性增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-elemental&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;额外增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-extra&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础暴击伤害（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-crit&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;150&quot;&gt;
+      &lt;/label&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;section-label&quot;&gt;候选效果&lt;/div&gt;
+    &lt;div class=&quot;entry-list&quot; id=&quot;cdc-effects&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;viz-controls&quot;&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-add-effect&quot; type=&quot;button&quot;&gt;添加候选效果&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/details&gt;
+
+  &lt;div class=&quot;skills-workspace&quot;&gt;
+  &lt;details open id=&quot;cdc-skill-section&quot;&gt;
+    &lt;summary&gt;伤害技能、倍率与实测伤害&lt;/summary&gt;
+    &lt;div class=&quot;entry-list&quot; id=&quot;cdc-skills&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;pagination-bar&quot;&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-add-skill&quot; type=&quot;button&quot;&gt;添加伤害技能&lt;/button&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-skill-prev&quot; type=&quot;button&quot;&gt;上一页&lt;/button&gt;
+      &lt;span class=&quot;text-small&quot; id=&quot;cdc-skill-page&quot;&gt;第 1/1 页&lt;/span&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-skill-next&quot; type=&quot;button&quot;&gt;下一页&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/details&gt;
+
+  &lt;details open id=&quot;cdc-heal-section&quot;&gt;
+    &lt;summary&gt;治疗技能、倍率与实测治疗&lt;/summary&gt;
+    &lt;div class=&quot;entry-list&quot; id=&quot;cdc-heals&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;viz-controls&quot;&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-add-heal&quot; type=&quot;button&quot;&gt;添加治疗技能&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/details&gt;
+  &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;mode-row&quot; role=&quot;group&quot; aria-label=&quot;验算模式&quot;&gt;
+    &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-verification-mode=&quot;normal&quot; aria-pressed=&quot;true&quot;&gt;常规验算&lt;/button&gt;
+    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-verification-mode=&quot;rage&quot; aria-pressed=&quot;false&quot;&gt;狂暴溯源&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;cdc-rage-input&quot; hidden&gt;
+    &lt;label class=&quot;form-label&quot;&gt;未知来源的实测伤害
+      &lt;textarea class=&quot;form-control&quot; id=&quot;cdc-rage-values&quot; rows=&quot;2&quot; placeholder=&quot;使用空格、逗号或换行分隔，例如：4413 5793 6612&quot;&gt;&lt;/textarea&gt;
+    &lt;/label&gt;
+    &lt;div class=&quot;text-small result-meta&quot;&gt;自动尝试全部已启用伤害技能、创生伤害、暴击/非暴击和其他技能倍率来源；同一来源可重复。&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;viz-controls&quot;&gt;
+    &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-run-verification&quot; type=&quot;button&quot;&gt;确定并开始验算&lt;/button&gt;
+    &lt;span class=&quot;text-small result-meta&quot; id=&quot;cdc-run-status&quot; aria-live=&quot;polite&quot;&gt;数据已就绪，等待验算&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;result-row&quot; aria-live=&quot;polite&quot;&gt;
+    &lt;div class=&quot;card viz-stat&quot;&gt;
+      &lt;div class=&quot;text-muted&quot;&gt;最符合实测的全局状态&lt;/div&gt;
+      &lt;div class=&quot;viz-stat-value result-main&quot; id=&quot;cdc-best-combination&quot;&gt;—&lt;/div&gt;
+      &lt;div class=&quot;text-small result-meta&quot; id=&quot;cdc-combination-count&quot;&gt;—&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card viz-stat&quot;&gt;
+      &lt;div class=&quot;text-muted&quot;&gt;技能倍率异常&lt;/div&gt;
+      &lt;div class=&quot;viz-stat-value result-main&quot; id=&quot;cdc-multiplier-status&quot;&gt;—&lt;/div&gt;
+      &lt;div class=&quot;text-small result-meta&quot;&gt;同误差时优先本技能倍率&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;card viz-stat&quot;&gt;
+      &lt;div class=&quot;text-muted&quot;&gt;显示值总误差&lt;/div&gt;
+      &lt;div class=&quot;viz-stat-value result-main&quot; id=&quot;cdc-total-error&quot;&gt;—&lt;/div&gt;
+      &lt;div class=&quot;text-small result-meta&quot; id=&quot;cdc-tie-count&quot;&gt;—&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;results-workspace&quot;&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;section-label&quot;&gt;最佳全局状态的逐项验算&lt;/div&gt;
+      &lt;div class=&quot;entry-list&quot; id=&quot;cdc-best-details&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;pagination-bar&quot;&gt;
+        &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-detail-prev&quot; type=&quot;button&quot;&gt;上一页&lt;/button&gt;
+        &lt;span class=&quot;text-small&quot; id=&quot;cdc-detail-page&quot;&gt;第 1/1 页&lt;/span&gt;
+        &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-detail-next&quot; type=&quot;button&quot;&gt;下一页&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div class=&quot;section-label&quot;&gt;零误差全局状态（最多 3 项）&lt;/div&gt;
+      &lt;div class=&quot;verification-note text-small&quot; id=&quot;cdc-verification-note&quot; aria-live=&quot;polite&quot;&gt;同一个候选状态会同时用于本次全部实测值；每条伤害或治疗的具体来源见左侧逐项验算。&lt;/div&gt;
+      &lt;div class=&quot;entry-list&quot; id=&quot;cdc-combination-results&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    (() =&gt; {
+      const root = document.getElementById(&#x27;compact-damage-calculator&#x27;);
+      const byId = (id) =&gt; root.querySelector(&#x27;#&#x27; + id);
+      const number = (id) =&gt; Number(byId(id).value) || 0;
+      const percent = (id) =&gt; number(id) / 100;
+      const format = (value) =&gt; Number.isFinite(value)
+        ? value.toLocaleString(&#x27;zh-CN&#x27;, { maximumFractionDigits: 6 })
+        : &#x27;—&#x27;;
+      const escapeHtml = (value) =&gt; String(value).replace(/[&amp;&lt;&gt;&quot;&#x27;]/g, (character) =&gt; ({
+        &#x27;&amp;&#x27;: &#x27;&amp;amp;&#x27;, &#x27;&lt;&#x27;: &#x27;&amp;lt;&#x27;, &#x27;&gt;&#x27;: &#x27;&amp;gt;&#x27;, &#x27;&quot;&#x27;: &#x27;&amp;quot;&#x27;, &quot;&#x27;&quot;: &#x27;&amp;#39;&#x27;
+      })[character]);
+      let rowCounter = 0;
+      let verificationMode = &#x27;normal&#x27;;
+      let skillPage = 0;
+      let detailPage = 0;
+      let detailRows = [];
+      let draftTimer = null;
+      let restoring = false;
+      const SKILL_PAGE_SIZE = 3;
+      const DETAIL_PAGE_SIZE = 3;
+      const REPORT_ERROR_LIMIT = 20;
+      const PROFILE_STORAGE_KEY = &#x27;game-calculator-profiles-v1&#x27;;
+      const DRAFT_STORAGE_KEY = &#x27;game-calculator-draft-v1&#x27;;
+
+      function addEffect(name = &#x27;&#x27;, values = {}) {
+        if (root.querySelectorAll(&#x27;[data-effect-row]&#x27;).length &gt;= 12) return;
+        rowCounter += 1;
+        const row = document.createElement(&#x27;div&#x27;);
+        row.className = &#x27;entry-row&#x27;;
+        row.dataset.effectRow = String(rowCounter);
+        row.innerHTML = `
+          &lt;label class=&quot;form-label&quot;&gt;名称&lt;input class=&quot;form-control&quot; data-effect-name type=&quot;text&quot; value=&quot;${escapeHtml(name)}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;攻击加成（%）&lt;input class=&quot;form-control&quot; data-effect-attack type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.attack || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;防御穿透（%）&lt;input class=&quot;form-control&quot; data-effect-penetration type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.penetration || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;抗性削弱（%）&lt;input class=&quot;form-control&quot; data-effect-res-shred type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resShred || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;增伤（%）&lt;input class=&quot;form-control&quot; data-effect-damage type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.damage || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;暴击伤害（%）&lt;input class=&quot;form-control&quot; data-effect-crit type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.crit || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;技能倍率（%）&lt;input class=&quot;form-control&quot; data-effect-skill type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.skill || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; data-effect-skill-multiply type=&quot;checkbox&quot; ${values.skillMultiply ? &#x27;checked&#x27; : &#x27;&#x27;}&gt;&lt;span class=&quot;form-check-label&quot;&gt;技能倍率乘算&lt;/span&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;治疗倍率（%）&lt;input class=&quot;form-control&quot; data-effect-heal type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.heal || 0}&quot;&gt;&lt;/label&gt;
+          &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-remove-effect&gt;删除此效果&lt;/button&gt;`;
+        byId(&#x27;cdc-effects&#x27;).appendChild(row);
+      }
+
+      function addSkill(name = &#x27;&#x27;, model = &#x27;skill&#x27;, multiplier = 0, observed = 0, critical = false, enabled = true) {
+        rowCounter += 1;
+        const row = document.createElement(&#x27;div&#x27;);
+        row.className = &#x27;entry-row&#x27;;
+        row.dataset.skillRow = String(rowCounter);
+        row.innerHTML = `
+          &lt;label class=&quot;form-label&quot;&gt;技能名称&lt;input class=&quot;form-control&quot; data-skill-name type=&quot;text&quot; value=&quot;${escapeHtml(name)}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;伤害模型&lt;select class=&quot;form-select&quot; data-skill-model&gt;&lt;option value=&quot;skill&quot;&gt;常规技能&lt;/option&gt;&lt;option value=&quot;creation&quot;&gt;创生伤害&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;基础倍率（%）&lt;input class=&quot;form-control&quot; data-skill-multiplier type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;${multiplier}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot; data-normal-skill-field&gt;实测显示伤害&lt;input class=&quot;form-control&quot; data-skill-observed type=&quot;number&quot; min=&quot;0&quot; step=&quot;1&quot; value=&quot;${observed}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-check&quot; data-normal-skill-field&gt;&lt;input class=&quot;form-check-input&quot; data-skill-critical type=&quot;checkbox&quot; ${critical ? &#x27;checked&#x27; : &#x27;&#x27;}&gt;&lt;span class=&quot;form-check-label&quot;&gt;暴击&lt;/span&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; data-skill-enabled type=&quot;checkbox&quot; ${enabled ? &#x27;checked&#x27; : &#x27;&#x27;}&gt;&lt;span class=&quot;form-check-label&quot; data-skill-enabled-label&gt;${verificationMode === &#x27;rage&#x27; ? &#x27;作为候选来源&#x27; : &#x27;纳入验算&#x27;}&lt;/span&gt;&lt;/label&gt;
+          &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-remove-skill&gt;删除此技能&lt;/button&gt;`;
+        row.querySelector(&#x27;[data-skill-model]&#x27;).value = model;
+        byId(&#x27;cdc-skills&#x27;).appendChild(row);
+      }
+
+      function addHeal(name = &#x27;&#x27;, multiplier = 0, observed = 0, enabled = true) {
+        rowCounter += 1;
+        const row = document.createElement(&#x27;div&#x27;);
+        row.className = &#x27;entry-row&#x27;;
+        row.dataset.healRow = String(rowCounter);
+        row.innerHTML = `
+          &lt;label class=&quot;form-label&quot;&gt;治疗技能名称&lt;input class=&quot;form-control&quot; data-heal-name type=&quot;text&quot; value=&quot;${escapeHtml(name)}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;治疗倍率（%）&lt;input class=&quot;form-control&quot; data-heal-multiplier type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;${multiplier}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;实测显示治疗&lt;input class=&quot;form-control&quot; data-heal-observed type=&quot;number&quot; min=&quot;0&quot; step=&quot;1&quot; value=&quot;${observed}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; data-heal-enabled type=&quot;checkbox&quot; ${enabled ? &#x27;checked&#x27; : &#x27;&#x27;}&gt;&lt;span class=&quot;form-check-label&quot;&gt;纳入验算&lt;/span&gt;&lt;/label&gt;
+          &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-remove-heal&gt;删除此治疗技能&lt;/button&gt;`;
+        byId(&#x27;cdc-heals&#x27;).appendChild(row);
+      }
+
+      function readEffects() {
+        return Array.from(root.querySelectorAll(&#x27;[data-effect-row]&#x27;)).map((row, index) =&gt; ({
+          name: row.querySelector(&#x27;[data-effect-name]&#x27;).value.trim() || `候选效果${index + 1}`,
+          attack: Number(row.querySelector(&#x27;[data-effect-attack]&#x27;).value) / 100 || 0,
+          penetration: Number(row.querySelector(&#x27;[data-effect-penetration]&#x27;).value) / 100 || 0,
+          resShred: Number(row.querySelector(&#x27;[data-effect-res-shred]&#x27;).value) / 100 || 0,
+          damage: Number(row.querySelector(&#x27;[data-effect-damage]&#x27;).value) / 100 || 0,
+          crit: Number(row.querySelector(&#x27;[data-effect-crit]&#x27;).value) / 100 || 0,
+          skill: Number(row.querySelector(&#x27;[data-effect-skill]&#x27;).value) / 100 || 0,
+          skillMultiply: row.querySelector(&#x27;[data-effect-skill-multiply]&#x27;).checked,
+          heal: Number(row.querySelector(&#x27;[data-effect-heal]&#x27;).value) / 100 || 0
+        }));
+      }
+
+      function readSkills() {
+        return Array.from(root.querySelectorAll(&#x27;[data-skill-row]&#x27;)).map((row, index) =&gt; ({
+          index,
+          name: row.querySelector(&#x27;[data-skill-name]&#x27;).value.trim() || `伤害技能${index + 1}`,
+          model: row.querySelector(&#x27;[data-skill-model]&#x27;).value,
+          multiplier: Number(row.querySelector(&#x27;[data-skill-multiplier]&#x27;).value) / 100 || 0,
+          observed: Number(row.querySelector(&#x27;[data-skill-observed]&#x27;).value) || 0,
+          critical: row.querySelector(&#x27;[data-skill-critical]&#x27;).checked,
+          enabled: row.querySelector(&#x27;[data-skill-enabled]&#x27;).checked
+        }));
+      }
+
+      function readHeals() {
+        return Array.from(root.querySelectorAll(&#x27;[data-heal-row]&#x27;)).map((row, index) =&gt; ({
+          index,
+          name: row.querySelector(&#x27;[data-heal-name]&#x27;).value.trim() || `治疗技能${index + 1}`,
+          multiplier: Number(row.querySelector(&#x27;[data-heal-multiplier]&#x27;).value) / 100 || 0,
+          observed: Number(row.querySelector(&#x27;[data-heal-observed]&#x27;).value) || 0,
+          enabled: row.querySelector(&#x27;[data-heal-enabled]&#x27;).checked
+        }));
+      }
+
+      function readRageValues() {
+        return byId(&#x27;cdc-rage-values&#x27;).value
+          .split(/[^0-9.+-]+/)
+          .map((value) =&gt; Number(value))
+          .filter((value) =&gt; Number.isFinite(value) &amp;&amp; value &gt;= 0);
+      }
+
+      function updateVerificationMode() {
+        root.querySelectorAll(&#x27;[data-verification-mode]&#x27;).forEach((button) =&gt; {
+          const active = button.dataset.verificationMode === verificationMode;
+          button.classList.toggle(&#x27;btn-primary&#x27;, active);
+          button.setAttribute(&#x27;aria-pressed&#x27;, String(active));
+        });
+        byId(&#x27;cdc-rage-input&#x27;).hidden = verificationMode !== &#x27;rage&#x27;;
+        root.querySelectorAll(&#x27;[data-normal-skill-field]&#x27;).forEach((field) =&gt; {
+          field.hidden = verificationMode === &#x27;rage&#x27;;
+        });
+        root.querySelectorAll(&#x27;[data-skill-enabled-label]&#x27;).forEach((label) =&gt; {
+          label.textContent = verificationMode === &#x27;rage&#x27; ? &#x27;作为候选来源&#x27; : &#x27;纳入验算&#x27;;
+        });
+        byId(&#x27;cdc-run-verification&#x27;).textContent = verificationMode === &#x27;rage&#x27;
+          ? &#x27;确定并开始溯源&#x27;
+          : &#x27;确定并开始验算&#x27;;
+      }
+
+      function updateSkillPagination(goToLast = false) {
+        const rows = Array.from(root.querySelectorAll(&#x27;[data-skill-row]&#x27;));
+        const pageCount = Math.max(1, Math.ceil(rows.length / SKILL_PAGE_SIZE));
+        if (goToLast) skillPage = pageCount - 1;
+        skillPage = Math.max(0, Math.min(skillPage, pageCount - 1));
+        rows.forEach((row, index) =&gt; {
+          row.hidden = index &lt; skillPage * SKILL_PAGE_SIZE || index &gt;= (skillPage + 1) * SKILL_PAGE_SIZE;
+        });
+        byId(&#x27;cdc-skill-page&#x27;).textContent = `第 ${skillPage + 1}/${pageCount} 页 · 共 ${rows.length} 项`;
+        byId(&#x27;cdc-skill-prev&#x27;).disabled = skillPage === 0;
+        byId(&#x27;cdc-skill-next&#x27;).disabled = skillPage &gt;= pageCount - 1;
+      }
+
+      function renderDetailPage() {
+        const pageCount = Math.max(1, Math.ceil(detailRows.length / DETAIL_PAGE_SIZE));
+        detailPage = Math.max(0, Math.min(detailPage, pageCount - 1));
+        const start = detailPage * DETAIL_PAGE_SIZE;
+        byId(&#x27;cdc-best-details&#x27;).innerHTML = detailRows.slice(start, start + DETAIL_PAGE_SIZE).join(&#x27;&#x27;);
+        byId(&#x27;cdc-detail-page&#x27;).textContent = `第 ${detailPage + 1}/${pageCount} 页 · 共 ${detailRows.length} 项`;
+        byId(&#x27;cdc-detail-prev&#x27;).disabled = detailPage === 0;
+        byId(&#x27;cdc-detail-next&#x27;).disabled = detailPage &gt;= pageCount - 1;
+      }
+
+      function captureData() {
+        const scalarIds = [&#x27;cdc-character&#x27;, &#x27;cdc-version&#x27;, &#x27;cdc-panel&#x27;, &#x27;cdc-base&#x27;, &#x27;cdc-atk-bonus&#x27;,
+          &#x27;cdc-char-level&#x27;, &#x27;cdc-enemy-level&#x27;, &#x27;cdc-resistance&#x27;, &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;,
+          &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;, &#x27;cdc-rage-values&#x27;];
+        const scalars = {};
+        scalarIds.forEach((id) =&gt; { scalars[id] = byId(id).value; });
+        const effects = Array.from(root.querySelectorAll(&#x27;[data-effect-row]&#x27;)).map((row) =&gt; ({
+          name: row.querySelector(&#x27;[data-effect-name]&#x27;).value,
+          attack: Number(row.querySelector(&#x27;[data-effect-attack]&#x27;).value) || 0,
+          penetration: Number(row.querySelector(&#x27;[data-effect-penetration]&#x27;).value) || 0,
+          resShred: Number(row.querySelector(&#x27;[data-effect-res-shred]&#x27;).value) || 0,
+          damage: Number(row.querySelector(&#x27;[data-effect-damage]&#x27;).value) || 0,
+          crit: Number(row.querySelector(&#x27;[data-effect-crit]&#x27;).value) || 0,
+          skill: Number(row.querySelector(&#x27;[data-effect-skill]&#x27;).value) || 0,
+          skillMultiply: row.querySelector(&#x27;[data-effect-skill-multiply]&#x27;).checked,
+          heal: Number(row.querySelector(&#x27;[data-effect-heal]&#x27;).value) || 0
+        }));
+        const skills = Array.from(root.querySelectorAll(&#x27;[data-skill-row]&#x27;)).map((row) =&gt; ({
+          name: row.querySelector(&#x27;[data-skill-name]&#x27;).value,
+          model: row.querySelector(&#x27;[data-skill-model]&#x27;).value,
+          multiplier: Number(row.querySelector(&#x27;[data-skill-multiplier]&#x27;).value) || 0,
+          observed: Number(row.querySelector(&#x27;[data-skill-observed]&#x27;).value) || 0,
+          critical: row.querySelector(&#x27;[data-skill-critical]&#x27;).checked,
+          enabled: row.querySelector(&#x27;[data-skill-enabled]&#x27;).checked
+        }));
+        const heals = Array.from(root.querySelectorAll(&#x27;[data-heal-row]&#x27;)).map((row) =&gt; ({
+          name: row.querySelector(&#x27;[data-heal-name]&#x27;).value,
+          multiplier: Number(row.querySelector(&#x27;[data-heal-multiplier]&#x27;).value) || 0,
+          observed: Number(row.querySelector(&#x27;[data-heal-observed]&#x27;).value) || 0,
+          enabled: row.querySelector(&#x27;[data-heal-enabled]&#x27;).checked
+        }));
+        return { schema: 2, mode: verificationMode, scalars, effects, skills, heals };
+      }
+
+      function applyData(data) {
+        if (!data || !data.scalars) return false;
+        restoring = true;
+        Object.entries(data.scalars).forEach(([id, value]) =&gt; {
+          const element = byId(id);
+          if (element) element.value = value;
+        });
+        byId(&#x27;cdc-effects&#x27;).innerHTML = &#x27;&#x27;;
+        byId(&#x27;cdc-skills&#x27;).innerHTML = &#x27;&#x27;;
+        byId(&#x27;cdc-heals&#x27;).innerHTML = &#x27;&#x27;;
+        (data.effects || []).forEach((effect) =&gt; addEffect(effect.name, effect));
+        (data.skills || []).forEach((skill) =&gt; addSkill(skill.name, skill.model, skill.multiplier, skill.observed, skill.critical, skill.enabled));
+        (data.heals || []).forEach((heal) =&gt; addHeal(heal.name, heal.multiplier, heal.observed, heal.enabled));
+        verificationMode = data.mode === &#x27;rage&#x27; ? &#x27;rage&#x27; : &#x27;normal&#x27;;
+        updateVerificationMode();
+        skillPage = 0;
+        detailPage = 0;
+        updateSkillPagination();
+        restoring = false;
+        markDirty();
+        scheduleDraftSave();
+        return true;
+      }
+
+      function clearCurrentConfiguration() {
+        if (!window.confirm(&#x27;清空当前输入和当前草稿？已保存的角色/版本配置不会删除。&#x27;)) return;
+        const scalarIds = [&#x27;cdc-character&#x27;, &#x27;cdc-version&#x27;, &#x27;cdc-panel&#x27;, &#x27;cdc-base&#x27;, &#x27;cdc-atk-bonus&#x27;,
+          &#x27;cdc-char-level&#x27;, &#x27;cdc-enemy-level&#x27;, &#x27;cdc-resistance&#x27;, &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;,
+          &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;, &#x27;cdc-rage-values&#x27;];
+        const scalars = {};
+        scalarIds.forEach((id) =&gt; { scalars[id] = &#x27;&#x27;; });
+        applyData({ schema: 2, mode: &#x27;normal&#x27;, scalars, effects: [], skills: [], heals: [] });
+        clearTimeout(draftTimer);
+        try {
+          localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(captureData()));
+          byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;已清空当前配置；已保存档案未变更&#x27;;
+        } catch (_error) {
+          byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;当前配置已清空，但本地记忆不可用&#x27;;
+        }
+        byId(&#x27;cdc-run-status&#x27;).textContent = &#x27;当前配置已清空&#x27;;
+      }
+
+      function readStoredProfiles() {
+        try { return JSON.parse(localStorage.getItem(PROFILE_STORAGE_KEY) || &#x27;{}&#x27;); }
+        catch (_error) { return {}; }
+      }
+
+      function writeStoredProfiles(profiles) {
+        try { localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profiles)); return true; }
+        catch (_error) { byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;本地保存不可用&#x27;; return false; }
+      }
+
+      function refreshProfileSelect(selectedKey = &#x27;&#x27;) {
+        const profiles = readStoredProfiles();
+        const keys = Object.keys(profiles).sort((a, b) =&gt; a.localeCompare(b, &#x27;zh-CN&#x27;));
+        byId(&#x27;cdc-profile-select&#x27;).innerHTML = keys.length
+          ? keys.map((key) =&gt; `&lt;option value=&quot;${escapeHtml(key)}&quot;&gt;${escapeHtml(key)}&lt;/option&gt;`).join(&#x27;&#x27;)
+          : &#x27;&lt;option value=&quot;&quot;&gt;暂无已保存配置&lt;/option&gt;&#x27;;
+        if (selectedKey &amp;&amp; profiles[selectedKey]) byId(&#x27;cdc-profile-select&#x27;).value = selectedKey;
+      }
+
+      function profileKey() {
+        const character = byId(&#x27;cdc-character&#x27;).value.trim();
+        const version = byId(&#x27;cdc-version&#x27;).value.trim();
+        return character &amp;&amp; version ? `${character} · ${version}` : &#x27;&#x27;;
+      }
+
+      function scheduleDraftSave() {
+        if (restoring) return;
+        clearTimeout(draftTimer);
+        draftTimer = setTimeout(() =&gt; {
+          try {
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(captureData()));
+            byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;当前草稿已自动记忆&#x27;;
+          } catch (_error) {
+            byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;本地记忆不可用&#x27;;
+          }
+        }, 250);
+      }
+
+      const baseAtoms = [
+        { id: &#x27;base-attack&#x27;, label: &#x27;基础攻击加成&#x27;, component: &#x27;baseAttack&#x27;, expected: true },
+        { id: &#x27;base-penetration&#x27;, label: &#x27;基础防御穿透&#x27;, component: &#x27;basePenetration&#x27;, expected: true },
+        { id: &#x27;base-res-shred&#x27;, label: &#x27;基础抗性削弱&#x27;, component: &#x27;baseResShred&#x27;, expected: true },
+        { id: &#x27;base-general&#x27;, label: &#x27;通用增伤&#x27;, component: &#x27;baseGeneral&#x27;, expected: true },
+        { id: &#x27;base-elemental&#x27;, label: &#x27;属性增伤&#x27;, component: &#x27;baseElemental&#x27;, expected: true },
+        { id: &#x27;base-extra&#x27;, label: &#x27;额外增伤&#x27;, component: &#x27;baseExtra&#x27;, expected: true },
+        { id: &#x27;base-crit&#x27;, label: &#x27;基础暴击伤害&#x27;, component: &#x27;baseCrit&#x27;, expected: true },
+        { id: &#x27;zone-defense&#x27;, label: &#x27;防御区整体&#x27;, component: &#x27;zoneDefense&#x27;, expected: true },
+        { id: &#x27;zone-resistance&#x27;, label: &#x27;抗性区整体&#x27;, component: &#x27;zoneResistance&#x27;, expected: true },
+        { id: &#x27;zone-damage&#x27;, label: &#x27;增伤区整体&#x27;, component: &#x27;zoneDamage&#x27;, expected: true },
+        { id: &#x27;zone-crit&#x27;, label: &#x27;暴击区整体&#x27;, component: &#x27;zoneCrit&#x27;, expected: true },
+        { id: &#x27;zone-skill&#x27;, label: &#x27;技能倍率区整体&#x27;, component: &#x27;zoneSkill&#x27;, expected: true },
+        { id: &#x27;zone-heal&#x27;, label: &#x27;治疗倍率区整体&#x27;, component: &#x27;zoneHeal&#x27;, expected: true }
+      ];
+      const componentLabels = {
+        attack: &#x27;攻击加成&#x27;, penetration: &#x27;防御穿透&#x27;, resShred: &#x27;抗性削弱&#x27;, damage: &#x27;增伤&#x27;,
+        crit: &#x27;暴击伤害&#x27;, skill: &#x27;技能倍率&#x27;, heal: &#x27;治疗倍率&#x27;
+      };
+
+      function createAtoms(effects) {
+        const atoms = baseAtoms.map((atom) =&gt; ({ ...atom, kind: &#x27;base&#x27; }));
+        effects.forEach((effect, effectIndex) =&gt; {
+          [&#x27;attack&#x27;, &#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;damage&#x27;, &#x27;crit&#x27;, &#x27;skill&#x27;, &#x27;heal&#x27;].forEach((component) =&gt; {
+            if (!effect[component]) return;
+            atoms.push({
+              id: `effect-${effectIndex}-${component}`,
+              kind: &#x27;effect&#x27;,
+              expected: true,
+              effectIndex,
+              effectName: effect.name,
+              component,
+              value: effect[component],
+              skillMultiply: component === &#x27;skill&#x27; &amp;&amp; effect.skillMultiply
+            });
+          });
+        });
+        return atoms;
+      }
+
+      function buildState(activeIds, atoms) {
+        const active = activeIds instanceof Set ? activeIds : new Set(activeIds);
+        const enabled = (id) =&gt; active.has(id);
+        const state = {
+          attackBonus: enabled(&#x27;base-attack&#x27;) ? percent(&#x27;cdc-atk-bonus&#x27;) : 0,
+          penetration: enabled(&#x27;base-penetration&#x27;) ? percent(&#x27;cdc-penetration&#x27;) : 0,
+          resShred: enabled(&#x27;base-res-shred&#x27;) ? percent(&#x27;cdc-res-shred&#x27;) : 0,
+          damageBonus: (enabled(&#x27;base-general&#x27;) ? percent(&#x27;cdc-general&#x27;) : 0)
+            + (enabled(&#x27;base-elemental&#x27;) ? percent(&#x27;cdc-elemental&#x27;) : 0)
+            + (enabled(&#x27;base-extra&#x27;) ? percent(&#x27;cdc-extra&#x27;) : 0),
+          critDamage: enabled(&#x27;base-crit&#x27;) ? percent(&#x27;cdc-crit&#x27;) : 1,
+          skillAdd: 0,
+          skillProduct: 1,
+          healAdd: 0,
+          active,
+          baseFailures: atoms.filter((atom) =&gt; atom.kind === &#x27;base&#x27; &amp;&amp; !active.has(atom.id)).map((atom) =&gt; atom.label),
+          activeEffectAtoms: atoms.filter((atom) =&gt; atom.kind === &#x27;effect&#x27; &amp;&amp; active.has(atom.id))
+        };
+        state.activeEffectAtoms.forEach((atom) =&gt; {
+          if (atom.component === &#x27;attack&#x27;) state.attackBonus += atom.value;
+          if (atom.component === &#x27;penetration&#x27;) state.penetration += atom.value;
+          if (atom.component === &#x27;resShred&#x27;) state.resShred += atom.value;
+          if (atom.component === &#x27;damage&#x27;) state.damageBonus += atom.value;
+          if (atom.component === &#x27;crit&#x27;) state.critDamage += atom.value;
+          if (atom.component === &#x27;skill&#x27; &amp;&amp; atom.skillMultiply) state.skillProduct *= 1 + atom.value;
+          if (atom.component === &#x27;skill&#x27; &amp;&amp; !atom.skillMultiply) state.skillAdd += atom.value;
+          if (atom.component === &#x27;heal&#x27;) state.healAdd += atom.value;
+        });
+        state.combatAttack = number(&#x27;cdc-panel&#x27;) + number(&#x27;cdc-base&#x27;) * state.attackBonus;
+        const characterFactor = 100 + number(&#x27;cdc-char-level&#x27;);
+        const enemyFactor = (100 + number(&#x27;cdc-enemy-level&#x27;)) * (1 - state.penetration);
+        const calculatedDefense = characterFactor / (characterFactor + enemyFactor);
+        const calculatedResistance = 1 - percent(&#x27;cdc-resistance&#x27;) + state.resShred;
+        state.defenseZone = enabled(&#x27;zone-defense&#x27;) ? calculatedDefense : 1;
+        state.resistanceZone = enabled(&#x27;zone-resistance&#x27;) ? calculatedResistance : 1;
+        state.damageZone = enabled(&#x27;zone-damage&#x27;) ? 1 + state.damageBonus : 1;
+        state.critZoneEnabled = enabled(&#x27;zone-crit&#x27;);
+        state.skillZoneEnabled = enabled(&#x27;zone-skill&#x27;);
+        state.healZoneEnabled = enabled(&#x27;zone-heal&#x27;);
+        return state;
+      }
+
+      function describeHypothesis(state, atoms, effects) {
+        const effectDescriptions = effects.map((effect, effectIndex) =&gt; {
+          const effectAtoms = atoms.filter((atom) =&gt; atom.kind === &#x27;effect&#x27; &amp;&amp; atom.effectIndex === effectIndex);
+          if (!effectAtoms.length) return &#x27;&#x27;;
+          const activeAtoms = effectAtoms.filter((atom) =&gt; state.active.has(atom.id));
+          if (!activeAtoms.length) return `${effect.name}未生效`;
+          if (activeAtoms.length === effectAtoms.length) return `${effect.name}全部生效`;
+          return `${effect.name}仅${activeAtoms.map((atom) =&gt; componentLabels[atom.component]).join(&#x27;、&#x27;)}生效`;
+        }).filter(Boolean);
+        const baseDescription = state.baseFailures.length
+          ? `基础异常：${state.baseFailures.join(&#x27;、&#x27;)}未生效`
+          : &#x27;基础乘区正常&#x27;;
+        return effectDescriptions.concat(baseDescription).join(&#x27;；&#x27;);
+      }
+
+      function predictSkill(target, source, state) {
+        let exact;
+        if (target.model === &#x27;creation&#x27;) {
+          exact = 9000 * state.defenseZone * state.resistanceZone;
+        } else {
+          const calculatedMultiplier = (source.multiplier + state.skillAdd) * state.skillProduct;
+          const finalMultiplier = state.skillZoneEnabled ? calculatedMultiplier : 1;
+          exact = state.combatAttack * state.defenseZone * state.resistanceZone * state.damageZone * finalMultiplier;
+        }
+        if (target.critical &amp;&amp; state.critZoneEnabled) exact *= state.critDamage;
+        return { exact, displayed: Math.round(exact) };
+      }
+
+      function evaluateCombination(activeIds, atoms, effects, skills, heals) {
+        const state = buildState(activeIds, atoms);
+        const damageDetails = [];
+        const healDetails = [];
+        let normalizedScore = 0;
+        let totalDisplayError = 0;
+        let wrongMultiplierCount = 0;
+
+        skills.filter((skill) =&gt; skill.enabled).forEach((target) =&gt; {
+          if (target.model === &#x27;creation&#x27;) {
+            const prediction = predictSkill(target, target, state);
+            const error = Math.abs(prediction.displayed - target.observed);
+            normalizedScore += error / Math.max(1, target.observed);
+            totalDisplayError += error;
+            damageDetails.push({ target, source: null, ...prediction, error, wrongSource: false });
+            return;
+          }
+          const sourceCandidates = skills.filter((skill) =&gt; skill.model === &#x27;skill&#x27;).map((source) =&gt; {
+            const prediction = predictSkill(target, source, state);
+            const error = Math.abs(prediction.displayed - target.observed);
+            return { target, source, ...prediction, error, wrongSource: source.index !== target.index };
+          });
+          sourceCandidates.sort((a, b) =&gt; a.error - b.error || Number(a.wrongSource) - Number(b.wrongSource));
+          const bestSource = sourceCandidates[0];
+          normalizedScore += bestSource.error / Math.max(1, target.observed);
+          totalDisplayError += bestSource.error;
+          if (bestSource.wrongSource) wrongMultiplierCount += 1;
+          damageDetails.push(bestSource);
+        });
+
+        heals.filter((heal) =&gt; heal.enabled).forEach((heal) =&gt; {
+          const healMultiplier = state.healZoneEnabled ? heal.multiplier + state.healAdd : 1;
+          const exact = state.combatAttack * healMultiplier;
+          const displayed = Math.round(exact);
+          const error = Math.abs(displayed - heal.observed);
+          normalizedScore += error / Math.max(1, heal.observed);
+          totalDisplayError += error;
+          healDetails.push({ heal, exact, displayed, error });
+        });
+
+        const itemErrors = damageDetails.map((detail) =&gt; detail.error).concat(healDetails.map((detail) =&gt; detail.error));
+        const maxItemError = itemErrors.length ? Math.max(...itemErrors) : 0;
+        const overLimitCount = itemErrors.filter((error) =&gt; error &gt; REPORT_ERROR_LIMIT).length;
+        return {
+          activeIds: new Set(activeIds), state, damageDetails, healDetails, normalizedScore, totalDisplayError,
+          wrongMultiplierCount, baseFailureCount: state.baseFailures.length,
+          activeEffectCount: state.activeEffectAtoms.length,
+          effectFailureCount: atoms.filter((atom) =&gt; atom.kind === &#x27;effect&#x27;).length - state.activeEffectAtoms.length,
+          maxItemError, overLimitCount,
+          description: describeHypothesis(state, atoms, effects)
+        };
+      }
+
+      function evaluateRageCombination(activeIds, atoms, effects, skills, rageValues) {
+        const state = buildState(activeIds, atoms);
+        const enabledSkills = skills.filter((skill) =&gt; skill.enabled);
+        const multiplierSources = enabledSkills.filter((skill) =&gt; skill.model === &#x27;skill&#x27;);
+        const sourceCandidates = [];
+
+        enabledSkills.forEach((target) =&gt; {
+          const criticalStates = [false, true];
+          if (target.model === &#x27;creation&#x27;) {
+            criticalStates.forEach((critical) =&gt; {
+              const testTarget = { ...target, critical };
+              const prediction = predictSkill(testTarget, testTarget, state);
+              sourceCandidates.push({ target: testTarget, source: null, wrongSource: false, ...prediction });
+            });
+            return;
+          }
+          multiplierSources.forEach((source) =&gt; {
+            criticalStates.forEach((critical) =&gt; {
+              const testTarget = { ...target, critical };
+              const prediction = predictSkill(testTarget, source, state);
+              sourceCandidates.push({
+                target: testTarget,
+                source,
+                wrongSource: source.index !== target.index,
+                ...prediction
+              });
+            });
+          });
+        });
+
+        const damageDetails = rageValues.map((observed, index) =&gt; {
+          let best = null;
+          let alternatives = 0;
+          sourceCandidates.forEach((candidate) =&gt; {
+            const tested = { ...candidate, error: Math.abs(candidate.displayed - observed) };
+            if (tested.error &lt;= REPORT_ERROR_LIMIT) alternatives += 1;
+            if (!best
+              || tested.error &lt; best.error
+              || (tested.error === best.error &amp;&amp; Number(tested.wrongSource) &lt; Number(best.wrongSource))
+              || (tested.error === best.error &amp;&amp; tested.wrongSource === best.wrongSource
+                &amp;&amp; Number(tested.target.critical) &lt; Number(best.target.critical))) {
+              best = tested;
+            }
+          });
+          if (!best) {
+            return { index, observed, matched: false, error: Number.POSITIVE_INFINITY, alternatives: 0 };
+          }
+          return {
+            index,
+            observed,
+            matched: best.error &lt;= REPORT_ERROR_LIMIT,
+            alternatives,
+            ...best
+          };
+        });
+
+        const finiteErrors = damageDetails.map((detail) =&gt; detail.error).filter(Number.isFinite);
+        const totalDisplayError = damageDetails.filter((detail) =&gt; detail.matched)
+          .reduce((sum, detail) =&gt; sum + detail.error, 0);
+        const normalizedScore = damageDetails.reduce((sum, detail) =&gt; {
+          if (!Number.isFinite(detail.error)) return sum + 1;
+          return sum + detail.error / Math.max(1, detail.observed);
+        }, 0);
+        const wrongMultiplierCount = damageDetails.filter((detail) =&gt; detail.matched &amp;&amp; detail.wrongSource).length;
+        const maxItemError = finiteErrors.length ? Math.max(...finiteErrors) : Number.POSITIVE_INFINITY;
+        const overLimitCount = damageDetails.filter((detail) =&gt; !detail.matched).length;
+
+        return {
+          activeIds: new Set(activeIds), state, damageDetails, healDetails: [], normalizedScore, totalDisplayError,
+          wrongMultiplierCount, baseFailureCount: state.baseFailures.length,
+          activeEffectCount: state.activeEffectAtoms.length,
+          effectFailureCount: atoms.filter((atom) =&gt; atom.kind === &#x27;effect&#x27;).length - state.activeEffectAtoms.length,
+          maxItemError, overLimitCount,
+          description: describeHypothesis(state, atoms, effects),
+          rageMode: true
+        };
+      }
+
+      function compareResults(a, b) {
+        return a.overLimitCount - b.overLimitCount
+          || a.normalizedScore - b.normalizedScore
+          || a.baseFailureCount - b.baseFailureCount
+          || a.wrongMultiplierCount - b.wrongMultiplierCount
+          || a.effectFailureCount - b.effectFailureCount;
+      }
+
+      function searchHypotheses(atoms, effects, skills, heals, rageValues) {
+        const evaluateState = (activeIds) =&gt; verificationMode === &#x27;rage&#x27;
+          ? evaluateRageCombination(activeIds, atoms, effects, skills, rageValues)
+          : evaluateCombination(activeIds, atoms, effects, skills, heals);
+        const totalLabel = atoms.length &lt;= 52 ? (2 ** atoms.length).toLocaleString(&#x27;zh-CN&#x27;) : `2^${atoms.length}`;
+        if (atoms.length &lt;= 18) {
+          const results = [];
+          const combinations = 2 ** atoms.length;
+          for (let mask = 0; mask &lt; combinations; mask += 1) {
+            const activeIds = new Set();
+            atoms.forEach((atom, index) =&gt; { if ((mask &amp; (1 &lt;&lt; index)) !== 0) activeIds.add(atom.id); });
+            results.push(evaluateState(activeIds));
+          }
+          results.sort(compareResults);
+          return { results, tested: combinations, totalLabel, mode: &#x27;完整枚举&#x27; };
+        }
+
+        const width = 5000;
+        const visited = new Set();
+        let beam = [new Set(atoms.filter((atom) =&gt; atom.expected).map((atom) =&gt; atom.id))];
+        atoms.forEach((atom) =&gt; {
+          const candidates = [];
+          beam.forEach((previous) =&gt; {
+            [false, true].forEach((isActive) =&gt; {
+              const activeIds = new Set(previous);
+              if (isActive) activeIds.add(atom.id); else activeIds.delete(atom.id);
+              visited.add(atoms.map((candidateAtom) =&gt; activeIds.has(candidateAtom.id) ? &#x27;1&#x27; : &#x27;0&#x27;).join(&#x27;&#x27;));
+              candidates.push(evaluateState(activeIds));
+            });
+          });
+          candidates.sort(compareResults);
+          beam = candidates.slice(0, width).map((result) =&gt; result.activeIds);
+        });
+        const results = beam.map((activeIds) =&gt; evaluateState(activeIds));
+        results.sort(compareResults);
+        return { results, tested: visited.size, totalLabel, mode: `全生效起点逐项排除 · 限宽 ${width}` };
+      }
+
+      function verify() {
+        const effects = readEffects();
+        const skills = readSkills();
+        const heals = readHeals();
+        const rageValues = readRageValues();
+        const observationCount = verificationMode === &#x27;rage&#x27;
+          ? rageValues.length
+          : skills.filter((skill) =&gt; skill.enabled).length + heals.filter((heal) =&gt; heal.enabled).length;
+        if (!observationCount) {
+          byId(&#x27;cdc-best-combination&#x27;).textContent = verificationMode === &#x27;rage&#x27; ? &#x27;没有未知伤害数据&#x27; : &#x27;没有验算项目&#x27;;
+          byId(&#x27;cdc-multiplier-status&#x27;).textContent = &#x27;—&#x27;;
+          byId(&#x27;cdc-total-error&#x27;).textContent = &#x27;—&#x27;;
+          byId(&#x27;cdc-combination-count&#x27;).textContent = &#x27;—&#x27;;
+          byId(&#x27;cdc-tie-count&#x27;).textContent = &#x27;—&#x27;;
+          detailRows = [];
+          renderDetailPage();
+          byId(&#x27;cdc-combination-results&#x27;).innerHTML = &#x27;&#x27;;
+          byId(&#x27;cdc-verification-note&#x27;).textContent = verificationMode === &#x27;rage&#x27;
+            ? &#x27;请输入至少一个未知来源的实测伤害。&#x27;
+            : &#x27;请至少选择一项伤害或治疗数据。&#x27;;
+          return;
+        }
+        if (verificationMode === &#x27;rage&#x27; &amp;&amp; !skills.some((skill) =&gt; skill.enabled)) {
+          byId(&#x27;cdc-best-combination&#x27;).textContent = &#x27;没有候选伤害来源&#x27;;
+          byId(&#x27;cdc-verification-note&#x27;).textContent = &#x27;请至少启用一个伤害技能或创生伤害模型。&#x27;;
+          return;
+        }
+
+        const atoms = createAtoms(effects);
+        const search = searchHypotheses(atoms, effects, skills, heals, rageValues);
+        const results = search.results;
+        const eligibleResults = results.filter((result) =&gt; result.overLimitCount === 0);
+        if (!eligibleResults.length &amp;&amp; verificationMode !== &#x27;rage&#x27;) {
+          byId(&#x27;cdc-best-combination&#x27;).textContent = `没有符合 ±${REPORT_ERROR_LIMIT} 的组合`;
+          byId(&#x27;cdc-combination-count&#x27;).textContent = `${search.mode} · 已评估 ${search.tested.toLocaleString(&#x27;zh-CN&#x27;)} / ${search.totalLabel}`;
+          byId(&#x27;cdc-multiplier-status&#x27;).textContent = &#x27;—&#x27;;
+          byId(&#x27;cdc-total-error&#x27;).textContent = &#x27;—&#x27;;
+          byId(&#x27;cdc-tie-count&#x27;).textContent = &#x27;超限结果不汇报&#x27;;
+          detailRows = [];
+          renderDetailPage();
+          byId(&#x27;cdc-combination-results&#x27;).innerHTML = &#x27;&#x27;;
+          byId(&#x27;cdc-verification-note&#x27;).textContent = `所有候选状态至少有一项误差超过 ±${REPORT_ERROR_LIMIT}，因此不列出。`;
+          return;
+        }
+        const minimumUnmatched = results[0].overLimitCount;
+        const reportableResults = verificationMode === &#x27;rage&#x27;
+          ? results.filter((result) =&gt; result.overLimitCount === minimumUnmatched)
+          : eligibleResults;
+        const best = reportableResults[0];
+        const zeroErrorResults = reportableResults.filter((result) =&gt; result.overLimitCount === 0
+          &amp;&amp; result.totalDisplayError === 0);
+        const top = zeroErrorResults.slice(0, 3);
+        const tied = reportableResults.filter((result) =&gt; Math.abs(result.normalizedScore - best.normalizedScore) &lt; 1e-12
+          &amp;&amp; result.baseFailureCount === best.baseFailureCount
+          &amp;&amp; result.wrongMultiplierCount === best.wrongMultiplierCount
+          &amp;&amp; result.effectFailureCount === best.effectFailureCount).length;
+        const abnormal = best.damageDetails.filter((detail) =&gt; detail.matched !== false &amp;&amp; detail.wrongSource);
+
+        byId(&#x27;cdc-best-combination&#x27;).textContent = best.description;
+        byId(&#x27;cdc-combination-count&#x27;).textContent = `${search.mode} · 已评估 ${search.tested.toLocaleString(&#x27;zh-CN&#x27;)} / ${search.totalLabel}`;
+        byId(&#x27;cdc-multiplier-status&#x27;).textContent = abnormal.length ? `${abnormal.length} 项疑似误用` : &#x27;未发现&#x27;;
+        byId(&#x27;cdc-total-error&#x27;).textContent = best.totalDisplayError.toLocaleString(&#x27;zh-CN&#x27;);
+        byId(&#x27;cdc-tie-count&#x27;).textContent = verificationMode === &#x27;rage&#x27;
+          ? `无来源 ${best.overLimitCount} 项 · 同优先级状态 ${tied} 个`
+          : `同优先级状态 ${tied} 个`;
+        byId(&#x27;cdc-verification-note&#x27;).textContent = verificationMode === &#x27;rage&#x27;
+          ? (top.length
+            ? `已为 ${best.damageDetails.length - best.overLimitCount}/${best.damageDetails.length} 个伤害找到 ±${REPORT_ERROR_LIMIT} 内来源；右栏只显示整批零误差且无缺失来源的全局状态。`
+            : `最佳状态仍有误差或无来源；无零误差备选，右栏不显示近似状态。`)
+          : (top.length
+            ? &#x27;右栏只显示整批显示值总误差为 0 的全局状态，并按解释优先级排序。&#x27;
+            : `最佳状态的显示值总误差为 ${best.totalDisplayError.toLocaleString(&#x27;zh-CN&#x27;)}；无零误差备选，右栏不显示近似状态。`);
+
+        const damageRows = best.damageDetails.map((detail) =&gt; {
+          if (verificationMode === &#x27;rage&#x27;) {
+            if (!detail.matched) {
+              return `&lt;div class=&quot;entry-row&quot;&gt;
+                &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测项目&lt;/div&gt;&lt;div&gt;未知伤害 ${detail.index + 1}&lt;/div&gt;&lt;/div&gt;
+                &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;可能来源&lt;/div&gt;&lt;div&gt;±${REPORT_ERROR_LIMIT} 内无来源&lt;/div&gt;&lt;/div&gt;
+                &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;理论值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;不汇报超限匹配&lt;/div&gt;&lt;/div&gt;
+                &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.observed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+                &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;±20 内来源数&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;0&lt;/div&gt;&lt;/div&gt;
+              &lt;/div&gt;`;
+            }
+            const modelName = detail.target.model === &#x27;creation&#x27; ? &#x27;创生伤害&#x27; : detail.target.name;
+            const critName = detail.target.critical ? &#x27;暴击&#x27; : &#x27;非暴击&#x27;;
+            const multiplierName = detail.target.model === &#x27;creation&#x27;
+              ? &#x27;固定基础值 9000&#x27;
+              : detail.wrongSource ? `倍率疑似来自：${detail.source.name}` : &#x27;本技能倍率&#x27;;
+            return `&lt;div class=&quot;entry-row&quot;&gt;
+              &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测项目&lt;/div&gt;&lt;div&gt;未知伤害 ${detail.index + 1} · ${detail.observed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;可能来源&lt;/div&gt;&lt;div&gt;${escapeHtml(modelName)} · ${critName}&lt;/div&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;倍率来源&lt;/div&gt;&lt;div&gt;${escapeHtml(multiplierName)}&lt;/div&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;理论值 → 显示值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${format(detail.exact)} → ${detail.displayed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+              &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;误差 / ±20 内来源数&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.error} / ${detail.alternatives}&lt;/div&gt;&lt;/div&gt;
+            &lt;/div&gt;`;
+          }
+          const source = detail.target.model === &#x27;creation&#x27;
+            ? &#x27;固定基础值 9000&#x27;
+            : detail.wrongSource ? `疑似误用：${detail.source.name}` : &#x27;本技能倍率&#x27;;
+          return `&lt;div class=&quot;entry-row&quot;&gt;
+            &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测项目&lt;/div&gt;&lt;div&gt;${escapeHtml(detail.target.name)}&lt;/div&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;倍率来源&lt;/div&gt;&lt;div&gt;${escapeHtml(source)}&lt;/div&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;理论精确值 → 显示值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${format(detail.exact)} → ${detail.displayed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.target.observed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;误差&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.error.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+          &lt;/div&gt;`;
+        });
+        const healRows = verificationMode === &#x27;rage&#x27; ? [] : best.healDetails.map((detail) =&gt; `&lt;div class=&quot;entry-row&quot;&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测项目&lt;/div&gt;&lt;div&gt;${escapeHtml(detail.heal.name)}&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;倍率来源&lt;/div&gt;&lt;div&gt;本治疗倍率&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;理论精确值 → 显示值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${format(detail.exact)} → ${detail.displayed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;实测值&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.heal.observed.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;误差&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${detail.error.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;`);
+        detailRows = damageRows.concat(healRows);
+        renderDetailPage();
+
+        byId(&#x27;cdc-combination-results&#x27;).innerHTML = top.length ? top.map((result) =&gt; `&lt;div class=&quot;entry-row&quot;&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;效果与失效状态&lt;/div&gt;&lt;div&gt;${escapeHtml(result.description)}&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;显示值总误差&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${result.totalDisplayError.toLocaleString(&#x27;zh-CN&#x27;)}&lt;/div&gt;&lt;/div&gt;
+          &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;无来源 / 倍率误用 / 基础失效 / 效果失效&lt;/div&gt;&lt;div class=&quot;detail-value&quot;&gt;${result.overLimitCount} / ${result.wrongMultiplierCount} / ${result.baseFailureCount} / ${result.effectFailureCount}&lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;`).join(&#x27;&#x27;) : &#x27;&lt;div class=&quot;text-small result-meta&quot;&gt;无零误差全局状态&lt;/div&gt;&#x27;;
+      }
+
+      function markDirty() {
+        if (restoring) return;
+        byId(&#x27;cdc-run-status&#x27;).textContent = verificationMode === &#x27;rage&#x27;
+          ? &#x27;数据已修改，点击“确定并开始溯源”&#x27;
+          : &#x27;数据已修改，点击“确定并开始验算”&#x27;;
+        byId(&#x27;cdc-best-combination&#x27;).textContent = &#x27;等待验算&#x27;;
+        byId(&#x27;cdc-combination-count&#x27;).textContent = &#x27;当前结果尚未计算&#x27;;
+        byId(&#x27;cdc-multiplier-status&#x27;).textContent = &#x27;—&#x27;;
+        byId(&#x27;cdc-total-error&#x27;).textContent = &#x27;—&#x27;;
+        byId(&#x27;cdc-tie-count&#x27;).textContent = &#x27;—&#x27;;
+        detailRows = [];
+        detailPage = 0;
+        renderDetailPage();
+        byId(&#x27;cdc-combination-results&#x27;).innerHTML = &#x27;&#x27;;
+        byId(&#x27;cdc-verification-note&#x27;).textContent = &#x27;完成全部输入后再启动验算。&#x27;;
+      }
+
+      function runVerification() {
+        const button = byId(&#x27;cdc-run-verification&#x27;);
+        button.disabled = true;
+        byId(&#x27;cdc-run-status&#x27;).textContent = &#x27;正在计算组合，请稍候…&#x27;;
+        setTimeout(() =&gt; {
+          try {
+            verify();
+            byId(&#x27;cdc-run-status&#x27;).textContent = verificationMode === &#x27;rage&#x27; ? &#x27;溯源完成&#x27; : &#x27;验算完成&#x27;;
+          } catch (_error) {
+            byId(&#x27;cdc-run-status&#x27;).textContent = verificationMode === &#x27;rage&#x27; ? &#x27;溯源过程中出现错误&#x27; : &#x27;验算过程中出现错误&#x27;;
+          } finally {
+            button.disabled = false;
+          }
+        }, 20);
+      }
+
+      root.addEventListener(&#x27;input&#x27;, (event) =&gt; {
+        if (event.target.matches(&#x27;input, select, textarea&#x27;)) {
+          if (event.target.id !== &#x27;cdc-profile-select&#x27;) markDirty();
+          scheduleDraftSave();
+        }
+      });
+      root.addEventListener(&#x27;change&#x27;, (event) =&gt; {
+        if (event.target.matches(&#x27;input, select, textarea&#x27;)) {
+          if (event.target.id !== &#x27;cdc-profile-select&#x27;) markDirty();
+          scheduleDraftSave();
+        }
+      });
+      root.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+        const removeEffect = event.target.closest(&#x27;[data-remove-effect]&#x27;);
+        const removeSkill = event.target.closest(&#x27;[data-remove-skill]&#x27;);
+        const removeHeal = event.target.closest(&#x27;[data-remove-heal]&#x27;);
+        if (removeEffect) removeEffect.closest(&#x27;[data-effect-row]&#x27;).remove();
+        if (removeSkill) removeSkill.closest(&#x27;[data-skill-row]&#x27;).remove();
+        if (removeHeal) removeHeal.closest(&#x27;[data-heal-row]&#x27;).remove();
+        if (removeEffect || removeSkill || removeHeal) {
+          updateSkillPagination();
+          markDirty();
+          scheduleDraftSave();
+        }
+      });
+      byId(&#x27;cdc-add-effect&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { addEffect(); markDirty(); scheduleDraftSave(); });
+      byId(&#x27;cdc-add-skill&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        addSkill();
+        updateSkillPagination(true);
+        markDirty();
+        scheduleDraftSave();
+      });
+      byId(&#x27;cdc-add-heal&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { addHeal(); markDirty(); scheduleDraftSave(); });
+      byId(&#x27;cdc-skill-prev&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { skillPage -= 1; updateSkillPagination(); });
+      byId(&#x27;cdc-skill-next&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { skillPage += 1; updateSkillPagination(); });
+      byId(&#x27;cdc-detail-prev&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { detailPage -= 1; renderDetailPage(); });
+      byId(&#x27;cdc-detail-next&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { detailPage += 1; renderDetailPage(); });
+      byId(&#x27;cdc-run-verification&#x27;).addEventListener(&#x27;click&#x27;, runVerification);
+      root.querySelectorAll(&#x27;[data-verification-mode]&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; {
+          verificationMode = button.dataset.verificationMode;
+          updateVerificationMode();
+          markDirty();
+          scheduleDraftSave();
+        });
+      });
+
+      byId(&#x27;cdc-save-profile&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        const key = profileKey();
+        if (!key) {
+          byId(&#x27;cdc-profile-status&#x27;).textContent = &#x27;请填写角色名称和版本&#x27;;
+          return;
+        }
+        const profiles = readStoredProfiles();
+        profiles[key] = captureData();
+        if (writeStoredProfiles(profiles)) {
+          refreshProfileSelect(key);
+          byId(&#x27;cdc-profile-status&#x27;).textContent = `已保存：${key}`;
+        }
+      });
+      byId(&#x27;cdc-load-profile&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        const key = byId(&#x27;cdc-profile-select&#x27;).value;
+        const profiles = readStoredProfiles();
+        if (key &amp;&amp; profiles[key] &amp;&amp; applyData(profiles[key])) {
+          byId(&#x27;cdc-profile-status&#x27;).textContent = `已载入：${key}`;
+        }
+      });
+      byId(&#x27;cdc-delete-profile&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        const key = byId(&#x27;cdc-profile-select&#x27;).value;
+        const profiles = readStoredProfiles();
+        if (!key || !profiles[key]) return;
+        if (!window.confirm(`删除配置“${key}”？`)) return;
+        delete profiles[key];
+        if (writeStoredProfiles(profiles)) {
+          refreshProfileSelect();
+          byId(&#x27;cdc-profile-status&#x27;).textContent = `已删除：${key}`;
+        }
+      });
+      byId(&#x27;cdc-clear-current&#x27;).addEventListener(&#x27;click&#x27;, clearCurrentConfiguration);
+
+      refreshProfileSelect();
+      updateVerificationMode();
+      let restoredDraft = false;
+      try {
+        const draft = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY) || &#x27;null&#x27;);
+        if (draft) restoredDraft = applyData(draft);
+      } catch (_error) {
+        restoredDraft = false;
+      }
+      if (!restoredDraft) {
+        addEffect(&#x27;觉醒A&#x27;, { damage: 20 });
+        addEffect(&#x27;武器B&#x27;, { attack: 20 });
+        addSkill(&#x27;技能一&#x27;, &#x27;skill&#x27;, 240, 4413, false);
+        addSkill(&#x27;技能二&#x27;, &#x27;skill&#x27;, 315, 5793, false);
+        addHeal(&#x27;治疗一&#x27;, 120, 2520);
+        updateSkillPagination();
+        markDirty();
+        scheduleDraftSave();
+      }
+    })();
+  &lt;/script&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>
