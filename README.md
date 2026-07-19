@@ -264,20 +264,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\desktop\build.ps1
 
 输出文件为 `dist/GameDamageCalculator.exe`。每次修改 `index.html` 后重新执行最后一条命令即可。
 
-## 上传到 Git
-
-第一次上传仓库时，提交以下内容：
-
-- `.gitignore`
-- `README.md`、`CHANGELOG.md`、`LICENSE`
-- `index.html`
-- `src/`、`desktop/`、`scripts/`、`docs/`
-- `dist/GameDamageCalculator.exe` 与 `dist/SHA256SUMS.txt`（如果希望仓库页面也直接提供 EXE）
-
-不要上传 `.venv/`、`build/`、`build-spec/`、`__pycache__/` 或个人应用数据目录。它们已经由 `.gitignore` 排除。
-
-正式版本建议创建类似 `v0.4.0` 的 Git 标签，并把完整 Windows ZIP 上传到 GitHub Release，而不是提交到仓库历史。Release 中至少附带 ZIP 和 SHA-256；仓库本身保留源码、README 和构建脚本。
-
 ## 开源
 
 本项目采用 [MIT License](LICENSE)。
