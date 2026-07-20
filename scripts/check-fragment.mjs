@@ -8,4 +8,10 @@ if (!match) {
 }
 
 new Function(match[1]);
+
+const criticalMultiplierRule = "critDamage: 1 + (enabled('base-crit') ? percent('cdc-crit') : 0)";
+if (!source.includes(criticalMultiplierRule)) {
+  throw new Error('Panel critical damage must include the implicit base multiplier of 1');
+}
+
 console.log('Fragment JavaScript syntax: OK');

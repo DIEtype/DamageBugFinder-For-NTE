@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>游戏数值验算器</title>
-<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;max-width:736px;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+<title>Damage Bug Finder for NTE / 异环NTE数值验算器</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;max-width:none;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
 </head>
 <body>
-<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="游戏数值验算器" srcdoc="&lt;!doctype html&gt;
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Damage Bug Finder for NTE / 异环NTE数值验算器" srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;en&quot;&gt;
 &lt;head&gt;
 &lt;meta charset=&quot;utf-8&quot;&gt;
@@ -821,6 +821,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       color: var(--foreground);
       min-width: 0;
       max-width: 100%;
+      --cdc-section-border: color-mix(in oklab, var(--foreground) 16%, transparent);
+      --cdc-section-bg: color-mix(in oklab, var(--foreground) 3.5%, transparent);
+      --cdc-heading-bg: color-mix(in oklab, var(--foreground) 6.5%, transparent);
+      --cdc-accent-bg: color-mix(in oklab, var(--primary) 8%, transparent);
     }
     #compact-damage-calculator [hidden] { display: none !important; }
     #compact-damage-calculator .compact-fields {
@@ -833,23 +837,98 @@ html&gt;body{padding:0}&lt;/style&gt;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 8px;
     }
-    #compact-damage-calculator details { border-top: 1px solid var(--border); padding-top: 8px; }
-    #compact-damage-calculator summary { cursor: pointer; font-weight: 500; margin-bottom: 8px; }
-    #compact-damage-calculator .section-label { font-weight: 500; margin: 10px 0 8px; }
-    #compact-damage-calculator .profile-bar,
-    #compact-damage-calculator .pagination-bar {
+    #compact-damage-calculator details {
+      overflow: clip;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 10px;
+      background: var(--cdc-section-bg);
+      padding: 0 10px 10px;
+    }
+    #compact-damage-calculator summary {
+      cursor: pointer;
+      font-weight: 600;
+      margin: 0 -10px 10px;
+      padding: 8px 10px;
+      background: var(--cdc-heading-bg);
+      border-left: 3px solid var(--primary);
+      border-bottom: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator details:not([open]) { padding-bottom: 0; }
+    #compact-damage-calculator details:not([open]) &gt; summary { margin-bottom: 0; border-bottom: 0; }
+    #compact-damage-calculator summary::marker { color: var(--primary); }
+    #compact-damage-calculator .section-label {
+      font-weight: 600;
+      margin: 10px 0 8px;
+      padding-left: 8px;
+      border-left: 3px solid var(--primary);
+    }
+    #compact-damage-calculator .profile-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px 12px;
+      align-items: end;
+      min-width: 0;
+      margin-top: 8px;
+      padding: 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 10px;
+      background: var(--cdc-section-bg);
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+    #compact-damage-calculator .profile-fields {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) minmax(110px, .65fr) minmax(190px, 1.25fr);
       gap: 8px;
       align-items: end;
+      min-width: 0;
+    }
+    #compact-damage-calculator .profile-actions {
+      display: grid;
+      grid-template-columns: repeat(4, max-content);
+      gap: 6px;
+      align-items: end;
+    }
+    #compact-damage-calculator .profile-actions .btn,
+    #compact-damage-calculator .mode-row .btn,
+    #compact-damage-calculator #cdc-run-verification { min-height: 34px; white-space: nowrap; }
+    #compact-damage-calculator .profile-status { grid-column: 1 / -1; min-height: 1.25em; }
+    #compact-damage-calculator .pagination-bar {
+      display: grid;
+      gap: 8px;
       min-width: 0;
     }
     #compact-damage-calculator .pagination-bar { grid-template-columns: repeat(4, auto); justify-content: start; align-items: center; }
     #compact-damage-calculator .mode-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      max-width: 520px;
+      gap: 6px;
+      width: 100%;
+    }
+    #compact-damage-calculator .toolbar-label {
+      min-height: 1.25em;
+      margin-bottom: 4px;
+      color: var(--muted-foreground);
+      font-size: .875em;
+      line-height: 1.25;
+    }
+    #compact-damage-calculator .calculator-mode-field {
+      box-sizing: border-box;
+      width: min(520px, 100%);
+      padding: 0 10px;
+    }
+    #compact-damage-calculator .verification-toolbar {
+      display: grid;
+      grid-template-columns: minmax(240px, .85fr) minmax(300px, 1.35fr) max-content minmax(170px, .7fr);
+      gap: 8px 12px;
+      align-items: end;
+      min-width: 0;
+    }
+    #compact-damage-calculator .verification-toolbar &gt; * { min-width: 0; }
+    #compact-damage-calculator .verification-toolbar #cdc-run-status {
+      align-self: end;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
     }
     #compact-damage-calculator .numeric,
     #compact-damage-calculator .result-main { font-variant-numeric: tabular-nums; }
@@ -886,15 +965,92 @@ html&gt;body{padding:0}&lt;/style&gt;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       align-items: start;
     }
+    #compact-damage-calculator .verification-panel {
+      display: grid;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid color-mix(in oklab, var(--primary) 32%, var(--cdc-section-border));
+      border-radius: 10px;
+      background: var(--cdc-accent-bg);
+    }
+    #compact-damage-calculator .result-row &gt; .card {
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 10px;
+      box-shadow: inset 3px 0 0 color-mix(in oklab, var(--primary) 72%, var(--foreground));
+    }
+    #compact-damage-calculator .result-panel {
+      min-width: 0;
+      padding: 0 10px 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 10px;
+      background: var(--cdc-section-bg);
+    }
+    #compact-damage-calculator .result-panel &gt; .section-label {
+      margin: 0 -10px 10px;
+      padding: 8px 10px;
+      background: var(--cdc-heading-bg);
+      border-left: 3px solid var(--primary);
+      border-bottom: 1px solid var(--cdc-section-border);
+      border-radius: 9px 9px 0 0;
+    }
+    #compact-damage-calculator #cdc-ocr-dialog {
+      width: min(1120px, calc(100vw - 40px));
+      max-width: none;
+      max-height: calc(100vh - 40px);
+      color: var(--popover-foreground);
+      background: var(--popover);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    #compact-damage-calculator #cdc-ocr-dialog::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
+    #compact-damage-calculator .ocr-header,
+    #compact-damage-calculator .ocr-capture-bar,
+    #compact-damage-calculator .ocr-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: end;
+      justify-content: space-between;
+    }
+    #compact-damage-calculator .ocr-capture-bar { justify-content: flex-start; margin: 12px 0; }
+    #compact-damage-calculator .ocr-capture-bar .form-label { min-width: 170px; }
+    #compact-damage-calculator .ocr-preview {
+      display: grid;
+      grid-template-columns: minmax(180px, .45fr) minmax(0, 1.55fr);
+      gap: 12px;
+      align-items: start;
+      margin: 12px 0;
+    }
+    #compact-damage-calculator .ocr-preview img { display: block; width: 100%; height: auto; }
+    #compact-damage-calculator .ocr-table-wrap { max-height: 42vh; overflow: auto; }
+    #compact-damage-calculator .ocr-footer { margin-top: 12px; }
     @media (max-width: 520px) {
       #compact-damage-calculator .result-row { grid-template-columns: 1fr; }
+      #compact-damage-calculator .ocr-preview { grid-template-columns: 1fr; }
     }
     @media (max-width: 1099px) {
       #compact-damage-calculator .main-workspace,
       #compact-damage-calculator .results-workspace { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #compact-damage-calculator .verification-toolbar {
+        grid-template-columns: minmax(220px, .85fr) minmax(260px, 1.25fr) max-content;
+      }
+      #compact-damage-calculator .verification-toolbar #cdc-run-status { grid-column: 1 / -1; min-height: 1.25em; }
+    }
+    @media (max-width: 760px) {
+      #compact-damage-calculator .profile-fields,
+      #compact-damage-calculator .verification-toolbar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-actions .btn,
+      #compact-damage-calculator #cdc-run-verification { width: 100%; }
+      #compact-damage-calculator .verification-toolbar #cdc-run-status {
+        grid-column: auto;
+        min-height: 1.25em;
+      }
     }
     @media (min-width: 1100px) {
-      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr .7fr 1.4fr auto auto; }
       #compact-damage-calculator .main-workspace { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
       #compact-damage-calculator #cdc-panel-section .compact-fields,
       #compact-damage-calculator #cdc-effect-section .compact-fields { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -922,27 +1078,32 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/style&gt;
 
   &lt;div class=&quot;profile-bar&quot;&gt;
-    &lt;label class=&quot;form-label&quot;&gt;角色名称
-      &lt;input class=&quot;form-control&quot; id=&quot;cdc-character&quot; type=&quot;text&quot; value=&quot;测试角色&quot;&gt;
-    &lt;/label&gt;
-    &lt;label class=&quot;form-label&quot;&gt;版本
-      &lt;input class=&quot;form-control&quot; id=&quot;cdc-version&quot; type=&quot;text&quot; value=&quot;1.0&quot;&gt;
-    &lt;/label&gt;
-    &lt;label class=&quot;form-label&quot;&gt;已保存配置
-      &lt;select class=&quot;form-select&quot; id=&quot;cdc-profile-select&quot;&gt;&lt;/select&gt;
-    &lt;/label&gt;
-    &lt;div class=&quot;viz-controls&quot;&gt;
+    &lt;div class=&quot;profile-fields&quot;&gt;
+      &lt;label class=&quot;form-label&quot;&gt;角色名称
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-character&quot; type=&quot;text&quot; value=&quot;测试角色&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;版本
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-version&quot; type=&quot;text&quot; value=&quot;1.0&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;已保存配置
+        &lt;select class=&quot;form-select&quot; id=&quot;cdc-profile-select&quot;&gt;&lt;/select&gt;
+      &lt;/label&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;profile-actions&quot;&gt;
       &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-save-profile&quot; type=&quot;button&quot;&gt;保存/覆盖&lt;/button&gt;
       &lt;button class=&quot;btn&quot; id=&quot;cdc-load-profile&quot; type=&quot;button&quot;&gt;载入&lt;/button&gt;
       &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-delete-profile&quot; type=&quot;button&quot;&gt;删除&lt;/button&gt;
       &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-clear-current&quot; type=&quot;button&quot;&gt;清空当前&lt;/button&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;text-small result-meta&quot; id=&quot;cdc-profile-status&quot; aria-live=&quot;polite&quot;&gt;自动记忆当前草稿&lt;/div&gt;
+    &lt;div class=&quot;profile-status text-small result-meta&quot; id=&quot;cdc-profile-status&quot; aria-live=&quot;polite&quot;&gt;自动记忆当前草稿&lt;/div&gt;
   &lt;/div&gt;
 
-  &lt;div class=&quot;mode-row&quot; role=&quot;group&quot; aria-label=&quot;计算类型&quot;&gt;
-    &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-calculator-type=&quot;damage&quot; aria-pressed=&quot;true&quot;&gt;伤害计算&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-calculator-type=&quot;heal&quot; aria-pressed=&quot;false&quot;&gt;治疗计算&lt;/button&gt;
+  &lt;div class=&quot;calculator-mode-field&quot;&gt;
+    &lt;div class=&quot;toolbar-label&quot;&gt;计算类型&lt;/div&gt;
+    &lt;div class=&quot;mode-row&quot; role=&quot;group&quot; aria-label=&quot;计算类型&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-calculator-type=&quot;damage&quot; aria-pressed=&quot;true&quot;&gt;伤害计算&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-calculator-type=&quot;heal&quot; aria-pressed=&quot;false&quot;&gt;治疗计算&lt;/button&gt;
+    &lt;/div&gt;
   &lt;/div&gt;
 
   &lt;details open id=&quot;cdc-panel-section&quot;&gt;
@@ -970,33 +1131,83 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-resistance&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
       &lt;/label&gt;
       &lt;label class=&quot;form-label&quot; data-fusion-field hidden&gt;基础环合强度
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-fusion&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;600&quot;&gt;
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-fusion&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;360&quot; step=&quot;0.01&quot; value=&quot;360&quot;&gt;
       &lt;/label&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;section-label&quot; data-damage-only&gt;基础伤害乘区&lt;/div&gt;
+    &lt;div class=&quot;compact-fields&quot; data-damage-only&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础防御穿透（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-penetration&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;15&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础抗性削弱（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-res-shred&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;通用增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-general&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;30&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;属性增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-elemental&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;额外增伤（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-extra&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;面板暴击伤害（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-crit&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;150&quot; title=&quot;填写游戏面板显示值；例如 134 表示实际暴击倍率为 1 + 134% = 2.34&quot;&gt;
+      &lt;/label&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;viz-controls&quot; id=&quot;cdc-ocr-entry&quot; hidden&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-open-ocr&quot; type=&quot;button&quot;&gt;自动读取游戏面板&lt;/button&gt;
+      &lt;span class=&quot;text-small result-meta&quot;&gt;桌面版功能：自动截取游戏窗口并在本机识别&lt;/span&gt;
     &lt;/div&gt;
   &lt;/details&gt;
 
+  &lt;dialog id=&quot;cdc-ocr-dialog&quot;&gt;
+    &lt;div class=&quot;ocr-header&quot;&gt;
+      &lt;div&gt;
+        &lt;div class=&quot;section-label&quot;&gt;截图识别基础面板&lt;/div&gt;
+        &lt;div class=&quot;text-small result-meta&quot;&gt;程序会在倒计时期间隐藏并切回游戏；可趁倒计时打开详情或滚动面板。&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-close-ocr&quot; type=&quot;button&quot;&gt;关闭&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;ocr-capture-bar&quot;&gt;
+      &lt;label class=&quot;form-label&quot;&gt;游戏窗口
+        &lt;select class=&quot;form-select&quot; id=&quot;cdc-ocr-window&quot;&gt;&lt;/select&gt;
+      &lt;/label&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-refresh-windows&quot; type=&quot;button&quot;&gt;刷新窗口&lt;/button&gt;
+      &lt;label class=&quot;form-label&quot;&gt;截图倒计时
+        &lt;select class=&quot;form-select&quot; id=&quot;cdc-ocr-delay&quot;&gt;
+          &lt;option value=&quot;2&quot;&gt;2 秒&lt;/option&gt;
+          &lt;option value=&quot;3&quot; selected&gt;3 秒&lt;/option&gt;
+          &lt;option value=&quot;5&quot;&gt;5 秒&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/label&gt;
+      &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-capture-panel&quot; type=&quot;button&quot;&gt;捕获当前面板&lt;/button&gt;
+      &lt;label class=&quot;btn&quot; for=&quot;cdc-ocr-files&quot;&gt;备用：导入已有截图&lt;/label&gt;
+      &lt;input class=&quot;sr-only&quot; id=&quot;cdc-ocr-files&quot; type=&quot;file&quot; accept=&quot;image/png,image/jpeg,image/webp&quot; multiple&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;text-small result-meta&quot; id=&quot;cdc-ocr-status&quot; aria-live=&quot;polite&quot;&gt;尚未捕获截图&lt;/div&gt;
+    &lt;div class=&quot;ocr-preview&quot;&gt;
+      &lt;img id=&quot;cdc-ocr-preview&quot; alt=&quot;最近一次面板截图预览&quot; hidden&gt;
+      &lt;div class=&quot;ocr-table-wrap&quot;&gt;
+        &lt;table class=&quot;table table-sm&quot;&gt;
+          &lt;thead&gt;&lt;tr&gt;&lt;th&gt;采用&lt;/th&gt;&lt;th&gt;识别项目&lt;/th&gt;&lt;th class=&quot;text-end&quot;&gt;数值&lt;/th&gt;&lt;th&gt;写入位置&lt;/th&gt;&lt;th&gt;可信度&lt;/th&gt;&lt;th&gt;依据&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+          &lt;tbody id=&quot;cdc-ocr-results&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;6&quot; class=&quot;text-muted&quot;&gt;捕获总览和属性详情后，将在此合并识别结果。&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;ocr-footer&quot;&gt;
+      &lt;span class=&quot;text-small result-meta&quot; id=&quot;cdc-ocr-summary&quot;&gt;建议至少捕获角色总览、详情上半段和详情下半段。&lt;/span&gt;
+      &lt;div class=&quot;viz-controls&quot;&gt;
+        &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-clear-ocr&quot; type=&quot;button&quot;&gt;清除截图结果&lt;/button&gt;
+        &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-apply-ocr&quot; type=&quot;button&quot; disabled&gt;确认并填入面板&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+
   &lt;div class=&quot;main-workspace&quot;&gt;
   &lt;details open id=&quot;cdc-effect-section&quot;&gt;
-    &lt;summary&gt;乘区、候选觉醒与武器效果&lt;/summary&gt;
+    &lt;summary&gt;Buff 区&lt;/summary&gt;
     &lt;div class=&quot;compact-fields&quot;&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;基础防御穿透（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-penetration&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;15&quot;&gt;
-      &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;基础抗性削弱（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-res-shred&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
-      &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;通用增伤（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-general&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;30&quot;&gt;
-      &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;属性增伤（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-elemental&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
-      &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;额外增伤（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-extra&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
-      &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-damage-only&gt;基础暴击伤害（%）
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-crit&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;150&quot;&gt;
-      &lt;/label&gt;
       &lt;label class=&quot;form-check&quot; data-damage-only&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;cdc-infusion-enabled&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用浸染乘区&lt;/span&gt;&lt;/label&gt;
       &lt;label class=&quot;form-check&quot; data-damage-only&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;cdc-special-enabled&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用特殊独立乘区&lt;/span&gt;&lt;/label&gt;
       &lt;label class=&quot;form-label&quot; id=&quot;cdc-special-field&quot; hidden&gt;特殊独立倍率（倍）
@@ -1004,7 +1215,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/label&gt;
     &lt;/div&gt;
 
-    &lt;div class=&quot;section-label&quot;&gt;候选效果&lt;/div&gt;
+    &lt;div class=&quot;section-label&quot;&gt;候选效果（觉醒、被动、弧盘、共鸣、队友等 Buff）&lt;/div&gt;
     &lt;div class=&quot;entry-list&quot; id=&quot;cdc-effects&quot;&gt;&lt;/div&gt;
     &lt;div class=&quot;viz-controls&quot;&gt;
       &lt;button class=&quot;btn&quot; id=&quot;cdc-add-effect&quot; type=&quot;button&quot;&gt;添加候选效果&lt;/button&gt;
@@ -1033,17 +1244,15 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/div&gt;
   &lt;/div&gt;
 
-  &lt;div class=&quot;mode-row&quot; id=&quot;cdc-verification-modes&quot; role=&quot;group&quot; aria-label=&quot;验算模式&quot; data-damage-only&gt;
-    &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-verification-mode=&quot;normal&quot; aria-pressed=&quot;true&quot;&gt;常规验算&lt;/button&gt;
-    &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-verification-mode=&quot;rage&quot; aria-pressed=&quot;false&quot;&gt;狂暴溯源&lt;/button&gt;
-  &lt;/div&gt;
-  &lt;div id=&quot;cdc-rage-input&quot; hidden&gt;
-    &lt;label class=&quot;form-label&quot;&gt;未知来源的实测伤害
-      &lt;textarea class=&quot;form-control&quot; id=&quot;cdc-rage-values&quot; rows=&quot;2&quot; placeholder=&quot;使用空格、逗号或换行分隔，例如：4413 5793 6612&quot;&gt;&lt;/textarea&gt;
-    &lt;/label&gt;
-    &lt;div class=&quot;text-small result-meta&quot;&gt;自动尝试全部已启用伤害技能、创生伤害、暴击/非暴击和其他技能倍率来源；同一来源可重复。&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;viz-controls&quot;&gt;
+  &lt;div class=&quot;verification-panel&quot;&gt;
+  &lt;div class=&quot;verification-toolbar&quot;&gt;
+    &lt;div data-damage-only&gt;
+      &lt;div class=&quot;toolbar-label&quot;&gt;验算模式&lt;/div&gt;
+      &lt;div class=&quot;mode-row&quot; id=&quot;cdc-verification-modes&quot; role=&quot;group&quot; aria-label=&quot;验算模式&quot;&gt;
+        &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-verification-mode=&quot;normal&quot; aria-pressed=&quot;true&quot;&gt;常规验算&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-verification-mode=&quot;rage&quot; aria-pressed=&quot;false&quot;&gt;狂暴溯源&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
     &lt;label class=&quot;form-label&quot;&gt;搜索强度
       &lt;select class=&quot;form-select&quot; id=&quot;cdc-search-strength&quot;&gt;
         &lt;option value=&quot;standard&quot;&gt;标准 · 完整 18 / 限宽 5,000&lt;/option&gt;
@@ -1053,6 +1262,13 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;/label&gt;
     &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-run-verification&quot; type=&quot;button&quot;&gt;确定并开始验算&lt;/button&gt;
     &lt;span class=&quot;text-small result-meta&quot; id=&quot;cdc-run-status&quot; aria-live=&quot;polite&quot;&gt;数据已就绪，等待验算&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div id=&quot;cdc-rage-input&quot; hidden&gt;
+    &lt;label class=&quot;form-label&quot;&gt;未知来源的实测伤害
+      &lt;textarea class=&quot;form-control&quot; id=&quot;cdc-rage-values&quot; rows=&quot;2&quot; placeholder=&quot;使用空格、逗号或换行分隔，例如：4413 5793 6612&quot;&gt;&lt;/textarea&gt;
+    &lt;/label&gt;
+    &lt;div class=&quot;text-small result-meta&quot;&gt;自动尝试全部已启用伤害技能、创生伤害、暴击/非暴击和其他技能倍率来源；同一来源可重复。&lt;/div&gt;
+  &lt;/div&gt;
   &lt;/div&gt;
 
   &lt;div class=&quot;result-row&quot; aria-live=&quot;polite&quot;&gt;
@@ -1074,7 +1290,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/div&gt;
 
   &lt;div class=&quot;results-workspace&quot;&gt;
-    &lt;div&gt;
+    &lt;div class=&quot;result-panel&quot;&gt;
       &lt;div class=&quot;section-label&quot;&gt;最佳全局状态的逐项验算&lt;/div&gt;
       &lt;div class=&quot;entry-list&quot; id=&quot;cdc-best-details&quot;&gt;&lt;/div&gt;
       &lt;div class=&quot;pagination-bar&quot;&gt;
@@ -1083,7 +1299,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-detail-next&quot; type=&quot;button&quot;&gt;下一页&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div&gt;
+    &lt;div class=&quot;result-panel&quot;&gt;
       &lt;div class=&quot;section-label&quot;&gt;零误差全局状态（最多 3 项）&lt;/div&gt;
       &lt;div class=&quot;verification-note text-small&quot; id=&quot;cdc-verification-note&quot; aria-live=&quot;polite&quot;&gt;同一个候选状态会同时用于本次全部实测值；每条伤害或治疗的具体来源见左侧逐项验算。&lt;/div&gt;
       &lt;div class=&quot;entry-list&quot; id=&quot;cdc-combination-results&quot;&gt;&lt;/div&gt;
@@ -1110,6 +1326,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       let detailRows = [];
       let draftTimer = null;
       let restoring = false;
+      let verificationDirty = false;
       const SKILL_PAGE_SIZE = 3;
       const DETAIL_PAGE_SIZE = 3;
       const REPORT_ERROR_LIMIT = 20;
@@ -1121,6 +1338,240 @@ html&gt;body{padding:0}&lt;/style&gt;
       const EXACT_RESULT_KEEP = 300;
       const PROFILE_STORAGE_KEY = &#x27;game-calculator-profiles-v1&#x27;;
       const DRAFT_STORAGE_KEY = &#x27;game-calculator-draft-v1&#x27;;
+      const OCR_TARGETS = {
+        panel_attack: { label: &#x27;非战斗面板攻击&#x27;, input: &#x27;cdc-panel&#x27; },
+        base_attack: { label: &#x27;基础攻击&#x27;, input: &#x27;cdc-base&#x27; },
+        character_level: { label: &#x27;角色等级&#x27;, input: &#x27;cdc-char-level&#x27; },
+        crit_damage: { label: &#x27;面板暴击伤害&#x27;, input: &#x27;cdc-crit&#x27;, suffix: &#x27;%&#x27; },
+        general_bonus: { label: &#x27;通用增伤&#x27;, input: &#x27;cdc-general&#x27;, suffix: &#x27;%&#x27; },
+        elemental_bonus: { label: &#x27;属性增伤&#x27;, input: &#x27;cdc-elemental&#x27;, suffix: &#x27;%&#x27; },
+        fusion_strength: { label: &#x27;基础环合强度&#x27;, input: &#x27;cdc-fusion&#x27; },
+        healing_bonus: { label: &#x27;基础治疗加成&#x27;, input: &#x27;cdc-heal-bonus&#x27;, suffix: &#x27;%&#x27; }
+      };
+      const OCR_ORDER = Object.keys(OCR_TARGETS);
+      const desktopRequests = new Map();
+      let desktopRequestId = 0;
+      let desktopApiAvailable = false;
+      let ocrCaptures = [];
+      let ocrMergedRows = [];
+
+      function enableDesktopOcr() {
+        desktopApiAvailable = true;
+        byId(&#x27;cdc-ocr-entry&#x27;).hidden = false;
+      }
+
+      function callDesktopApi(method, ...args) {
+        if (window.pywebview &amp;&amp; window.pywebview.api &amp;&amp; typeof window.pywebview.api[method] === &#x27;function&#x27;) {
+          return window.pywebview.api[method](...args);
+        }
+        if (window.parent === window) return Promise.reject(new Error(&#x27;此功能需要 Windows 桌面版。&#x27;));
+        desktopRequestId += 1;
+        const id = `cdc-${Date.now()}-${desktopRequestId}`;
+        return new Promise((resolve, reject) =&gt; {
+          const timer = setTimeout(() =&gt; {
+            desktopRequests.delete(id);
+            reject(new Error(&#x27;桌面功能响应超时。&#x27;));
+          }, 90000);
+          desktopRequests.set(id, { resolve, reject, timer });
+          window.parent.postMessage({ type: &#x27;cdc-api-call&#x27;, id, method, args }, &#x27;*&#x27;);
+        });
+      }
+
+      window.addEventListener(&#x27;message&#x27;, (event) =&gt; {
+        const message = event.data || {};
+        if (message.type === &#x27;cdc-api-ready&#x27;) {
+          enableDesktopOcr();
+          return;
+        }
+        if (message.type !== &#x27;cdc-api-result&#x27; || !desktopRequests.has(message.id)) return;
+        const pending = desktopRequests.get(message.id);
+        clearTimeout(pending.timer);
+        desktopRequests.delete(message.id);
+        if (message.ok) pending.resolve(message.result);
+        else pending.reject(new Error(message.error || &#x27;桌面功能调用失败。&#x27;));
+      });
+
+      window.addEventListener(&#x27;pywebviewready&#x27;, enableDesktopOcr);
+      if (document.body.dataset.cdcDesktop === &#x27;true&#x27;) enableDesktopOcr();
+      if (window.parent !== window) window.parent.postMessage({ type: &#x27;cdc-api-probe&#x27; }, &#x27;*&#x27;);
+
+      function ocrValueKey(candidate) {
+        return `${candidate.attribute || &#x27;&#x27;}|${Number(candidate.value).toFixed(4)}`;
+      }
+
+      function mergeOcrCandidates() {
+        const all = ocrCaptures.flatMap((capture) =&gt; (capture.analysis.fields || []).map((field) =&gt; ({
+          ...field,
+          source: capture.name
+        })));
+        const rows = [];
+        OCR_ORDER.forEach((fieldName) =&gt; {
+          let candidates = all.filter((candidate) =&gt; candidate.field === fieldName &amp;&amp; Number.isFinite(Number(candidate.value)));
+          if (!candidates.length) return;
+          if (fieldName === &#x27;elemental_bonus&#x27;) {
+            const positive = candidates.filter((candidate) =&gt; Number(candidate.value) &gt; 0);
+            if (positive.length) candidates = positive;
+          }
+          const groups = new Map();
+          candidates.forEach((candidate) =&gt; {
+            const key = ocrValueKey(candidate);
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(candidate);
+          });
+          const ranked = Array.from(groups.values()).sort((left, right) =&gt; {
+            if (right.length !== left.length) return right.length - left.length;
+            return Math.max(...right.map((item) =&gt; item.confidence || 0))
+              - Math.max(...left.map((item) =&gt; item.confidence || 0));
+          });
+          const winning = ranked[0];
+          const best = winning.slice().sort((a, b) =&gt; (b.confidence || 0) - (a.confidence || 0))[0];
+          const confidence = Math.min(0.99, (best.confidence || 0.5) + Math.min(0.06, (winning.length - 1) * 0.03));
+          const alternatives = ranked.slice(1).filter((group) =&gt; Number(group[0].value) !== Number(best.value));
+          rows.push({
+            ...best,
+            confidence,
+            agreement: winning.length,
+            sources: Array.from(new Set(winning.map((item) =&gt; item.source))),
+            conflict: alternatives.length &gt; 0,
+            alternativeValues: alternatives.map((group) =&gt; group[0].value)
+          });
+        });
+        return rows;
+      }
+
+      function renderOcrResults() {
+        ocrMergedRows = mergeOcrCandidates();
+        const body = byId(&#x27;cdc-ocr-results&#x27;);
+        if (!ocrMergedRows.length) {
+          body.innerHTML = &#x27;&lt;tr&gt;&lt;td colspan=&quot;6&quot; class=&quot;text-muted&quot;&gt;尚未识别到可填写字段。请确认截图中显示了角色属性面板。&lt;/td&gt;&lt;/tr&gt;&#x27;;
+          byId(&#x27;cdc-apply-ocr&#x27;).disabled = true;
+          byId(&#x27;cdc-ocr-summary&#x27;).textContent = ocrCaptures.length
+            ? `已处理 ${ocrCaptures.length} 张截图，但没有可靠字段。可以继续捕获其他滚动位置。`
+            : &#x27;建议至少捕获角色总览、详情上半段和详情下半段。&#x27;;
+          return;
+        }
+        body.innerHTML = ocrMergedRows.map((row, index) =&gt; {
+          const target = OCR_TARGETS[row.field];
+          const attribute = row.field === &#x27;elemental_bonus&#x27; &amp;&amp; row.attribute ? `${row.attribute} · ` : &#x27;&#x27;;
+          const valueText = `${attribute}${Number(row.value).toLocaleString(&#x27;zh-CN&#x27;, { maximumFractionDigits: 4 })}${target.suffix || &#x27;&#x27;}`;
+          const conflict = row.conflict ? `；另有识别值 ${row.alternativeValues.join(&#x27;、&#x27;)}` : &#x27;&#x27;;
+          const evidence = `${row.agreement} 次一致 · ${row.raw || row.sources.join(&#x27;、&#x27;)}${conflict}`;
+          return `&lt;tr&gt;
+            &lt;td&gt;&lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; type=&quot;checkbox&quot; data-ocr-row=&quot;${index}&quot; checked&gt;&lt;span class=&quot;sr-only&quot;&gt;采用${escapeHtml(target.label)}&lt;/span&gt;&lt;/label&gt;&lt;/td&gt;
+            &lt;td&gt;${escapeHtml(row.label || target.label)}&lt;/td&gt;
+            &lt;td class=&quot;text-end text-nowrap&quot;&gt;${escapeHtml(valueText)}&lt;/td&gt;
+            &lt;td&gt;${escapeHtml(target.label)}&lt;/td&gt;
+            &lt;td class=&quot;text-nowrap${row.conflict ? &#x27; text-destructive&#x27; : &#x27;&#x27;}&quot;&gt;${Math.round(row.confidence * 100)}%${row.conflict ? &#x27; · 待核对&#x27; : &#x27;&#x27;}&lt;/td&gt;
+            &lt;td class=&quot;text-small&quot;&gt;${escapeHtml(evidence)}&lt;/td&gt;
+          &lt;/tr&gt;`;
+        }).join(&#x27;&#x27;);
+        byId(&#x27;cdc-apply-ocr&#x27;).disabled = false;
+        const conflictCount = ocrMergedRows.filter((row) =&gt; row.conflict).length;
+        byId(&#x27;cdc-ocr-summary&#x27;).textContent = `已合并 ${ocrCaptures.length} 张截图，得到 ${ocrMergedRows.length} 个可填写字段${conflictCount ? `；${conflictCount} 项存在冲突，请先核对` : &#x27;&#x27;}。`;
+      }
+
+      function addOcrCapture(result) {
+        if (!result || !result.ok) throw new Error(result &amp;&amp; result.error ? result.error : &#x27;截图识别失败。&#x27;);
+        ocrCaptures.push(result);
+        if (result.preview) {
+          byId(&#x27;cdc-ocr-preview&#x27;).src = result.preview;
+          byId(&#x27;cdc-ocr-preview&#x27;).hidden = false;
+        }
+        renderOcrResults();
+        const fieldCount = (result.analysis.fields || []).length;
+        byId(&#x27;cdc-ocr-status&#x27;).textContent = `已处理 ${ocrCaptures.length} 张截图；最近一张识别到 ${fieldCount} 条候选字段。截图仅在本机处理。`;
+      }
+
+      async function refreshCaptureWindows() {
+        const select = byId(&#x27;cdc-ocr-window&#x27;);
+        const previous = select.value;
+        select.innerHTML = &#x27;&lt;option value=&quot;&quot;&gt;正在读取窗口…&lt;/option&gt;&#x27;;
+        try {
+          const result = await callDesktopApi(&#x27;get_capture_windows&#x27;);
+          if (!result.ok) throw new Error(result.error || &#x27;无法读取窗口列表。&#x27;);
+          select.innerHTML = result.windows.length ? result.windows.map((item) =&gt;
+            `&lt;option value=&quot;${escapeHtml(item.id)}&quot;&gt;${escapeHtml(item.title)}（${item.width}×${item.height}）&lt;/option&gt;`
+          ).join(&#x27;&#x27;) : &#x27;&lt;option value=&quot;&quot;&gt;没有找到可捕获窗口&lt;/option&gt;&#x27;;
+          if (previous &amp;&amp; result.windows.some((item) =&gt; item.id === previous)) select.value = previous;
+          byId(&#x27;cdc-capture-panel&#x27;).disabled = !select.value;
+        } catch (error) {
+          select.innerHTML = &#x27;&lt;option value=&quot;&quot;&gt;读取失败&lt;/option&gt;&#x27;;
+          byId(&#x27;cdc-capture-panel&#x27;).disabled = true;
+          byId(&#x27;cdc-ocr-status&#x27;).textContent = error.message;
+        }
+      }
+
+      async function captureCurrentPanel() {
+        const button = byId(&#x27;cdc-capture-panel&#x27;);
+        const windowId = byId(&#x27;cdc-ocr-window&#x27;).value;
+        if (!windowId) return;
+        const delay = Number(byId(&#x27;cdc-ocr-delay&#x27;).value) || 3;
+        button.disabled = true;
+        byId(&#x27;cdc-ocr-status&#x27;).textContent = `${delay} 秒后截图：计算器将暂时隐藏，请在游戏中打开或滚动到需要识别的位置。`;
+        try {
+          addOcrCapture(await callDesktopApi(&#x27;capture_panel&#x27;, windowId, delay));
+        } catch (error) {
+          byId(&#x27;cdc-ocr-status&#x27;).textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) =&gt; {
+          const reader = new FileReader();
+          reader.onload = () =&gt; resolve(reader.result);
+          reader.onerror = () =&gt; reject(new Error(`无法读取 ${file.name}`));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function importOcrFiles(files) {
+        const selected = Array.from(files).slice(0, 8);
+        for (let index = 0; index &lt; selected.length; index += 1) {
+          const file = selected[index];
+          byId(&#x27;cdc-ocr-status&#x27;).textContent = `正在识别 ${index + 1}/${selected.length}：${file.name}`;
+          try {
+            const dataUrl = await readFileAsDataUrl(file);
+            addOcrCapture(await callDesktopApi(&#x27;recognize_uploaded_image&#x27;, dataUrl, file.name));
+          } catch (error) {
+            byId(&#x27;cdc-ocr-status&#x27;).textContent = error.message;
+            break;
+          }
+        }
+      }
+
+      function applyOcrResults() {
+        const checked = Array.from(byId(&#x27;cdc-ocr-results&#x27;).querySelectorAll(&#x27;[data-ocr-row]:checked&#x27;));
+        if (!checked.length) {
+          byId(&#x27;cdc-ocr-status&#x27;).textContent = &#x27;请至少勾选一个识别字段。&#x27;;
+          return;
+        }
+        let applied = 0;
+        checked.forEach((checkbox) =&gt; {
+          const row = ocrMergedRows[Number(checkbox.dataset.ocrRow)];
+          const target = row &amp;&amp; OCR_TARGETS[row.field];
+          if (!target) return;
+          const input = byId(target.input);
+          const value = row.field === &#x27;fusion_strength&#x27; ? Math.min(360, Math.max(0, Number(row.value))) : Number(row.value);
+          input.value = Number.isInteger(value) ? String(value) : String(Number(value.toFixed(4)));
+          applied += 1;
+        });
+        markDirty();
+        scheduleDraftSave();
+        byId(&#x27;cdc-ocr-status&#x27;).textContent = `已将 ${applied} 个确认字段填入当前面板。`;
+        byId(&#x27;cdc-ocr-dialog&#x27;).close();
+      }
+
+      function clearOcrResults() {
+        ocrCaptures = [];
+        ocrMergedRows = [];
+        byId(&#x27;cdc-ocr-preview&#x27;).hidden = true;
+        byId(&#x27;cdc-ocr-preview&#x27;).removeAttribute(&#x27;src&#x27;);
+        byId(&#x27;cdc-ocr-files&#x27;).value = &#x27;&#x27;;
+        byId(&#x27;cdc-ocr-status&#x27;).textContent = &#x27;已清除本次截图识别结果。&#x27;;
+        renderOcrResults();
+      }
 
       function addEffect(name = &#x27;&#x27;, values = {}) {
         if (root.querySelectorAll(&#x27;[data-effect-row]&#x27;).length &gt;= 12) return;
@@ -1340,12 +1791,16 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (!data || !data.scalars) return false;
         restoring = true;
         byId(&#x27;cdc-heal-bonus&#x27;).value = &#x27;0&#x27;;
-        byId(&#x27;cdc-fusion&#x27;).value = &#x27;600&#x27;;
+        byId(&#x27;cdc-fusion&#x27;).value = &#x27;360&#x27;;
         byId(&#x27;cdc-special-multiplier&#x27;).value = &#x27;1&#x27;;
         Object.entries(data.scalars).forEach(([id, value]) =&gt; {
           const element = byId(id);
           if (element) element.value = value;
         });
+        const storedFusion = Number(byId(&#x27;cdc-fusion&#x27;).value);
+        byId(&#x27;cdc-fusion&#x27;).value = String(Number.isFinite(storedFusion)
+          ? Math.max(0, Math.min(360, storedFusion))
+          : 0);
         byId(&#x27;cdc-infusion-enabled&#x27;).checked = Boolean(data.options?.infusionEnabled);
         byId(&#x27;cdc-special-enabled&#x27;).checked = Boolean(data.options?.specialEnabled);
         byId(&#x27;cdc-effects&#x27;).innerHTML = &#x27;&#x27;;
@@ -1432,7 +1887,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         { id: &#x27;base-general&#x27;, label: &#x27;通用增伤&#x27;, component: &#x27;baseGeneral&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-elemental&#x27;, label: &#x27;属性增伤&#x27;, component: &#x27;baseElemental&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-extra&#x27;, label: &#x27;额外增伤&#x27;, component: &#x27;baseExtra&#x27;, modes: [&#x27;damage&#x27;] },
-        { id: &#x27;base-crit&#x27;, label: &#x27;基础暴击伤害&#x27;, component: &#x27;baseCrit&#x27;, modes: [&#x27;damage&#x27;] },
+        { id: &#x27;base-crit&#x27;, label: &#x27;面板暴击伤害&#x27;, component: &#x27;baseCrit&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;zone-defense&#x27;, label: &#x27;防御区整体&#x27;, component: &#x27;zoneDefense&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;zone-resistance&#x27;, label: &#x27;抗性区整体&#x27;, component: &#x27;zoneResistance&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;zone-damage&#x27;, label: &#x27;增伤区整体&#x27;, component: &#x27;zoneDamage&#x27;, modes: [&#x27;damage&#x27;] },
@@ -1489,7 +1944,9 @@ html&gt;body{padding:0}&lt;/style&gt;
           damageBonus: (enabled(&#x27;base-general&#x27;) ? percent(&#x27;cdc-general&#x27;) : 0)
             + (enabled(&#x27;base-elemental&#x27;) ? percent(&#x27;cdc-elemental&#x27;) : 0)
             + (enabled(&#x27;base-extra&#x27;) ? percent(&#x27;cdc-extra&#x27;) : 0),
-          critDamage: enabled(&#x27;base-crit&#x27;) ? percent(&#x27;cdc-crit&#x27;) : 1,
+          // The game panel shows bonus critical damage. The actual critical
+          // multiplier always includes the implicit base multiplier of 1.
+          critDamage: 1 + (enabled(&#x27;base-crit&#x27;) ? percent(&#x27;cdc-crit&#x27;) : 0),
           skillAdd: 0,
           skillProduct: 1,
           healBonus: enabled(&#x27;base-heal-bonus&#x27;) ? percent(&#x27;cdc-heal-bonus&#x27;) : 0,
@@ -1882,6 +2339,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         byId(&#x27;cdc-run-status&#x27;).textContent = calculatorType === &#x27;heal&#x27;
           ? &#x27;数据已修改，点击“确定并开始治疗验算”&#x27;
           : verificationMode === &#x27;rage&#x27; ? &#x27;数据已修改，点击“确定并开始溯源”&#x27; : &#x27;数据已修改，点击“确定并开始验算”&#x27;;
+        if (verificationDirty) return;
+        verificationDirty = true;
         byId(&#x27;cdc-best-combination&#x27;).textContent = &#x27;等待验算&#x27;;
         byId(&#x27;cdc-combination-count&#x27;).textContent = &#x27;当前结果尚未计算&#x27;;
         byId(&#x27;cdc-multiplier-status&#x27;).textContent = &#x27;—&#x27;;
@@ -1901,10 +2360,12 @@ html&gt;body{padding:0}&lt;/style&gt;
         setTimeout(() =&gt; {
           try {
             verify();
+            verificationDirty = false;
             byId(&#x27;cdc-run-status&#x27;).textContent = calculatorType === &#x27;heal&#x27;
               ? &#x27;治疗验算完成&#x27;
               : verificationMode === &#x27;rage&#x27; ? &#x27;溯源完成&#x27; : &#x27;验算完成&#x27;;
           } catch (_error) {
+            verificationDirty = true;
             byId(&#x27;cdc-run-status&#x27;).textContent = verificationMode === &#x27;rage&#x27; ? &#x27;溯源过程中出现错误&#x27; : &#x27;验算过程中出现错误&#x27;;
           } finally {
             button.disabled = false;
@@ -2002,6 +2463,16 @@ html&gt;body{padding:0}&lt;/style&gt;
         }
       });
       byId(&#x27;cdc-clear-current&#x27;).addEventListener(&#x27;click&#x27;, clearCurrentConfiguration);
+      byId(&#x27;cdc-open-ocr&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        byId(&#x27;cdc-ocr-dialog&#x27;).showModal();
+        refreshCaptureWindows();
+      });
+      byId(&#x27;cdc-close-ocr&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; byId(&#x27;cdc-ocr-dialog&#x27;).close());
+      byId(&#x27;cdc-refresh-windows&#x27;).addEventListener(&#x27;click&#x27;, refreshCaptureWindows);
+      byId(&#x27;cdc-capture-panel&#x27;).addEventListener(&#x27;click&#x27;, captureCurrentPanel);
+      byId(&#x27;cdc-clear-ocr&#x27;).addEventListener(&#x27;click&#x27;, clearOcrResults);
+      byId(&#x27;cdc-apply-ocr&#x27;).addEventListener(&#x27;click&#x27;, applyOcrResults);
+      byId(&#x27;cdc-ocr-files&#x27;).addEventListener(&#x27;change&#x27;, (event) =&gt; importOcrFiles(event.target.files));
 
       refreshProfileSelect();
       updateCalculatorType();
@@ -2026,248 +2497,53 @@ html&gt;body{padding:0}&lt;/style&gt;
     })();
   &lt;/script&gt;
 &lt;/div&gt;
-
-&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-(() =&gt; {
-  if (window.FloatingUIDOM == null) {
-    return;
-  }
-  const { autoUpdate, computePosition, flip, offset, shift, size } =
-    window.FloatingUIDOM;
-  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
-  const tooltipId = `codex-visualization-tooltip-${
-    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
-  }`;
-  const tooltipGap = 5;
-  const hoverDelay = 700;
-  const skipDelay = 300;
-  let activeTrigger = null;
-  let pendingTrigger = null;
-  let tooltip = null;
-  let openTimeout = null;
-  let autoUpdateCleanup = null;
-  let positionRequest = 0;
-  let skipDelayUntil = 0;
-
-  const getTrigger = (target) =&gt;
-    target?.nodeType === Node.ELEMENT_NODE
-      ? target.closest(&quot;[data-tooltip]&quot;)
-      : null;
-  const containsTarget = (trigger, target) =&gt;
-    target?.nodeType != null &amp;&amp; trigger.contains(target);
-  const getContent = (trigger) =&gt;
-    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
-  const getPlacement = (trigger) =&gt; {
-    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
-    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
-  };
-  const getTooltip = () =&gt; {
-    if (tooltip == null) {
-      tooltip = document.createElement(&quot;div&quot;);
-      tooltip.id = tooltipId;
-      tooltip.className = &quot;tooltip&quot;;
-      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
-    }
-    return tooltip;
-  };
-  const setDescribedBy = (trigger, described) =&gt; {
-    const ids = new Set(
-      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
-        .split(/\s+/)
-        .filter(Boolean),
-    );
-    if (described) {
-      ids.add(tooltipId);
-    } else {
-      ids.delete(tooltipId);
-    }
-    if (ids.size === 0) {
-      trigger.removeAttribute(&quot;aria-describedby&quot;);
-    } else {
-      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
-    }
-  };
-  const clearOpenTimeout = () =&gt; {
-    if (openTimeout != null) {
-      window.clearTimeout(openTimeout);
-      openTimeout = null;
-    }
-    pendingTrigger = null;
-  };
-  const closeTooltip = (activateSkipDelay = true) =&gt; {
-    clearOpenTimeout();
-    positionRequest += 1;
-    autoUpdateCleanup?.();
-    autoUpdateCleanup = null;
-    if (activeTrigger == null) {
-      return;
-    }
-    setDescribedBy(activeTrigger, false);
-    activeTrigger = null;
-    tooltip?.remove();
-    if (activateSkipDelay) {
-      skipDelayUntil = Date.now() + skipDelay;
-    }
-  };
-  const updatePosition = (trigger, floating) =&gt; {
-    const request = ++positionRequest;
-    void computePosition(trigger, floating, {
-      middleware: [
-        offset(tooltipGap),
-        flip({ padding: tooltipGap }),
-        shift({ padding: tooltipGap }),
-        size({
-          padding: tooltipGap,
-          apply({ availableHeight, availableWidth, elements }) {
-            elements.floating.style.setProperty(
-              &quot;--tooltip-available-width&quot;,
-              `${Math.max(0, availableWidth)}px`,
-            );
-            elements.floating.style.setProperty(
-              &quot;--tooltip-available-height&quot;,
-              `${Math.max(0, availableHeight)}px`,
-            );
-          },
-        }),
-      ],
-      placement: getPlacement(trigger),
-      strategy: &quot;fixed&quot;,
-    })
-      .then(({ x, y }) =&gt; {
-        if (activeTrigger !== trigger || request !== positionRequest) {
-          return;
-        }
-        const scale = window.devicePixelRatio || 1;
-        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
-        floating.style.visibility = &quot;visible&quot;;
-      })
-      .catch(() =&gt; {
-        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
-          closeTooltip(false);
-        }
-      });
-  };
-  const openTooltip = (trigger) =&gt; {
-    const content = getContent(trigger);
-    if (!trigger.isConnected || content.length === 0) {
-      return;
-    }
-    clearOpenTimeout();
-    if (activeTrigger === trigger) {
-      return;
-    }
-    closeTooltip();
-    const floating = getTooltip();
-    floating.textContent = content;
-    floating.style.visibility = &quot;hidden&quot;;
-    floating.style.transform = &quot;translate(0, 0)&quot;;
-    document.body.appendChild(floating);
-    activeTrigger = trigger;
-    setDescribedBy(trigger, true);
-    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
-      updatePosition(trigger, floating);
-    });
-  };
-  const requestOpen = (trigger, immediate = false) =&gt; {
-    if (
-      getContent(trigger).length === 0 ||
-      activeTrigger === trigger ||
-      pendingTrigger === trigger
-    ) {
-      return;
-    }
-    clearOpenTimeout();
-    pendingTrigger = trigger;
-    const delay =
-      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
-        ? 0
-        : hoverDelay;
-    if (delay === 0) {
-      openTooltip(trigger);
-      return;
-    }
-    openTimeout = window.setTimeout(() =&gt; {
-      openTimeout = null;
-      pendingTrigger = null;
-      openTooltip(trigger);
-    }, delay);
-  };
-  const handlePointerOpen = (event) =&gt; {
-    if (event.pointerType === &quot;touch&quot;) {
-      return;
-    }
-    const trigger = getTrigger(event.target);
-    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
-      return;
-    }
-    requestOpen(trigger);
-  };
-  const handleLeave = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
-      return;
-    }
-    if (activeTrigger === trigger || pendingTrigger === trigger) {
-      closeTooltip();
-    }
-  };
-  const handleFocusIn = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (trigger?.matches(&quot;:focus-visible&quot;)) {
-      requestOpen(trigger, true);
-    }
-  };
-  const handleKeyDown = (event) =&gt; {
-    if (event.key === &quot;Escape&quot;) {
-      closeTooltip();
-    }
-  };
-  const handleContextMenu = (event) =&gt; {
-    const trigger = getTrigger(event.target);
-    if (activeTrigger === trigger || pendingTrigger === trigger) {
-      closeTooltip();
-    }
-  };
-  const destroy = () =&gt; {
-    closeTooltip(false);
-    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
-    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
-    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
-    document.removeEventListener(&quot;focusout&quot;, handleLeave);
-    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
-    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
-    tooltip = null;
-  };
-
-  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
-  document.addEventListener(&quot;pointerout&quot;, handleLeave);
-  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
-  document.addEventListener(&quot;focusout&quot;, handleLeave);
-  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
-  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
-  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
-})();
-&lt;/script&gt;
-&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-(() =&gt; {
-  const initialize = () =&gt; {
-    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
-  };
-  if (globalThis.lucide != null) {
-    initialize();
-    return;
-  }
-  document
-    .getElementById(&quot;codex-visualization-lucide&quot;)
-    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
-})();
-&lt;/script&gt;
-
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
+<script data-cdc-desktop-bridge>
+(() => {
+  const frame = document.querySelector('iframe');
+  const allowed = new Set(['get_capture_windows', 'capture_panel', 'recognize_uploaded_image']);
+  let ready = Boolean(window.pywebview && window.pywebview.api);
+
+  function notifyReady() {
+    if (frame && frame.contentWindow) frame.contentWindow.postMessage({ type: 'cdc-api-ready' }, '*');
+  }
+
+  window.addEventListener('pywebviewready', () => {
+    ready = true;
+    notifyReady();
+  });
+
+  window.addEventListener('message', async (event) => {
+    if (!frame || event.source !== frame.contentWindow) return;
+    const message = event.data || {};
+    if (message.type === 'cdc-api-probe') {
+      if (ready || (window.pywebview && window.pywebview.api)) {
+        ready = true;
+        notifyReady();
+      }
+      return;
+    }
+    if (message.type !== 'cdc-api-call' || !message.id) return;
+    if (!allowed.has(message.method)) {
+      frame.contentWindow.postMessage({ type: 'cdc-api-result', id: message.id, ok: false, error: '不允许的桌面功能。' }, '*');
+      return;
+    }
+    try {
+      if (!window.pywebview || !window.pywebview.api) throw new Error('桌面功能尚未就绪。');
+      const result = await window.pywebview.api[message.method](...(message.args || []));
+      frame.contentWindow.postMessage({ type: 'cdc-api-result', id: message.id, ok: true, result }, '*');
+    } catch (error) {
+      frame.contentWindow.postMessage({
+        type: 'cdc-api-result', id: message.id, ok: false,
+        error: error && error.message ? error.message : String(error)
+      }, '*');
+    }
+  });
+
+  if (ready) notifyReady();
+})();
+</script>
 </body>
 </html>

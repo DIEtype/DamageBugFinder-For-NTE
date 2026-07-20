@@ -63,6 +63,8 @@ FusionStrength = BaseFusionStrength × (1 + Σ FusionPercentBonus)
                  + Σ FusionFlatBonus
 ```
 
+`BaseFusionStrength` 是非战斗面板值，合法范围为 `0～360`。该上限不限制觉醒、武器等 Buff 作用后的 `FusionStrength` 最终值。
+
 启用浸染时：
 
 ```text
@@ -70,6 +72,16 @@ Infusion = 1.2 × FusionStrength / 600
 ```
 
 未启用浸染时 `Infusion = 1`。特殊独立乘区直接填写倍数；未启用时为 `1`。
+
+游戏面板显示的是额外暴击伤害，计算器输入框和 OCR 均保留这个面板原值。实际暴击倍率为：
+
+```text
+CriticalDamageMultiplier = 1
+                           + PanelCriticalDamage
+                           + Σ ActiveCriticalDamageBonus
+```
+
+例如面板显示 `134%`，且没有其他暴击伤害 Buff，则实际暴击倍率为 `1 + 1.34 = 2.34`。
 
 非暴击：
 
