@@ -817,16 +817,110 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;style&gt;
     #compact-damage-calculator {
       display: grid;
-      gap: 12px;
+      gap: 10px;
       color: var(--foreground);
       min-width: 0;
       max-width: 100%;
-      --cdc-section-border: color-mix(in oklab, var(--foreground) 16%, transparent);
-      --cdc-section-bg: color-mix(in oklab, var(--foreground) 3.5%, transparent);
-      --cdc-heading-bg: color-mix(in oklab, var(--foreground) 6.5%, transparent);
-      --cdc-accent-bg: color-mix(in oklab, var(--primary) 8%, transparent);
+      min-height: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: light-dark(#eef0f4, #101217);
+      font-family: &quot;Segoe UI Variable Text&quot;, &quot;Microsoft YaHei UI&quot;, &quot;Segoe UI&quot;, sans-serif;
+      --foreground: light-dark(#191c23, #eef1f5);
+      --muted-foreground: light-dark(#646b78, #9097a4);
+      --primary: light-dark(#c92f69, #ef5b91);
+      --primary-foreground: #ffffff;
+      --secondary: light-dark(#ffffff, #20242c);
+      --secondary-foreground: var(--foreground);
+      --input: light-dark(#cbd0d9, #353b47);
+      --border: light-dark(#d9dde4, #2d323c);
+      --ring: light-dark(#c92f69, #ef78a4);
+      --card: light-dark(#ffffff, #181b21);
+      --card-foreground: var(--foreground);
+      --popover: light-dark(#ffffff, #181b21);
+      --popover-foreground: var(--foreground);
+      --cdc-canvas: light-dark(#eef0f4, #101217);
+      --cdc-panel: light-dark(#ffffff, #181b21);
+      --cdc-panel-raised: light-dark(#ffffff, #1c2027);
+      --cdc-section-border: light-dark(#d4d8e0, #303641);
+      --cdc-heading-bg: light-dark(#f4f5f8, #15181e);
+      --cdc-entry-bg: light-dark(#f7f8fa, #14171c);
+      --cdc-accent-bg: color-mix(in oklab, var(--primary) 9%, var(--cdc-panel));
+      --cdc-tick: color-mix(in oklab, var(--foreground) 18%, transparent);
+      --cdc-font-display: &quot;Bahnschrift SemiCondensed&quot;, &quot;Microsoft YaHei UI&quot;, sans-serif;
+      --cdc-font-data: &quot;Cascadia Mono&quot;, &quot;SFMono-Regular&quot;, Consolas, monospace;
     }
     #compact-damage-calculator [hidden] { display: none !important; }
+    #compact-damage-calculator .app-masthead {
+      display: grid;
+      grid-template-columns: minmax(330px, 1fr) minmax(300px, 420px) max-content;
+      gap: 14px;
+      align-items: center;
+      min-width: 0;
+      padding: 4px 4px 8px;
+      border-bottom: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    #compact-damage-calculator .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 38px;
+      flex: 0 0 46px;
+      place-content: center;
+      border: 1px solid color-mix(in oklab, var(--primary) 62%, var(--cdc-section-border));
+      border-radius: 6px 12px 6px 6px;
+      color: var(--primary);
+      background:
+        linear-gradient(135deg, color-mix(in oklab, var(--primary) 14%, transparent), transparent 58%),
+        var(--cdc-panel);
+      font: 700 15px/1 var(--cdc-font-display);
+      letter-spacing: .08em;
+      box-shadow: inset 0 -3px 0 color-mix(in oklab, var(--primary) 74%, transparent);
+    }
+    #compact-damage-calculator .brand-copy { min-width: 0; }
+    #compact-damage-calculator .brand-copy h1 {
+      overflow: hidden;
+      font: 650 clamp(18px, 1.45vw, 23px)/1.05 var(--cdc-font-display);
+      letter-spacing: .015em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .brand-copy h1 span { color: var(--primary); }
+    #compact-damage-calculator .brand-copy p {
+      margin-top: 3px;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+    #compact-damage-calculator .local-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 999px;
+      color: var(--muted-foreground);
+      background: var(--cdc-panel);
+      font: 600 10px/1 var(--cdc-font-data);
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .local-badge::before,
+    #compact-damage-calculator #cdc-run-status::before {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #36b89a;
+      box-shadow: 0 0 0 3px color-mix(in oklab, #36b89a 16%, transparent);
+      content: &quot;&quot;;
+    }
     #compact-damage-calculator .compact-fields {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
@@ -840,40 +934,105 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator details {
       overflow: clip;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
-      padding: 0 10px 10px;
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      padding: 0 12px 11px;
+      box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent);
     }
     #compact-damage-calculator summary {
+      display: grid;
+      grid-template-columns: max-content max-content minmax(72px, 1fr) max-content;
+      gap: 9px;
+      align-items: center;
       cursor: pointer;
-      font-weight: 600;
-      margin: 0 -10px 10px;
-      padding: 8px 10px;
+      min-height: 38px;
+      margin: 0 -12px 10px;
+      padding: 7px 11px;
       background: var(--cdc-heading-bg);
-      border-left: 3px solid var(--primary);
       border-bottom: 1px solid var(--cdc-section-border);
+      background-image: repeating-linear-gradient(90deg, transparent 0 11px, var(--cdc-tick) 11px 12px);
+      background-repeat: no-repeat;
+      background-position: calc(100% - 70px) center;
+      background-size: min(22%, 170px) 5px;
+      font: 650 15px/1 var(--cdc-font-display);
+      list-style: none;
     }
+    #compact-damage-calculator summary::-webkit-details-marker { display: none; }
+    #compact-damage-calculator summary::after {
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-content: center;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 5px;
+      color: var(--muted-foreground);
+      background: var(--cdc-panel);
+      content: &quot;−&quot;;
+      font: 500 14px/1 var(--cdc-font-data);
+    }
+    #compact-damage-calculator details:not([open]) &gt; summary::after { content: &quot;+&quot;; }
     #compact-damage-calculator details:not([open]) { padding-bottom: 0; }
     #compact-damage-calculator details:not([open]) &gt; summary { margin-bottom: 0; border-bottom: 0; }
-    #compact-damage-calculator summary::marker { color: var(--primary); }
-    #compact-damage-calculator .section-label {
-      font-weight: 600;
-      margin: 10px 0 8px;
+    #compact-damage-calculator .section-index {
+      display: inline-grid;
+      min-width: 28px;
+      min-height: 22px;
+      place-content: center;
+      border-radius: 4px;
+      color: var(--primary-foreground);
+      background: var(--primary);
+      font: 700 10px/1 var(--cdc-font-data);
+      letter-spacing: .06em;
+    }
+    #compact-damage-calculator .section-code {
       padding-left: 8px;
-      border-left: 3px solid var(--primary);
+      color: var(--muted-foreground);
+      font: 600 9px/1 var(--cdc-font-data);
+      letter-spacing: .13em;
+    }
+    #compact-damage-calculator .section-label {
+      margin: 11px 0 8px;
+      color: var(--muted-foreground);
+      font: 650 11px/1.3 var(--cdc-font-display);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    #compact-damage-calculator .section-label::before {
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+      background: var(--primary);
+      content: &quot;&quot;;
     }
     #compact-damage-calculator .profile-bar {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: max-content minmax(0, 1fr) auto;
       gap: 8px 12px;
       align-items: end;
       min-width: 0;
-      margin-top: 8px;
-      padding: 10px;
+      padding: 10px 12px;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
-      box-shadow: inset 3px 0 0 var(--primary);
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      box-shadow: inset 3px 0 0 var(--primary), 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent);
+    }
+    #compact-damage-calculator .profile-ident {
+      display: grid;
+      align-self: center;
+      gap: 4px;
+      min-width: 82px;
+      padding-right: 12px;
+      border-right: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator .profile-ident strong {
+      font: 650 14px/1 var(--cdc-font-display);
+    }
+    #compact-damage-calculator .profile-ident span {
+      color: var(--muted-foreground);
+      font: 600 9px/1 var(--cdc-font-data);
+      letter-spacing: .12em;
     }
     #compact-damage-calculator .profile-fields {
       display: grid;
@@ -891,7 +1050,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .profile-actions .btn,
     #compact-damage-calculator .mode-row .btn,
     #compact-damage-calculator #cdc-run-verification { min-height: 34px; white-space: nowrap; }
-    #compact-damage-calculator .profile-status { grid-column: 1 / -1; min-height: 1.25em; }
+    #compact-damage-calculator .profile-status { grid-column: 2 / -1; min-height: 1.25em; }
     #compact-damage-calculator .pagination-bar {
       display: grid;
       gap: 8px;
@@ -901,8 +1060,24 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .mode-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
+      gap: 3px;
       width: 100%;
+      padding: 3px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 8px;
+      background: var(--cdc-heading-bg);
+    }
+    #compact-damage-calculator .mode-row .btn {
+      width: 100%;
+      border-color: transparent;
+      border-radius: 5px;
+      background: transparent;
+      box-shadow: none;
+    }
+    #compact-damage-calculator .mode-row .btn.btn-primary {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      box-shadow: 0 2px 8px color-mix(in oklab, var(--primary) 20%, transparent);
     }
     #compact-damage-calculator .toolbar-label {
       min-height: 1.25em;
@@ -913,8 +1088,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     #compact-damage-calculator .calculator-mode-field {
       box-sizing: border-box;
-      width: min(520px, 100%);
-      padding: 0 10px;
+      width: 100%;
     }
     #compact-damage-calculator .verification-toolbar {
       display: grid;
@@ -929,7 +1103,51 @@ html&gt;body{padding:0}&lt;/style&gt;
       min-height: 34px;
       display: flex;
       align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 6px;
+      background: var(--cdc-panel);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+    #compact-damage-calculator .form-label,
+    #compact-damage-calculator .toolbar-label {
+      font-size: 12px;
+      font-weight: 520;
+      letter-spacing: .01em;
+    }
+    #compact-damage-calculator :is(.form-control, .form-select) {
+      min-height: 32px;
+      border-color: var(--input);
+      border-radius: 6px;
+      background-color: var(--cdc-panel-raised);
+    }
+    #compact-damage-calculator :is(.form-control, .form-select):hover { border-color: color-mix(in oklab, var(--foreground) 32%, var(--input)); }
+    #compact-damage-calculator :is(.form-control, .form-select):focus-visible {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+    }
+    #compact-damage-calculator input[type=&quot;number&quot;],
+    #compact-damage-calculator .numeric,
+    #compact-damage-calculator .result-main,
+    #compact-damage-calculator #cdc-rage-values { font-family: var(--cdc-font-data); }
+    #compact-damage-calculator .btn {
+      border-radius: 6px;
+      font-weight: 560;
+      transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease, transform 120ms ease;
+    }
+    #compact-damage-calculator .btn-primary {
+      border-color: transparent;
+      color: var(--primary-foreground);
+      background: var(--primary);
+    }
+    #compact-damage-calculator .btn-primary:not(:disabled):hover {
+      background: color-mix(in oklab, var(--primary) 86%, white);
+      transform: translateY(-1px);
+    }
+    #compact-damage-calculator .btn:focus-visible { outline-color: var(--ring); }
     #compact-damage-calculator .numeric,
     #compact-damage-calculator .result-main { font-variant-numeric: tabular-nums; }
     #compact-damage-calculator .result-meta,
@@ -940,8 +1158,10 @@ html&gt;body{padding:0}&lt;/style&gt;
       grid-template-columns: repeat(auto-fit, minmax(min(138px, 100%), 1fr));
       gap: 8px 12px;
       align-items: end;
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
+      padding: 8px;
+      border: 1px solid color-mix(in oklab, var(--cdc-section-border) 76%, transparent);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
       min-width: 0;
     }
     #compact-damage-calculator .entry-row &gt; * { min-width: 0; }
@@ -968,30 +1188,62 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .verification-panel {
       display: grid;
       gap: 10px;
-      padding: 10px;
-      border: 1px solid color-mix(in oklab, var(--primary) 32%, var(--cdc-section-border));
-      border-radius: 10px;
+      padding: 0 12px 11px;
+      overflow: hidden;
+      border: 1px solid color-mix(in oklab, var(--primary) 38%, var(--cdc-section-border));
+      border-radius: 9px;
       background: var(--cdc-accent-bg);
     }
+    #compact-damage-calculator .workflow-heading {
+      display: grid;
+      grid-template-columns: max-content minmax(0, max-content) minmax(72px, 1fr) max-content;
+      gap: 9px;
+      align-items: center;
+      min-height: 38px;
+      margin: 0 -12px;
+      padding: 7px 11px;
+      border-bottom: 1px solid color-mix(in oklab, var(--primary) 25%, var(--cdc-section-border));
+      background:
+        repeating-linear-gradient(90deg, transparent 0 11px, var(--cdc-tick) 11px 12px) calc(100% - 60px) center / min(22%, 170px) 5px no-repeat,
+        color-mix(in oklab, var(--primary) 7%, var(--cdc-heading-bg));
+    }
+    #compact-damage-calculator .workflow-heading strong { font: 650 15px/1 var(--cdc-font-display); }
+    #compact-damage-calculator #cdc-run-verification {
+      min-width: 150px;
+      box-shadow: 0 5px 16px color-mix(in oklab, var(--primary) 22%, transparent);
+    }
     #compact-damage-calculator .result-row &gt; .card {
+      position: relative;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      box-shadow: inset 3px 0 0 color-mix(in oklab, var(--primary) 72%, var(--foreground));
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      box-shadow: none;
+    }
+    #compact-damage-calculator .result-row &gt; .card::before {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--primary);
+      content: &quot;&quot;;
+    }
+    #compact-damage-calculator .result-row .viz-stat-value {
+      margin: 4px 0 2px;
+      font: 650 clamp(17px, 1.35vw, 22px)/1.2 var(--cdc-font-data);
+      letter-spacing: -.035em;
     }
     #compact-damage-calculator .result-panel {
       min-width: 0;
-      padding: 0 10px 10px;
+      padding: 0 12px 11px;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
+      border-radius: 9px;
+      background: var(--cdc-panel);
     }
     #compact-damage-calculator .result-panel &gt; .section-label {
-      margin: 0 -10px 10px;
-      padding: 8px 10px;
+      margin: 0 -12px 10px;
+      padding: 10px 12px;
       background: var(--cdc-heading-bg);
-      border-left: 3px solid var(--primary);
       border-bottom: 1px solid var(--cdc-section-border);
-      border-radius: 9px 9px 0 0;
+      border-radius: 8px 8px 0 0;
     }
     #compact-damage-calculator #cdc-ocr-dialog {
       width: min(1120px, calc(100vw - 40px));
@@ -1000,7 +1252,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       color: var(--popover-foreground);
       background: var(--popover);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 9px;
       padding: 16px;
     }
     #compact-damage-calculator #cdc-ocr-dialog::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
@@ -1025,6 +1277,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .ocr-preview img { display: block; width: 100%; height: auto; }
     #compact-damage-calculator .ocr-table-wrap { max-height: 42vh; overflow: auto; }
     #compact-damage-calculator .ocr-footer { margin-top: 12px; }
+    @media (prefers-reduced-motion: reduce) {
+      #compact-damage-calculator .btn { transition: none; }
+      #compact-damage-calculator .btn-primary:not(:disabled):hover { transform: none; }
+    }
     @media (max-width: 520px) {
       #compact-damage-calculator .result-row { grid-template-columns: 1fr; }
       #compact-damage-calculator .ocr-preview { grid-template-columns: 1fr; }
@@ -1032,23 +1288,38 @@ html&gt;body{padding:0}&lt;/style&gt;
     @media (max-width: 1099px) {
       #compact-damage-calculator .main-workspace,
       #compact-damage-calculator .results-workspace { grid-template-columns: 1fr; }
-      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .app-masthead { grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); }
+      #compact-damage-calculator .local-badge { display: none; }
+      #compact-damage-calculator .profile-bar { grid-template-columns: max-content minmax(0, 1fr); }
+      #compact-damage-calculator .profile-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-actions { grid-column: 1 / -1; }
       #compact-damage-calculator .profile-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-status { grid-column: 1 / -1; }
       #compact-damage-calculator .verification-toolbar {
         grid-template-columns: minmax(220px, .85fr) minmax(260px, 1.25fr) max-content;
       }
       #compact-damage-calculator .verification-toolbar #cdc-run-status { grid-column: 1 / -1; min-height: 1.25em; }
     }
     @media (max-width: 760px) {
+      #compact-damage-calculator { padding: 8px; }
+      #compact-damage-calculator .app-masthead { grid-template-columns: 1fr; }
+      #compact-damage-calculator .brand-copy h1 { white-space: normal; }
       #compact-damage-calculator .profile-fields,
       #compact-damage-calculator .verification-toolbar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-ident { border-right: 0; border-bottom: 1px solid var(--cdc-section-border); padding: 0 0 8px; }
       #compact-damage-calculator .profile-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-actions,
+      #compact-damage-calculator .profile-status { grid-column: auto; }
       #compact-damage-calculator .profile-actions .btn,
       #compact-damage-calculator #cdc-run-verification { width: 100%; }
       #compact-damage-calculator .verification-toolbar #cdc-run-status {
         grid-column: auto;
         min-height: 1.25em;
       }
+      #compact-damage-calculator summary,
+      #compact-damage-calculator .workflow-heading { background-image: none; }
+      #compact-damage-calculator .section-code { display: none; }
     }
     @media (min-width: 1100px) {
       #compact-damage-calculator .main-workspace { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
@@ -1077,7 +1348,29 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
   &lt;/style&gt;
 
+  &lt;header class=&quot;app-masthead&quot;&gt;
+    &lt;div class=&quot;brand-block&quot;&gt;
+      &lt;div class=&quot;brand-mark&quot; aria-hidden=&quot;true&quot;&gt;DBF&lt;/div&gt;
+      &lt;div class=&quot;brand-copy&quot;&gt;
+        &lt;h1&gt;Damage Bug Finder &lt;span&gt;for NTE&lt;/span&gt;&lt;/h1&gt;
+        &lt;p&gt;异环 NTE 数值验算器 · 离线数值诊断台&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;calculator-mode-field&quot;&gt;
+      &lt;div class=&quot;toolbar-label&quot;&gt;计算类型&lt;/div&gt;
+      &lt;div class=&quot;mode-row&quot; role=&quot;group&quot; aria-label=&quot;计算类型&quot;&gt;
+        &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-calculator-type=&quot;damage&quot; aria-pressed=&quot;true&quot;&gt;伤害计算&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-calculator-type=&quot;heal&quot; aria-pressed=&quot;false&quot;&gt;治疗计算&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;local-badge&quot;&gt;OFFLINE / LOCAL&lt;/div&gt;
+  &lt;/header&gt;
+
   &lt;div class=&quot;profile-bar&quot;&gt;
+    &lt;div class=&quot;profile-ident&quot;&gt;
+      &lt;strong&gt;角色档案&lt;/strong&gt;
+      &lt;span&gt;PROFILE&lt;/span&gt;
+    &lt;/div&gt;
     &lt;div class=&quot;profile-fields&quot;&gt;
       &lt;label class=&quot;form-label&quot;&gt;角色名称
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-character&quot; type=&quot;text&quot; value=&quot;测试角色&quot;&gt;
@@ -1098,16 +1391,8 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;div class=&quot;profile-status text-small result-meta&quot; id=&quot;cdc-profile-status&quot; aria-live=&quot;polite&quot;&gt;自动记忆当前草稿&lt;/div&gt;
   &lt;/div&gt;
 
-  &lt;div class=&quot;calculator-mode-field&quot;&gt;
-    &lt;div class=&quot;toolbar-label&quot;&gt;计算类型&lt;/div&gt;
-    &lt;div class=&quot;mode-row&quot; role=&quot;group&quot; aria-label=&quot;计算类型&quot;&gt;
-      &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-calculator-type=&quot;damage&quot; aria-pressed=&quot;true&quot;&gt;伤害计算&lt;/button&gt;
-      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-calculator-type=&quot;heal&quot; aria-pressed=&quot;false&quot;&gt;治疗计算&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-
   &lt;details open id=&quot;cdc-panel-section&quot;&gt;
-    &lt;summary&gt;角色与目标面板&lt;/summary&gt;
+    &lt;summary&gt;&lt;span class=&quot;section-index&quot;&gt;01&lt;/span&gt;&lt;span&gt;角色与目标面板&lt;/span&gt;&lt;span class=&quot;section-code&quot;&gt;BASELINE&lt;/span&gt;&lt;/summary&gt;
     &lt;div class=&quot;compact-fields&quot;&gt;
       &lt;label class=&quot;form-label&quot;&gt;非战斗面板攻击
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-panel&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;2000&quot;&gt;
@@ -1206,7 +1491,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   &lt;div class=&quot;main-workspace&quot;&gt;
   &lt;details open id=&quot;cdc-effect-section&quot;&gt;
-    &lt;summary&gt;Buff 区&lt;/summary&gt;
+    &lt;summary&gt;&lt;span class=&quot;section-index&quot;&gt;02&lt;/span&gt;&lt;span&gt;Buff 区&lt;/span&gt;&lt;span class=&quot;section-code&quot;&gt;VARIABLES&lt;/span&gt;&lt;/summary&gt;
     &lt;div class=&quot;compact-fields&quot;&gt;
       &lt;label class=&quot;form-check&quot; data-damage-only&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;cdc-infusion-enabled&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用浸染乘区&lt;/span&gt;&lt;/label&gt;
       &lt;label class=&quot;form-check&quot; data-damage-only&gt;&lt;input class=&quot;form-check-input&quot; id=&quot;cdc-special-enabled&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;form-check-label&quot;&gt;启用特殊独立乘区&lt;/span&gt;&lt;/label&gt;
@@ -1224,7 +1509,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   &lt;div class=&quot;skills-workspace&quot;&gt;
   &lt;details open id=&quot;cdc-skill-section&quot; data-damage-only&gt;
-    &lt;summary&gt;伤害技能、倍率与实测伤害&lt;/summary&gt;
+    &lt;summary&gt;&lt;span class=&quot;section-index&quot;&gt;03&lt;/span&gt;&lt;span&gt;伤害技能、倍率与实测伤害&lt;/span&gt;&lt;span class=&quot;section-code&quot;&gt;OBSERVED&lt;/span&gt;&lt;/summary&gt;
     &lt;div class=&quot;entry-list&quot; id=&quot;cdc-skills&quot;&gt;&lt;/div&gt;
     &lt;div class=&quot;pagination-bar&quot;&gt;
       &lt;button class=&quot;btn&quot; id=&quot;cdc-add-skill&quot; type=&quot;button&quot;&gt;添加伤害技能&lt;/button&gt;
@@ -1235,7 +1520,7 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/details&gt;
 
   &lt;details open id=&quot;cdc-heal-section&quot; data-heal-only hidden&gt;
-    &lt;summary&gt;治疗技能、倍率与实测治疗&lt;/summary&gt;
+    &lt;summary&gt;&lt;span class=&quot;section-index&quot;&gt;03&lt;/span&gt;&lt;span&gt;治疗技能、倍率与实测治疗&lt;/span&gt;&lt;span class=&quot;section-code&quot;&gt;OBSERVED&lt;/span&gt;&lt;/summary&gt;
     &lt;div class=&quot;entry-list&quot; id=&quot;cdc-heals&quot;&gt;&lt;/div&gt;
     &lt;div class=&quot;viz-controls&quot;&gt;
       &lt;button class=&quot;btn&quot; id=&quot;cdc-add-heal&quot; type=&quot;button&quot;&gt;添加治疗技能&lt;/button&gt;
@@ -1245,6 +1530,12 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/div&gt;
 
   &lt;div class=&quot;verification-panel&quot;&gt;
+  &lt;div class=&quot;workflow-heading&quot;&gt;
+    &lt;span class=&quot;section-index&quot;&gt;04&lt;/span&gt;
+    &lt;strong&gt;验算与溯源&lt;/strong&gt;
+    &lt;span&gt;&lt;/span&gt;
+    &lt;span class=&quot;section-code&quot;&gt;TRACE&lt;/span&gt;
+  &lt;/div&gt;
   &lt;div class=&quot;verification-toolbar&quot;&gt;
     &lt;div data-damage-only&gt;
       &lt;div class=&quot;toolbar-label&quot;&gt;验算模式&lt;/div&gt;
