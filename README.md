@@ -383,8 +383,6 @@ game-damage-calculator/
 └─ README.md
 ```
 
-`.venv`、`build*`、`dist*`、缓存及 Release ZIP 已由 `.gitignore` 排除。源码提交到仓库，Windows ZIP 应上传到 GitHub Release。
-
 ## License
 
 Copyright © 2026 DIEtype
