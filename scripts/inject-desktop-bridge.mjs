@@ -45,7 +45,11 @@ if (!html.includes(marker)) {
   const bridge = `<script ${marker}>
 (() => {
   const frame = document.querySelector('iframe');
-  const allowed = new Set(['get_capture_windows', 'capture_panel', 'recognize_uploaded_image']);
+  const allowed = new Set([
+    'get_capture_windows', 'capture_panel', 'recognize_uploaded_image',
+    'find_packet_capture_sidecars', 'choose_packet_capture_sidecar',
+    'start_packet_capture', 'poll_packet_capture', 'stop_packet_capture'
+  ]);
   let ready = Boolean(window.pywebview && window.pywebview.api);
 
   function notifyReady() {

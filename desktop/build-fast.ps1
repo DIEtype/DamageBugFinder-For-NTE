@@ -2,9 +2,9 @@ $ErrorActionPreference = 'Stop'
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $venvPython = Join-Path $projectRoot '.venv\Scripts\python.exe'
-$distDir = Join-Path $projectRoot 'dist'
-$workDir = Join-Path $projectRoot 'build'
-$specDir = Join-Path $projectRoot 'build-spec'
+$distDir = Join-Path $projectRoot 'dist-fast'
+$workDir = Join-Path $projectRoot 'build-fast'
+$specDir = Join-Path $projectRoot 'build-spec-fast'
 
 if (-not (Test-Path -LiteralPath $venvPython)) {
     throw 'Missing .venv. Follow the rebuild instructions in README.md first.'
@@ -28,7 +28,7 @@ if ($LASTEXITCODE -ne 0) {
 & $venvPython -m PyInstaller `
     --noconfirm `
     --clean `
-    --onefile `
+    --onedir `
     --windowed `
     --name 'DamageBugFinderForNTE' `
     --icon (Join-Path $projectRoot 'desktop\app.ico') `
@@ -42,4 +42,4 @@ if ($LASTEXITCODE -ne 0) {
     throw "PyInstaller failed with exit code $LASTEXITCODE"
 }
 
-Write-Host "Built: $distDir\DamageBugFinderForNTE.exe"
+Write-Host "Built fast-start folder: $distDir\DamageBugFinderForNTE"

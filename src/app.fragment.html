@@ -2,16 +2,130 @@
   <style>
     #compact-damage-calculator {
       display: grid;
-      gap: 12px;
+      gap: 10px;
       color: var(--foreground);
       min-width: 0;
       max-width: 100%;
-      --cdc-section-border: color-mix(in oklab, var(--foreground) 16%, transparent);
-      --cdc-section-bg: color-mix(in oklab, var(--foreground) 3.5%, transparent);
-      --cdc-heading-bg: color-mix(in oklab, var(--foreground) 6.5%, transparent);
-      --cdc-accent-bg: color-mix(in oklab, var(--primary) 8%, transparent);
+      min-height: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      background: light-dark(#eef0f4, #101217);
+      font-family: "Segoe UI Variable Text", "Microsoft YaHei UI", "Segoe UI", sans-serif;
+      --foreground: light-dark(#191c23, #eef1f5);
+      --muted-foreground: light-dark(#646b78, #9097a4);
+      --primary: light-dark(#c92f69, #ef5b91);
+      --primary-foreground: #ffffff;
+      --secondary: light-dark(#ffffff, #20242c);
+      --secondary-foreground: var(--foreground);
+      --input: light-dark(#cbd0d9, #353b47);
+      --border: light-dark(#d9dde4, #2d323c);
+      --ring: light-dark(#c92f69, #ef78a4);
+      --card: light-dark(#ffffff, #181b21);
+      --card-foreground: var(--foreground);
+      --popover: light-dark(#ffffff, #181b21);
+      --popover-foreground: var(--foreground);
+      --cdc-canvas: light-dark(#eef0f4, #101217);
+      --cdc-panel: light-dark(#ffffff, #181b21);
+      --cdc-panel-raised: light-dark(#ffffff, #1c2027);
+      --cdc-section-border: light-dark(#d4d8e0, #303641);
+      --cdc-heading-bg: light-dark(#f4f5f8, #15181e);
+      --cdc-entry-bg: light-dark(#f7f8fa, #14171c);
+      --cdc-accent-bg: color-mix(in oklab, var(--primary) 9%, var(--cdc-panel));
+      --cdc-tick: color-mix(in oklab, var(--foreground) 18%, transparent);
+      --cdc-font-display: "Bahnschrift SemiCondensed", "Microsoft YaHei UI", sans-serif;
+      --cdc-font-data: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+      --zone-base: #a96a2d;
+      --zone-attack: #d58a24;
+      --zone-defense: #397fc1;
+      --zone-resistance: #278f87;
+      --zone-damage: #8562bd;
+      --zone-skill: #c45d73;
+      --zone-fusion: #258ba5;
+      --zone-dot: #369260;
+      --zone-crit: #d24a58;
+      --zone-independent: #737b88;
     }
     #compact-damage-calculator [hidden] { display: none !important; }
+    #compact-damage-calculator .app-masthead {
+      display: grid;
+      grid-template-columns: minmax(330px, 1fr) minmax(300px, 420px) max-content max-content;
+      gap: 14px;
+      align-items: center;
+      min-width: 0;
+      padding: 4px 4px 8px;
+      border-bottom: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    #compact-damage-calculator .brand-mark {
+      display: grid;
+      width: 46px;
+      height: 38px;
+      flex: 0 0 46px;
+      place-content: center;
+      border: 1px solid color-mix(in oklab, var(--primary) 62%, var(--cdc-section-border));
+      border-radius: 6px 12px 6px 6px;
+      color: var(--primary);
+      background:
+        linear-gradient(135deg, color-mix(in oklab, var(--primary) 14%, transparent), transparent 58%),
+        var(--cdc-panel);
+      font: 700 15px/1 var(--cdc-font-display);
+      letter-spacing: .08em;
+      box-shadow: inset 0 -3px 0 color-mix(in oklab, var(--primary) 74%, transparent);
+    }
+    #compact-damage-calculator .brand-copy { min-width: 0; }
+    #compact-damage-calculator .brand-copy h1 {
+      overflow: hidden;
+      font: 650 clamp(18px, 1.45vw, 23px)/1.05 var(--cdc-font-display);
+      letter-spacing: .015em;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .brand-copy h1 span { color: var(--primary); }
+    #compact-damage-calculator .brand-copy p {
+      margin-top: 3px;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      letter-spacing: .08em;
+    }
+    #compact-damage-calculator .local-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 999px;
+      color: var(--muted-foreground);
+      background: var(--cdc-panel);
+      font: 600 10px/1 var(--cdc-font-data);
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .local-badge::before,
+    #compact-damage-calculator #cdc-run-status::before {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #36b89a;
+      box-shadow: 0 0 0 3px color-mix(in oklab, #36b89a 16%, transparent);
+      content: "";
+    }
+    #compact-damage-calculator .capture-entry {
+      min-height: 30px;
+      border-color: color-mix(in oklab, var(--primary) 46%, var(--cdc-section-border));
+      color: var(--primary);
+      background: var(--cdc-panel);
+      font: 650 10px/1 var(--cdc-font-data);
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .masthead-tools { display: flex; gap: 7px; align-items: center; }
     #compact-damage-calculator .compact-fields {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
@@ -25,40 +139,105 @@
     #compact-damage-calculator details {
       overflow: clip;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
-      padding: 0 10px 10px;
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      padding: 0 12px 11px;
+      box-shadow: 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent);
     }
     #compact-damage-calculator summary {
+      display: grid;
+      grid-template-columns: max-content max-content minmax(72px, 1fr) max-content;
+      gap: 9px;
+      align-items: center;
       cursor: pointer;
-      font-weight: 600;
-      margin: 0 -10px 10px;
-      padding: 8px 10px;
+      min-height: 38px;
+      margin: 0 -12px 10px;
+      padding: 7px 11px;
       background: var(--cdc-heading-bg);
-      border-left: 3px solid var(--primary);
       border-bottom: 1px solid var(--cdc-section-border);
+      background-image: repeating-linear-gradient(90deg, transparent 0 11px, var(--cdc-tick) 11px 12px);
+      background-repeat: no-repeat;
+      background-position: calc(100% - 70px) center;
+      background-size: min(22%, 170px) 5px;
+      font: 650 15px/1 var(--cdc-font-display);
+      list-style: none;
     }
+    #compact-damage-calculator summary::-webkit-details-marker { display: none; }
+    #compact-damage-calculator summary::after {
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-content: center;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 5px;
+      color: var(--muted-foreground);
+      background: var(--cdc-panel);
+      content: "−";
+      font: 500 14px/1 var(--cdc-font-data);
+    }
+    #compact-damage-calculator details:not([open]) > summary::after { content: "+"; }
     #compact-damage-calculator details:not([open]) { padding-bottom: 0; }
     #compact-damage-calculator details:not([open]) > summary { margin-bottom: 0; border-bottom: 0; }
-    #compact-damage-calculator summary::marker { color: var(--primary); }
-    #compact-damage-calculator .section-label {
-      font-weight: 600;
-      margin: 10px 0 8px;
+    #compact-damage-calculator .section-index {
+      display: inline-grid;
+      min-width: 28px;
+      min-height: 22px;
+      place-content: center;
+      border-radius: 4px;
+      color: var(--primary-foreground);
+      background: var(--primary);
+      font: 700 10px/1 var(--cdc-font-data);
+      letter-spacing: .06em;
+    }
+    #compact-damage-calculator .section-code {
       padding-left: 8px;
-      border-left: 3px solid var(--primary);
+      color: var(--muted-foreground);
+      font: 600 9px/1 var(--cdc-font-data);
+      letter-spacing: .13em;
+    }
+    #compact-damage-calculator .section-label {
+      margin: 11px 0 8px;
+      color: var(--muted-foreground);
+      font: 650 11px/1.3 var(--cdc-font-display);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    #compact-damage-calculator .section-label::before {
+      display: inline-block;
+      width: 14px;
+      height: 2px;
+      margin-right: 6px;
+      vertical-align: middle;
+      background: var(--primary);
+      content: "";
     }
     #compact-damage-calculator .profile-bar {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: max-content minmax(0, 1fr) auto;
       gap: 8px 12px;
       align-items: end;
       min-width: 0;
-      margin-top: 8px;
-      padding: 10px;
+      padding: 10px 12px;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
-      box-shadow: inset 3px 0 0 var(--primary);
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      box-shadow: inset 3px 0 0 var(--primary), 0 1px 0 color-mix(in oklab, var(--foreground) 4%, transparent);
+    }
+    #compact-damage-calculator .profile-ident {
+      display: grid;
+      align-self: center;
+      gap: 4px;
+      min-width: 82px;
+      padding-right: 12px;
+      border-right: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator .profile-ident strong {
+      font: 650 14px/1 var(--cdc-font-display);
+    }
+    #compact-damage-calculator .profile-ident span {
+      color: var(--muted-foreground);
+      font: 600 9px/1 var(--cdc-font-data);
+      letter-spacing: .12em;
     }
     #compact-damage-calculator .profile-fields {
       display: grid;
@@ -76,7 +255,7 @@
     #compact-damage-calculator .profile-actions .btn,
     #compact-damage-calculator .mode-row .btn,
     #compact-damage-calculator #cdc-run-verification { min-height: 34px; white-space: nowrap; }
-    #compact-damage-calculator .profile-status { grid-column: 1 / -1; min-height: 1.25em; }
+    #compact-damage-calculator .profile-status { grid-column: 2 / -1; min-height: 1.25em; }
     #compact-damage-calculator .pagination-bar {
       display: grid;
       gap: 8px;
@@ -86,8 +265,24 @@
     #compact-damage-calculator .mode-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
+      gap: 3px;
       width: 100%;
+      padding: 3px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 8px;
+      background: var(--cdc-heading-bg);
+    }
+    #compact-damage-calculator .mode-row .btn {
+      width: 100%;
+      border-color: transparent;
+      border-radius: 5px;
+      background: transparent;
+      box-shadow: none;
+    }
+    #compact-damage-calculator .mode-row .btn.btn-primary {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      box-shadow: 0 2px 8px color-mix(in oklab, var(--primary) 20%, transparent);
     }
     #compact-damage-calculator .toolbar-label {
       min-height: 1.25em;
@@ -98,8 +293,7 @@
     }
     #compact-damage-calculator .calculator-mode-field {
       box-sizing: border-box;
-      width: min(520px, 100%);
-      padding: 0 10px;
+      width: 100%;
     }
     #compact-damage-calculator .verification-toolbar {
       display: grid;
@@ -114,7 +308,52 @@
       min-height: 34px;
       display: flex;
       align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 6px;
+      background: var(--cdc-panel);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+    #compact-damage-calculator #cdc-search-scope-note { grid-column: 1 / -1; }
+    #compact-damage-calculator .form-label,
+    #compact-damage-calculator .toolbar-label {
+      font-size: 12px;
+      font-weight: 520;
+      letter-spacing: .01em;
+    }
+    #compact-damage-calculator :is(.form-control, .form-select) {
+      min-height: 32px;
+      border-color: var(--input);
+      border-radius: 6px;
+      background-color: var(--cdc-panel-raised);
+    }
+    #compact-damage-calculator :is(.form-control, .form-select):hover { border-color: color-mix(in oklab, var(--foreground) 32%, var(--input)); }
+    #compact-damage-calculator :is(.form-control, .form-select):focus-visible {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--ring) 18%, transparent);
+    }
+    #compact-damage-calculator input[type="number"],
+    #compact-damage-calculator .numeric,
+    #compact-damage-calculator .result-main,
+    #compact-damage-calculator #cdc-rage-values { font-family: var(--cdc-font-data); }
+    #compact-damage-calculator .btn {
+      border-radius: 6px;
+      font-weight: 560;
+      transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease, transform 120ms ease;
+    }
+    #compact-damage-calculator .btn-primary {
+      border-color: transparent;
+      color: var(--primary-foreground);
+      background: var(--primary);
+    }
+    #compact-damage-calculator .btn-primary:not(:disabled):hover {
+      background: color-mix(in oklab, var(--primary) 86%, white);
+      transform: translateY(-1px);
+    }
+    #compact-damage-calculator .btn:focus-visible { outline-color: var(--ring); }
     #compact-damage-calculator .numeric,
     #compact-damage-calculator .result-main { font-variant-numeric: tabular-nums; }
     #compact-damage-calculator .result-meta,
@@ -125,14 +364,207 @@
       grid-template-columns: repeat(auto-fit, minmax(min(138px, 100%), 1fr));
       gap: 8px 12px;
       align-items: end;
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
+      padding: 8px;
+      border: 1px solid color-mix(in oklab, var(--cdc-section-border) 76%, transparent);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
       min-width: 0;
     }
     #compact-damage-calculator .entry-row > * { min-width: 0; }
     #compact-damage-calculator .entry-row input,
     #compact-damage-calculator .entry-row select { max-width: 100%; }
+    #compact-damage-calculator .effect-row { grid-template-columns: 1fr; gap: 8px; }
+    #compact-damage-calculator .special-effect-picker {
+      display: grid;
+      grid-template-columns: minmax(120px, .75fr) minmax(0, 1.25fr);
+      gap: 8px 12px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+    #compact-damage-calculator .special-effect-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 8px;
+      background: var(--cdc-heading-bg);
+    }
+    #compact-damage-calculator .special-effect-options .btn {
+      min-height: 32px;
+      border-color: transparent;
+      border-radius: 5px;
+      background: transparent;
+    }
+    #compact-damage-calculator .special-effect-options .btn[aria-pressed="true"] {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      box-shadow: 0 2px 8px color-mix(in oklab, var(--primary) 22%, transparent);
+    }
+    #compact-damage-calculator .special-effect-card {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr) max-content;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 9px 11px;
+      border: 1px solid color-mix(in oklab, var(--primary) 44%, var(--cdc-section-border));
+      border-radius: 7px;
+      background:
+        linear-gradient(90deg, color-mix(in oklab, var(--primary) 10%, transparent), transparent 42%),
+        var(--cdc-entry-bg);
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+    #compact-damage-calculator .special-effect-card[hidden] { display: none; }
+    #compact-damage-calculator .special-effect-card strong { font: 650 14px/1 var(--cdc-font-display); }
+    #compact-damage-calculator .special-effect-formula {
+      color: var(--foreground);
+      font: 600 12px/1.35 var(--cdc-font-data);
+      font-variant-numeric: tabular-nums;
+    }
+    #compact-damage-calculator .special-effect-badge {
+      padding: 4px 7px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: color-mix(in oklab, var(--primary) 12%, transparent);
+      font: 650 9px/1 var(--cdc-font-data);
+      letter-spacing: .08em;
+    }
+    #compact-damage-calculator .effect-identity {
+      display: grid;
+      grid-template-columns: minmax(170px, 1fr) minmax(118px, max-content) max-content max-content minmax(132px, max-content) max-content;
+      gap: 8px;
+      align-items: end;
+      min-width: 0;
+    }
+    #compact-damage-calculator .effect-row[data-search-state="locked"] {
+      border-color: color-mix(in oklab, #2f9c82 58%, var(--cdc-section-border));
+      box-shadow: inset 3px 0 0 #2f9c82;
+    }
+    #compact-damage-calculator .effect-row[data-search-state="suspended"] {
+      border-color: color-mix(in oklab, var(--muted-foreground) 35%, var(--cdc-section-border));
+      background: color-mix(in oklab, var(--cdc-entry-bg) 78%, var(--cdc-heading-bg));
+      opacity: .64;
+    }
+    #compact-damage-calculator .effect-search-state .form-select {
+      font-weight: 650;
+    }
+    #compact-damage-calculator .effect-row[data-search-state="locked"] .effect-search-state .form-select { color: #217762; }
+    #compact-damage-calculator .effect-row[data-search-state="suspended"] .effect-search-state .form-select { color: var(--muted-foreground); }
+    #compact-damage-calculator .effect-stack-settings {
+      display: grid;
+      grid-template-columns: minmax(190px, 1fr) minmax(120px, .55fr) minmax(100px, .45fr) minmax(100px, .45fr);
+      gap: 8px;
+      align-items: end;
+      padding: 7px 8px;
+      border-left: 2px solid color-mix(in oklab, var(--primary) 70%, var(--cdc-section-border));
+      border-radius: 0 6px 6px 0;
+      background: color-mix(in oklab, var(--primary) 5%, var(--cdc-panel));
+    }
+    #compact-damage-calculator .effect-stack-settings[hidden] { display: none; }
+    #compact-damage-calculator .effect-stack-note {
+      align-self: center;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    #compact-damage-calculator .effect-stack-toggle {
+      align-self: end;
+      min-height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 6px;
+      background: var(--cdc-panel);
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .effect-values {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+      gap: 6px;
+      align-items: end;
+      min-width: 0;
+    }
+    #compact-damage-calculator .effect-priority {
+      align-self: end;
+      min-height: 32px;
+      padding: 0 8px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 6px;
+      background: var(--cdc-panel);
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .effect-scope-button {
+      min-width: 138px;
+      min-height: 32px;
+      justify-content: flex-start;
+      color: var(--muted-foreground);
+      font-size: 11px;
+    }
+    #compact-damage-calculator .effect-scope-button::before {
+      width: 6px;
+      height: 6px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--primary);
+      content: "";
+    }
+    #compact-damage-calculator .skill-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 8px;
+      align-items: center;
+      align-self: end;
+      min-height: 32px;
+    }
+    #compact-damage-calculator .damage-tag {
+      display: inline-flex;
+      margin-left: 6px;
+      padding: 2px 5px;
+      border: 1px solid color-mix(in oklab, var(--primary) 45%, var(--cdc-section-border));
+      border-radius: 4px;
+      color: var(--primary);
+      background: color-mix(in oklab, var(--primary) 8%, transparent);
+      font: 650 9px/1.2 var(--cdc-font-display);
+      letter-spacing: .04em;
+      vertical-align: middle;
+    }
     #compact-damage-calculator .detail-value { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    #compact-damage-calculator .formula-trace {
+      display: flex;
+      grid-column: 1 / -1;
+      gap: 5px;
+      align-items: stretch;
+      padding-top: 7px;
+      overflow-x: auto;
+      border-top: 1px dashed var(--cdc-section-border);
+      scrollbar-width: thin;
+    }
+    #compact-damage-calculator .formula-factor {
+      --factor-color: var(--zone-independent);
+      display: inline-grid;
+      min-width: max-content;
+      gap: 2px;
+      padding: 5px 7px;
+      border: 1px solid color-mix(in oklab, var(--factor-color) 48%, var(--cdc-section-border));
+      border-radius: 5px;
+      color: color-mix(in oklab, var(--factor-color) 82%, var(--foreground));
+      background: color-mix(in oklab, var(--factor-color) 9%, var(--cdc-panel));
+      font-family: var(--cdc-font-data);
+      font-variant-numeric: tabular-nums;
+    }
+    #compact-damage-calculator .formula-factor small { color: var(--muted-foreground); font: 600 9px/1.1 var(--cdc-font-display); letter-spacing: .035em; }
+    #compact-damage-calculator .formula-factor strong { font-size: 11px; font-weight: 700; }
+    #compact-damage-calculator .formula-times { align-self: center; color: var(--muted-foreground); font: 650 12px/1 var(--cdc-font-data); }
+    #compact-damage-calculator .factor-base { --factor-color: var(--zone-base); }
+    #compact-damage-calculator .factor-attack { --factor-color: var(--zone-attack); }
+    #compact-damage-calculator .factor-defense { --factor-color: var(--zone-defense); }
+    #compact-damage-calculator .factor-resistance { --factor-color: var(--zone-resistance); }
+    #compact-damage-calculator .factor-damage { --factor-color: var(--zone-damage); }
+    #compact-damage-calculator .factor-skill { --factor-color: var(--zone-skill); }
+    #compact-damage-calculator .factor-fusion { --factor-color: var(--zone-fusion); }
+    #compact-damage-calculator .factor-dot { --factor-color: var(--zone-dot); }
+    #compact-damage-calculator .factor-crit { --factor-color: var(--zone-crit); }
+    #compact-damage-calculator .factor-independent { --factor-color: var(--zone-independent); }
     #compact-damage-calculator .main-workspace {
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
@@ -153,30 +585,62 @@
     #compact-damage-calculator .verification-panel {
       display: grid;
       gap: 10px;
-      padding: 10px;
-      border: 1px solid color-mix(in oklab, var(--primary) 32%, var(--cdc-section-border));
-      border-radius: 10px;
+      padding: 0 12px 11px;
+      overflow: hidden;
+      border: 1px solid color-mix(in oklab, var(--primary) 38%, var(--cdc-section-border));
+      border-radius: 9px;
       background: var(--cdc-accent-bg);
     }
+    #compact-damage-calculator .workflow-heading {
+      display: grid;
+      grid-template-columns: max-content minmax(0, max-content) minmax(72px, 1fr) max-content;
+      gap: 9px;
+      align-items: center;
+      min-height: 38px;
+      margin: 0 -12px;
+      padding: 7px 11px;
+      border-bottom: 1px solid color-mix(in oklab, var(--primary) 25%, var(--cdc-section-border));
+      background:
+        repeating-linear-gradient(90deg, transparent 0 11px, var(--cdc-tick) 11px 12px) calc(100% - 60px) center / min(22%, 170px) 5px no-repeat,
+        color-mix(in oklab, var(--primary) 7%, var(--cdc-heading-bg));
+    }
+    #compact-damage-calculator .workflow-heading strong { font: 650 15px/1 var(--cdc-font-display); }
+    #compact-damage-calculator #cdc-run-verification {
+      min-width: 150px;
+      box-shadow: 0 5px 16px color-mix(in oklab, var(--primary) 22%, transparent);
+    }
     #compact-damage-calculator .result-row > .card {
+      position: relative;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      box-shadow: inset 3px 0 0 color-mix(in oklab, var(--primary) 72%, var(--foreground));
+      border-radius: 9px;
+      background: var(--cdc-panel);
+      box-shadow: none;
+    }
+    #compact-damage-calculator .result-row > .card::before {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: var(--primary);
+      content: "";
+    }
+    #compact-damage-calculator .result-row .viz-stat-value {
+      margin: 4px 0 2px;
+      font: 650 clamp(17px, 1.35vw, 22px)/1.2 var(--cdc-font-data);
+      letter-spacing: -.035em;
     }
     #compact-damage-calculator .result-panel {
       min-width: 0;
-      padding: 0 10px 10px;
+      padding: 0 12px 11px;
       border: 1px solid var(--cdc-section-border);
-      border-radius: 10px;
-      background: var(--cdc-section-bg);
+      border-radius: 9px;
+      background: var(--cdc-panel);
     }
     #compact-damage-calculator .result-panel > .section-label {
-      margin: 0 -10px 10px;
-      padding: 8px 10px;
+      margin: 0 -12px 10px;
+      padding: 10px 12px;
       background: var(--cdc-heading-bg);
-      border-left: 3px solid var(--primary);
       border-bottom: 1px solid var(--cdc-section-border);
-      border-radius: 9px 9px 0 0;
+      border-radius: 8px 8px 0 0;
     }
     #compact-damage-calculator #cdc-ocr-dialog {
       width: min(1120px, calc(100vw - 40px));
@@ -185,10 +649,124 @@
       color: var(--popover-foreground);
       background: var(--popover);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 9px;
       padding: 16px;
     }
-    #compact-damage-calculator #cdc-ocr-dialog::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
+    #compact-damage-calculator #cdc-effect-scope-dialog {
+      width: min(620px, calc(100vw - 40px));
+      max-width: none;
+      color: var(--popover-foreground);
+      background: var(--popover);
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 9px;
+      padding: 16px;
+    }
+    #compact-damage-calculator #cdc-capture-dialog {
+      width: min(1320px, calc(100vw - 40px));
+      max-width: none;
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      overflow: hidden;
+      color: var(--popover-foreground);
+      background: var(--popover);
+      border: 1px solid color-mix(in oklab, var(--primary) 34%, var(--cdc-section-border));
+      border-radius: 10px;
+    }
+    #compact-damage-calculator #cdc-formula-dialog {
+      width: min(1180px, calc(100vw - 40px));
+      max-width: none;
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      overflow: hidden;
+      color: var(--popover-foreground);
+      background: var(--popover);
+      border: 1px solid color-mix(in oklab, var(--zone-fusion) 42%, var(--cdc-section-border));
+      border-radius: 10px;
+    }
+    #compact-damage-calculator :is(#cdc-ocr-dialog, #cdc-effect-scope-dialog, #cdc-capture-dialog, #cdc-formula-dialog)::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
+    #compact-damage-calculator .formula-dialog-header,
+    #compact-damage-calculator .formula-dialog-footer {
+      display: flex;
+      gap: 8px 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--cdc-section-border);
+      background: color-mix(in oklab, var(--zone-fusion) 7%, var(--cdc-heading-bg));
+    }
+    #compact-damage-calculator .formula-dialog-body {
+      display: grid;
+      grid-template-columns: minmax(240px, .58fr) minmax(0, 1.42fr);
+      gap: 12px;
+      max-height: calc(100vh - 176px);
+      padding: 12px 16px;
+      overflow: auto;
+    }
+    #compact-damage-calculator .formula-dialog-footer { border-top: 1px solid var(--cdc-section-border); border-bottom: 0; background: var(--cdc-heading-bg); }
+    #compact-damage-calculator .formula-settings,
+    #compact-damage-calculator .formula-catalog,
+    #compact-damage-calculator .formula-rule-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .formula-settings { align-self: start; }
+    #compact-damage-calculator .formula-setting-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    #compact-damage-calculator .formula-catalog { display: grid; gap: 8px; }
+    #compact-damage-calculator .formula-card {
+      display: grid;
+      gap: 6px;
+      padding: 8px;
+      border: 1px solid var(--cdc-section-border);
+      border-left: 3px solid var(--zone-independent);
+      border-radius: 6px;
+      background: var(--cdc-panel);
+    }
+    #compact-damage-calculator .formula-card[data-model="creation"] { border-left-color: var(--zone-fusion); }
+    #compact-damage-calculator .formula-card[data-model="turbid"] { border-left-color: var(--zone-dot); }
+    #compact-damage-calculator .formula-card h3 { margin: 0; font: 650 13px/1.2 var(--cdc-font-display); }
+    #compact-damage-calculator .formula-card .formula-trace { padding-top: 0; border-top: 0; }
+    #compact-damage-calculator .formula-rule-card { grid-column: 1 / -1; overflow-x: auto; }
+    #compact-damage-calculator .formula-rule-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 10px; }
+    #compact-damage-calculator .formula-rule-table th,
+    #compact-damage-calculator .formula-rule-table td { padding: 6px; border-bottom: 1px solid var(--cdc-section-border); text-align: center; }
+    #compact-damage-calculator .formula-rule-table th:first-child,
+    #compact-damage-calculator .formula-rule-table td:first-child { position: sticky; left: 0; text-align: left; background: var(--cdc-entry-bg); }
+    #compact-damage-calculator .rule-yes { color: #24866a; font-weight: 700; }
+    #compact-damage-calculator .rule-no { color: var(--muted-foreground); }
+    #compact-damage-calculator .rule-explicit { color: var(--zone-damage); font-weight: 700; }
+    #compact-damage-calculator .scope-dialog-header,
+    #compact-damage-calculator .scope-dialog-footer {
+      display: flex;
+      gap: 8px 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #compact-damage-calculator .scope-dialog-header { margin-bottom: 14px; }
+    #compact-damage-calculator .scope-dialog-footer { margin-top: 14px; justify-content: flex-end; }
+    #compact-damage-calculator .scope-mode-field { max-width: 320px; }
+    #compact-damage-calculator .scope-skill-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      max-height: 280px;
+      margin-top: 10px;
+      padding: 8px;
+      overflow: auto;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .scope-skill-option {
+      min-width: 0;
+      padding: 6px 8px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      background: var(--cdc-panel);
+    }
+    #compact-damage-calculator .scope-skill-option span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #compact-damage-calculator .ocr-header,
     #compact-damage-calculator .ocr-capture-bar,
     #compact-damage-calculator .ocr-footer {
@@ -210,6 +788,270 @@
     #compact-damage-calculator .ocr-preview img { display: block; width: 100%; height: auto; }
     #compact-damage-calculator .ocr-table-wrap { max-height: 42vh; overflow: auto; }
     #compact-damage-calculator .ocr-footer { margin-top: 12px; }
+    #compact-damage-calculator .capture-header,
+    #compact-damage-calculator .capture-control-bar,
+    #compact-damage-calculator .capture-marker-bar,
+    #compact-damage-calculator .capture-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: end;
+      justify-content: space-between;
+    }
+    #compact-damage-calculator .capture-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--cdc-section-border);
+      background: color-mix(in oklab, var(--primary) 7%, var(--cdc-heading-bg));
+    }
+    #compact-damage-calculator .capture-body {
+      display: grid;
+      gap: 10px;
+      max-height: calc(100vh - 190px);
+      padding: 12px 16px;
+      overflow: auto;
+    }
+    #compact-damage-calculator .capture-control-bar,
+    #compact-damage-calculator .capture-marker-bar {
+      justify-content: flex-start;
+      padding: 9px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .capture-sidecar-field { flex: 1 1 420px; min-width: 260px; }
+    #compact-damage-calculator .capture-marker-field { flex: 1 1 260px; min-width: 200px; }
+    #compact-damage-calculator .capture-status {
+      display: inline-flex;
+      min-height: 32px;
+      align-items: center;
+      gap: 7px;
+      padding: 0 9px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 999px;
+      color: var(--muted-foreground);
+      background: var(--cdc-panel);
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .capture-status::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #9097a4;
+      content: "";
+    }
+    #compact-damage-calculator .capture-status[data-state="capturing"]::before { background: #36b89a; box-shadow: 0 0 0 3px color-mix(in oklab, #36b89a 16%, transparent); }
+    #compact-damage-calculator .raw-event-toolbar {
+      display: grid;
+      grid-template-columns: minmax(180px, .62fr) minmax(180px, .62fr) minmax(210px, .72fr) minmax(0, 1.1fr) max-content;
+      gap: 8px 12px;
+      align-items: end;
+      padding: 9px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px 7px 0 0;
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .raw-event-filter { max-width: 260px; }
+    #compact-damage-calculator .raw-event-character { max-width: 240px; }
+    #compact-damage-calculator .raw-event-target { max-width: 280px; }
+    #compact-damage-calculator .raw-event-preview {
+      display: grid;
+      min-height: 96px;
+      max-height: 280px;
+      overflow: auto;
+      border: 1px solid var(--cdc-section-border);
+      border-top: 0;
+      border-radius: 0 0 7px 7px;
+      background: var(--cdc-panel);
+    }
+    #compact-damage-calculator .raw-event-row {
+      display: grid;
+      grid-template-columns: 24px 68px 54px minmax(150px, .75fr) 74px minmax(190px, 1.25fr) 34px;
+      gap: 8px;
+      align-items: center;
+      min-width: 720px;
+      padding: 7px 9px;
+      border-left: 3px solid #9097a4;
+      border-bottom: 1px solid var(--cdc-section-border);
+    }
+    #compact-damage-calculator .raw-event-row:last-child { border-bottom: 0; }
+    #compact-damage-calculator .raw-event-row[data-category="action"] { border-left-color: #a65bd7; }
+    #compact-damage-calculator .raw-event-row[data-category="effect"] { border-left-color: #e48b3f; }
+    #compact-damage-calculator .raw-event-row[data-category="carrier"] { border-left-color: #278ca4; background: color-mix(in oklab, #278ca4 5%, var(--cdc-panel)); }
+    #compact-damage-calculator .raw-event-select { justify-content: center; }
+    #compact-damage-calculator .raw-event-name { overflow: hidden; font: 650 12px/1.25 var(--cdc-font-data); text-overflow: ellipsis; white-space: nowrap; }
+    #compact-damage-calculator .raw-event-link { display: block; overflow: hidden; color: #278ca4; font: 600 9px/1.3 var(--cdc-font-data); text-overflow: ellipsis; }
+    #compact-damage-calculator .raw-event-direction,
+    #compact-damage-calculator .raw-event-kind {
+      color: var(--muted-foreground);
+      font: 650 9px/1 var(--cdc-font-display);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    #compact-damage-calculator .raw-event-direction[data-direction="C2S"] { color: #7b4fc4; }
+    #compact-damage-calculator .raw-event-direction[data-direction="S2C"] { color: #16785f; }
+    #compact-damage-calculator .raw-event-candidates { display: flex; gap: 4px; overflow: hidden; }
+    #compact-damage-calculator .raw-event-candidate {
+      flex: 0 0 auto;
+      padding: 3px 5px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 4px;
+      color: var(--muted-foreground);
+      background: var(--cdc-entry-bg);
+      font: 10px/1 var(--cdc-font-data);
+    }
+    #compact-damage-calculator .raw-event-candidate.is-match {
+      border-color: color-mix(in oklab, #e48b3f 62%, var(--cdc-section-border));
+      color: #a85616;
+      background: color-mix(in oklab, #e48b3f 14%, var(--cdc-panel));
+      font-weight: 700;
+    }
+    #compact-damage-calculator .raw-event-copy { width: 30px; min-height: 26px; padding: 0; }
+    #compact-damage-calculator .core-audit-panel {
+      overflow: hidden;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-panel);
+    }
+    #compact-damage-calculator .core-audit-panel > summary {
+      display: flex;
+      min-height: 38px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border: 0;
+      border-left: 3px solid #6659b8;
+      color: var(--foreground);
+      background: color-mix(in oklab, #6659b8 6%, var(--cdc-heading-bg));
+      font: 650 11px/1.2 var(--cdc-font-display);
+      letter-spacing: .035em;
+      cursor: pointer;
+    }
+    #compact-damage-calculator .core-audit-panel[open] > summary { border-bottom: 1px solid var(--cdc-section-border); }
+    #compact-damage-calculator .core-audit-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 7px 12px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--cdc-section-border);
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .core-audit-file {
+      min-width: 0;
+      overflow: hidden;
+      font: 10px/1.3 var(--cdc-font-data);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .core-audit-preview { display: grid; max-height: 240px; overflow: auto; }
+    #compact-damage-calculator .core-audit-row { border-bottom: 1px solid var(--cdc-section-border); }
+    #compact-damage-calculator .core-audit-row:last-child { border-bottom: 0; }
+    #compact-damage-calculator .core-audit-row > summary {
+      display: grid;
+      grid-template-columns: 74px minmax(170px, .7fr) minmax(0, 1.3fr);
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 10px;
+      border: 0;
+      color: var(--foreground);
+      background: var(--cdc-panel);
+      cursor: pointer;
+    }
+    #compact-damage-calculator .core-audit-row[open] > summary { background: color-mix(in oklab, #6659b8 5%, var(--cdc-panel)); }
+    #compact-damage-calculator .core-audit-method { overflow: hidden; font: 650 11px/1.25 var(--cdc-font-data); text-overflow: ellipsis; white-space: nowrap; }
+    #compact-damage-calculator .core-audit-identifiers { display: flex; gap: 4px; overflow: hidden; }
+    #compact-damage-calculator .core-audit-chip {
+      flex: 0 0 auto;
+      max-width: 240px;
+      overflow: hidden;
+      padding: 3px 5px;
+      border: 1px solid color-mix(in oklab, #6659b8 30%, var(--cdc-section-border));
+      border-radius: 4px;
+      color: #554a9c;
+      background: color-mix(in oklab, #6659b8 8%, var(--cdc-panel));
+      font: 9px/1 var(--cdc-font-data);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .core-audit-detail {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      padding: 8px 10px 10px 92px;
+      color: var(--muted-foreground);
+      background: var(--cdc-entry-bg);
+      font: 9px/1.45 var(--cdc-font-data);
+    }
+    #compact-damage-calculator .core-audit-detail pre { max-height: 130px; margin: 0; overflow: auto; white-space: pre-wrap; }
+    #compact-damage-calculator .capture-timeline {
+      position: relative;
+      display: grid;
+      gap: 7px;
+      min-height: 120px;
+      padding-left: 20px;
+    }
+    #compact-damage-calculator .capture-timeline::before {
+      position: absolute;
+      inset: 5px auto 5px 6px;
+      width: 1px;
+      background: color-mix(in oklab, var(--primary) 42%, var(--cdc-section-border));
+      content: "";
+    }
+    #compact-damage-calculator .capture-event {
+      position: relative;
+      display: grid;
+      grid-template-columns: max-content minmax(170px, 1.15fr) minmax(180px, 1.45fr) max-content max-content minmax(210px, 1.2fr);
+      gap: 7px;
+      align-items: center;
+      min-width: 0;
+      padding: 7px 8px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-panel);
+    }
+    #compact-damage-calculator .capture-event::before {
+      position: absolute;
+      left: -18px;
+      width: 9px;
+      height: 9px;
+      border: 2px solid var(--popover);
+      border-radius: 50%;
+      background: var(--primary);
+      content: "";
+    }
+    #compact-damage-calculator .capture-event > * { min-width: 0; }
+    #compact-damage-calculator .capture-source { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #compact-damage-calculator .capture-ids { overflow: hidden; color: var(--muted-foreground); font: 10px/1.35 var(--cdc-font-data); text-overflow: ellipsis; white-space: nowrap; }
+    #compact-damage-calculator .capture-value { font: 650 14px/1 var(--cdc-font-data); text-align: right; }
+    #compact-damage-calculator .capture-hit-badge {
+      padding: 3px 6px;
+      border-radius: 4px;
+      color: #16785f;
+      background: color-mix(in oklab, #36b89a 12%, var(--cdc-panel));
+      font: 650 10px/1 var(--cdc-font-display);
+      white-space: nowrap;
+    }
+    #compact-damage-calculator .capture-hit-badge.is-multihit { color: #b56118; background: color-mix(in oklab, #e99a43 15%, var(--cdc-panel)); }
+    #compact-damage-calculator .capture-map {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 6px;
+      align-items: center;
+    }
+    #compact-damage-calculator .capture-map::before { color: var(--primary); content: "→"; font-family: var(--cdc-font-data); }
+    #compact-damage-calculator .capture-footer {
+      padding: 12px 16px;
+      border-top: 1px solid var(--cdc-section-border);
+      background: var(--cdc-heading-bg);
+    }
+    #compact-damage-calculator .capture-limit-note { padding: 8px 10px; border-left: 2px solid var(--primary); background: var(--cdc-accent-bg); }
+    @media (prefers-reduced-motion: reduce) {
+      #compact-damage-calculator .btn { transition: none; }
+      #compact-damage-calculator .btn-primary:not(:disabled):hover { transform: none; }
+    }
     @media (max-width: 520px) {
       #compact-damage-calculator .result-row { grid-template-columns: 1fr; }
       #compact-damage-calculator .ocr-preview { grid-template-columns: 1fr; }
@@ -217,34 +1059,62 @@
     @media (max-width: 1099px) {
       #compact-damage-calculator .main-workspace,
       #compact-damage-calculator .results-workspace { grid-template-columns: 1fr; }
-      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .app-masthead { grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); }
+      #compact-damage-calculator .local-badge { display: none; }
+      #compact-damage-calculator .masthead-tools { grid-column: 1 / -1; justify-self: end; }
+      #compact-damage-calculator .profile-bar { grid-template-columns: max-content minmax(0, 1fr); }
+      #compact-damage-calculator .profile-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-actions { grid-column: 1 / -1; }
       #compact-damage-calculator .profile-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-status { grid-column: 1 / -1; }
       #compact-damage-calculator .verification-toolbar {
         grid-template-columns: minmax(220px, .85fr) minmax(260px, 1.25fr) max-content;
       }
       #compact-damage-calculator .verification-toolbar #cdc-run-status { grid-column: 1 / -1; min-height: 1.25em; }
     }
     @media (max-width: 760px) {
+      #compact-damage-calculator { padding: 8px; }
+      #compact-damage-calculator .app-masthead { grid-template-columns: 1fr; }
+      #compact-damage-calculator .brand-copy h1 { white-space: normal; }
       #compact-damage-calculator .profile-fields,
       #compact-damage-calculator .verification-toolbar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-bar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .profile-ident { border-right: 0; border-bottom: 1px solid var(--cdc-section-border); padding: 0 0 8px; }
       #compact-damage-calculator .profile-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #compact-damage-calculator .profile-actions,
+      #compact-damage-calculator .profile-status { grid-column: auto; }
       #compact-damage-calculator .profile-actions .btn,
       #compact-damage-calculator #cdc-run-verification { width: 100%; }
+      #compact-damage-calculator .raw-event-toolbar { grid-template-columns: 1fr; }
+      #compact-damage-calculator .core-audit-row > summary { grid-template-columns: 68px minmax(0, 1fr); }
+      #compact-damage-calculator .core-audit-identifiers { grid-column: 2; }
+      #compact-damage-calculator .core-audit-detail { grid-template-columns: 1fr; padding-left: 10px; }
       #compact-damage-calculator .verification-toolbar #cdc-run-status {
         grid-column: auto;
         min-height: 1.25em;
       }
+      #compact-damage-calculator summary,
+      #compact-damage-calculator .workflow-heading { background-image: none; }
+      #compact-damage-calculator .section-code { display: none; }
+      #compact-damage-calculator .effect-identity { grid-template-columns: 1fr; }
+      #compact-damage-calculator .special-effect-picker,
+      #compact-damage-calculator .special-effect-card { grid-template-columns: 1fr; }
+      #compact-damage-calculator .effect-stack-settings { grid-template-columns: 1fr; }
+      #compact-damage-calculator .effect-scope-button { width: 100%; }
+      #compact-damage-calculator .scope-skill-list { grid-template-columns: 1fr; }
+      #compact-damage-calculator .formula-dialog-body { grid-template-columns: 1fr; }
+      #compact-damage-calculator .formula-setting-grid { grid-template-columns: 1fr; }
+      #compact-damage-calculator .capture-event { grid-template-columns: max-content 1fr max-content max-content; }
+      #compact-damage-calculator .capture-ids,
+      #compact-damage-calculator .capture-map { grid-column: 2 / -1; }
     }
     @media (min-width: 1100px) {
       #compact-damage-calculator .main-workspace { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
       #compact-damage-calculator #cdc-panel-section .compact-fields,
       #compact-damage-calculator #cdc-effect-section .compact-fields { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-      #compact-damage-calculator #cdc-effects .entry-row {
-        grid-template-columns: 1.2fr repeat(6, minmax(50px, .65fr)) minmax(70px, .8fr) minmax(50px, .65fr) auto;
-        gap: 6px;
-      }
+      #compact-damage-calculator #cdc-effects .effect-row { grid-template-columns: 1fr; gap: 8px; }
       #compact-damage-calculator #cdc-skills .entry-row {
-        grid-template-columns: 1.15fr minmax(82px, .9fr) minmax(56px, .7fr) minmax(72px, .85fr) auto auto auto;
+        grid-template-columns: 1.15fr minmax(82px, .85fr) minmax(72px, .72fr) minmax(56px, .65fr) minmax(72px, .8fr) minmax(110px, auto) auto;
         gap: 6px;
       }
       #compact-damage-calculator #cdc-heals .entry-row {
@@ -262,7 +1132,92 @@
     }
   </style>
 
+  <header class="app-masthead">
+    <div class="brand-block">
+      <div class="brand-mark" aria-hidden="true">DBF</div>
+      <div class="brand-copy">
+        <h1>Damage Bug Finder <span>for NTE</span></h1>
+        <p>异环 NTE 数值验算器 · 离线数值诊断台</p>
+      </div>
+    </div>
+    <div class="calculator-mode-field">
+      <div class="toolbar-label">计算类型</div>
+      <div class="mode-row" role="group" aria-label="计算类型">
+        <button class="btn btn-primary" type="button" data-calculator-type="damage" aria-pressed="true">伤害计算</button>
+        <button class="btn" type="button" data-calculator-type="heal" aria-pressed="false">治疗计算</button>
+      </div>
+    </div>
+    <div class="masthead-tools">
+      <button class="btn capture-entry" id="cdc-open-formula" type="button">公式 / FORMULA</button>
+      <button class="btn capture-entry" id="cdc-open-capture" type="button" hidden>抓包 / EVENT LEARN</button>
+    </div>
+    <div class="local-badge">OFFLINE / LOCAL</div>
+  </header>
+
+  <dialog id="cdc-formula-dialog">
+    <div class="formula-dialog-header">
+      <div>
+        <div class="section-label">公式检查与参数调整</div>
+        <div class="text-small result-meta">公式结构保持受控，只开放已确认的常量；修改会写入当前草稿和角色档案。</div>
+      </div>
+      <button class="btn btn-ghost" id="cdc-close-formula" type="button">关闭</button>
+    </div>
+    <div class="formula-dialog-body">
+      <section class="formula-settings">
+        <div class="section-label">可修改常量</div>
+        <div class="formula-setting-grid">
+          <label class="form-label">创生花固定基础值
+            <input class="form-control" id="cdc-formula-creation-base" type="number" min="0" step="1" value="9000">
+          </label>
+          <label class="form-label">浊燃固定基础值
+            <input class="form-control" id="cdc-formula-turbid-base" type="number" min="0" step="1" value="2700">
+          </label>
+          <label class="form-label">黯星固定基础值
+            <input class="form-control" id="cdc-formula-darkstar-base" type="number" min="0" step="1" value="45000">
+          </label>
+          <label class="form-label">环合强度除数
+            <input class="form-control" id="cdc-formula-fusion-divisor" type="number" min="1" step="1" value="600">
+          </label>
+          <label class="form-label">浸染 / 覆纹基础增伤（%）
+            <input class="form-control" id="cdc-formula-special-base-bonus" type="number" min="0" step="0.01" value="20">
+          </label>
+          <label class="form-label">浸染 / 覆纹环合除数
+            <input class="form-control" id="cdc-formula-special-fusion-divisor" type="number" min="1" step="1" value="1400">
+          </label>
+        </div>
+        <div class="verification-note text-small" id="cdc-formula-status">默认规则：创生花 9000；浊燃 2700；黯星 45000；环合修正为 1 + 最终环合强度 / 600。</div>
+        <div class="text-small result-meta">合法性：非战斗基础环合强度必须在 0～360；Buff 百分比与固定提升结算后的“最终环合强度”不设上限。</div>
+      </section>
+      <section class="formula-catalog" id="cdc-formula-catalog" aria-live="polite"></section>
+      <section class="formula-rule-card">
+        <div class="section-label">技能模型读取乘区</div>
+        <table class="formula-rule-table">
+          <thead><tr><th>模型</th><th>攻击</th><th>防御</th><th>抗性</th><th>常规增伤</th><th>技能倍率</th><th>环合修正</th><th>持续伤害</th><th>浸染/覆纹</th><th>暴击</th></tr></thead>
+          <tbody>
+            <tr><td>常规非持续</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-no">不读取</td><td class="rule-no">不读取</td><td class="rule-yes">按开关</td><td class="rule-yes">按勾选</td></tr>
+            <tr><td>常规持续伤害</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-yes">按开关</td><td class="rule-yes">按勾选</td></tr>
+            <tr><td>创生花</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-explicit">仅自定义点名</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-no">不读取</td><td class="rule-no">不读取</td><td class="rule-yes">按勾选</td></tr>
+            <tr><td>浊燃</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-explicit">仅自定义点名</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-yes">读取</td><td class="rule-no">不读取</td><td class="rule-yes">按勾选</td></tr>
+            <tr><td>黯星</td><td class="rule-no">不读取</td><td class="rule-no">固定 ×1</td><td class="rule-yes">读取</td><td class="rule-explicit">仅自定义点名</td><td class="rule-no">不读取</td><td class="rule-yes">读取</td><td class="rule-no">不读取</td><td class="rule-no">不读取</td><td class="rule-yes">按勾选</td></tr>
+          </tbody>
+        </table>
+        <div class="text-small result-meta">“仅自定义点名”表示 Buff 作用范围必须选择“自定义技能”并明确勾选该环合反应；“全部技能”、仅持续或仅非持续不会绕过环合反应的默认公式。</div>
+      </section>
+    </div>
+    <div class="formula-dialog-footer">
+      <span class="text-small result-meta">每次验算会在结果下方按同样颜色展开实际采用的乘区与数值。</span>
+      <div class="viz-controls">
+        <button class="btn btn-ghost" id="cdc-reset-formula" type="button">恢复默认公式</button>
+        <button class="btn btn-primary" id="cdc-apply-formula" type="button">应用公式参数</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="profile-bar">
+    <div class="profile-ident">
+      <strong>角色档案</strong>
+      <span>PROFILE</span>
+    </div>
     <div class="profile-fields">
       <label class="form-label">角色名称
         <input class="form-control" id="cdc-character" type="text" value="测试角色">
@@ -283,16 +1238,8 @@
     <div class="profile-status text-small result-meta" id="cdc-profile-status" aria-live="polite">自动记忆当前草稿</div>
   </div>
 
-  <div class="calculator-mode-field">
-    <div class="toolbar-label">计算类型</div>
-    <div class="mode-row" role="group" aria-label="计算类型">
-      <button class="btn btn-primary" type="button" data-calculator-type="damage" aria-pressed="true">伤害计算</button>
-      <button class="btn" type="button" data-calculator-type="heal" aria-pressed="false">治疗计算</button>
-    </div>
-  </div>
-
   <details open id="cdc-panel-section">
-    <summary>角色与目标面板</summary>
+    <summary><span class="section-index">01</span><span>角色与目标面板</span><span class="section-code">BASELINE</span></summary>
     <div class="compact-fields">
       <label class="form-label">非战斗面板攻击
         <input class="form-control" id="cdc-panel" type="number" min="0" step="0.01" value="2000">
@@ -389,18 +1336,135 @@
     </div>
   </dialog>
 
+  <dialog id="cdc-capture-dialog">
+    <div class="capture-header">
+      <div>
+        <div class="section-label">抓包与事件学习</div>
+        <div class="text-small result-meta">从游戏动作提取伤害证据，再把未知事件映射到现有技能或环合反应。</div>
+      </div>
+      <button class="btn btn-ghost" id="cdc-close-capture" type="button">关闭</button>
+    </div>
+    <div class="capture-body">
+      <div class="capture-control-bar">
+        <label class="form-label capture-sidecar-field">解析核心路径
+          <input class="form-control" id="cdc-capture-sidecar" type="text" placeholder="选择外部 nte-core.exe（本程序不会捆绑或下载）">
+        </label>
+        <button class="btn" id="cdc-choose-capture-sidecar" type="button">选择文件</button>
+        <button class="btn btn-primary" id="cdc-start-capture" type="button">开始抓包</button>
+        <button class="btn" id="cdc-stop-capture" type="button" disabled>停止</button>
+        <span class="capture-status text-small" id="cdc-capture-status" data-state="idle" aria-live="polite">尚未启动</span>
+      </div>
+      <div class="capture-marker-bar">
+        <label class="form-label capture-marker-field">本次游戏动作标记
+          <input class="form-control" id="cdc-capture-marker" type="text" placeholder="例如：真红 E 技能第 2 段">
+        </label>
+        <button class="btn" id="cdc-mark-capture-action" type="button">现在标记</button>
+        <span class="text-small result-meta" id="cdc-capture-marker-status">先标记，再在游戏内进行一次动作，便于识别未知事件。</span>
+      </div>
+      <div class="capture-limit-note text-small result-meta">
+        当前标准 Sidecar 输出的是短间隔累计摘要：单次增量只有 1 Hit 时可直接采用；同一次增量含多个 Hit 时仅保留为“多段合计”，不会写入单段验算。Buff apply/remove/stack 事件若核心未输出，也不会伪造推断。
+      </div>
+      <div class="section-label">原始事件预览 <span class="result-meta" id="cdc-raw-event-count">0 条</span></div>
+      <div class="raw-event-toolbar">
+        <label class="form-label raw-event-filter">游戏显示伤害（可选）
+          <input class="form-control" id="cdc-raw-event-damage" type="number" min="0" step="1" placeholder="输入后匹配 ±20">
+        </label>
+        <label class="form-label raw-event-character">角色/内部名筛选
+          <input class="form-control" id="cdc-raw-event-character" type="text" placeholder="例如 Zankou、Sagiri">
+        </label>
+        <label class="form-label raw-event-target">选中记录映射到
+          <select class="form-select" id="cdc-raw-event-target"></select>
+        </label>
+        <div class="text-small result-meta">ASC 是伤害同步载体，不等于技能来源。输入实测值后选择一次匹配记录，再结合动作标记或邻近 GA 建立映射。</div>
+        <label class="form-check text-small"><input class="form-check-input" id="cdc-show-system-events" type="checkbox"><span>显示其他系统字段</span></label>
+      </div>
+      <div class="raw-event-preview" id="cdc-raw-event-preview">
+        <div class="entry-row text-small result-meta">开始抓包后，Melee、Skill、Reaction、CritDamage、GA / GE 等可读名称会显示在这里。</div>
+      </div>
+      <details class="core-audit-panel" id="cdc-core-audit-panel" open>
+        <summary>
+          <span>CORE 通知审计（区别于原始包扫描）</span>
+          <span class="result-meta" id="cdc-core-audit-count">0 条</span>
+        </summary>
+        <div class="core-audit-toolbar">
+          <span class="core-audit-file result-meta" id="cdc-core-audit-file">开始抓包后自动保存 Core 主动上报的方法；运行状态始终显示，内容通知沿用角色关键词筛选。</span>
+          <div class="viz-controls">
+            <label class="form-check text-small"><input class="form-check-input" id="cdc-core-audit-show-summary" type="checkbox"><span>显示战斗摘要</span></label>
+            <button class="btn btn-ghost" id="cdc-copy-core-audit" type="button">复制筛选结果</button>
+            <button class="btn btn-ghost" id="cdc-clear-core-audit" type="button">清空显示</button>
+          </div>
+        </div>
+        <div class="entry-row text-small result-meta" id="cdc-core-audit-diagnostic">尚未收到 Core 通知。原始数据包中的 GA、GE、Default__Buff 等英文名称请在上方“原始事件预览”查看。</div>
+        <div class="core-audit-preview" id="cdc-core-audit-preview">
+          <div class="entry-row text-small result-meta">等待 core 发出通知。若重新登录后仍只有 battle.summary，说明当前接口没有导出 Buff 生命周期。</div>
+        </div>
+      </details>
+      <div class="section-label">伤害事件时间线</div>
+      <div class="capture-timeline" id="cdc-capture-timeline">
+        <div class="text-small result-meta">开始抓包后，新的伤害增量会显示在这里。</div>
+      </div>
+      <div class="section-label">Buff 事件</div>
+      <div class="entry-row text-small result-meta" id="cdc-capture-buff-events">当前标准接口尚未提供可靠的 Buff 生效、移除和层数事件；这一栏保留给后续逐包适配器。</div>
+      <div class="text-small result-meta" id="cdc-capture-diagnostics" aria-live="polite"></div>
+    </div>
+    <div class="capture-footer">
+      <button class="btn btn-ghost" id="cdc-clear-capture-events" type="button">清除本次事件</button>
+      <div class="viz-controls">
+        <button class="btn" id="cdc-import-capture-rage" type="button">送入狂暴溯源</button>
+        <button class="btn btn-primary" id="cdc-import-capture-normal" type="button">送入常规验算</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="cdc-effect-scope-dialog">
+    <div class="scope-dialog-header">
+      <div>
+        <div class="section-label">设置 Buff 作用范围</div>
+        <div class="text-small result-meta" id="cdc-scope-effect-name">选择该 Buff 可以影响的伤害技能</div>
+      </div>
+      <button class="btn btn-ghost" id="cdc-close-effect-scope" type="button">关闭</button>
+    </div>
+    <label class="form-label scope-mode-field">作用范围
+      <select class="form-select" id="cdc-effect-scope-mode">
+        <option value="all">全部伤害技能</option>
+        <option value="dot">仅持续伤害</option>
+        <option value="direct">仅非持续伤害</option>
+        <option value="custom">自定义选择技能</option>
+      </select>
+    </label>
+    <div class="text-small result-meta">默认作用于全部技能；选择 Tag 范围可以避免逐项勾选，只有自定义时才需要选择具体技能。</div>
+    <div class="scope-skill-list" id="cdc-effect-scope-skills" hidden></div>
+    <div class="scope-dialog-footer">
+      <button class="btn btn-ghost" id="cdc-cancel-effect-scope" type="button">取消</button>
+      <button class="btn btn-primary" id="cdc-apply-effect-scope" type="button">应用作用范围</button>
+    </div>
+  </dialog>
+
   <div class="main-workspace">
   <details open id="cdc-effect-section">
-    <summary>Buff 区</summary>
-    <div class="compact-fields">
-      <label class="form-check" data-damage-only><input class="form-check-input" id="cdc-infusion-enabled" type="checkbox"><span class="form-check-label">启用浸染乘区</span></label>
-      <label class="form-check" data-damage-only><input class="form-check-input" id="cdc-special-enabled" type="checkbox"><span class="form-check-label">启用特殊独立乘区</span></label>
-      <label class="form-label" id="cdc-special-field" hidden>特殊独立倍率（倍）
-        <input class="form-control" id="cdc-special-multiplier" type="number" min="0" step="0.01" value="1">
-      </label>
+    <summary><span class="section-index">02</span><span>Buff 区</span><span class="section-code">VARIABLES</span></summary>
+    <div class="special-effect-picker" data-damage-only>
+      <div>
+        <div class="section-label">特殊乘区</div>
+        <div class="text-small result-meta">浸染与覆纹使用同一公式，单次验算只能选择其一。</div>
+      </div>
+      <div class="special-effect-options" role="group" aria-label="特殊乘区">
+        <button class="btn" type="button" data-special-effect-option="none" aria-pressed="true">未启用</button>
+        <button class="btn" type="button" data-special-effect-option="infusion" aria-pressed="false">浸染</button>
+        <button class="btn" type="button" data-special-effect-option="overlay" aria-pressed="false">覆纹</button>
+      </div>
+    </div>
+    <div class="special-effect-card" id="cdc-special-effect-card" data-damage-only hidden>
+      <strong id="cdc-special-effect-name">浸染</strong>
+      <div>
+        <div class="special-effect-formula" id="cdc-special-effect-formula">独立倍率 = 1 + 20% + 最终环合强度 / 1400</div>
+        <div class="text-small result-meta">最终环合强度包含当前验算假设中生效的百分比与固定数值 Buff；基础面板仍限制为 0～360。</div>
+      </div>
+      <span class="special-effect-badge">SPECIAL BUFF</span>
     </div>
 
     <div class="section-label">候选效果（觉醒、被动、弧盘、共鸣、队友等 Buff）</div>
+    <div class="text-small result-meta">“高触发优先”是软排序；“锁定生效”必须进入相关公式，“挂起排除”完全不参与计算。程序只为当前技能公式实际读取的 Buff 建立搜索项。</div>
     <div class="entry-list" id="cdc-effects"></div>
     <div class="viz-controls">
       <button class="btn" id="cdc-add-effect" type="button">添加候选效果</button>
@@ -409,7 +1473,7 @@
 
   <div class="skills-workspace">
   <details open id="cdc-skill-section" data-damage-only>
-    <summary>伤害技能、倍率与实测伤害</summary>
+    <summary><span class="section-index">03</span><span>伤害技能、倍率与实测伤害</span><span class="section-code">OBSERVED</span></summary>
     <div class="entry-list" id="cdc-skills"></div>
     <div class="pagination-bar">
       <button class="btn" id="cdc-add-skill" type="button">添加伤害技能</button>
@@ -420,7 +1484,7 @@
   </details>
 
   <details open id="cdc-heal-section" data-heal-only hidden>
-    <summary>治疗技能、倍率与实测治疗</summary>
+    <summary><span class="section-index">03</span><span>治疗技能、倍率与实测治疗</span><span class="section-code">OBSERVED</span></summary>
     <div class="entry-list" id="cdc-heals"></div>
     <div class="viz-controls">
       <button class="btn" id="cdc-add-heal" type="button">添加治疗技能</button>
@@ -430,6 +1494,12 @@
   </div>
 
   <div class="verification-panel">
+  <div class="workflow-heading">
+    <span class="section-index">04</span>
+    <strong>验算与溯源</strong>
+    <span></span>
+    <span class="section-code">TRACE</span>
+  </div>
   <div class="verification-toolbar">
     <div data-damage-only>
       <div class="toolbar-label">验算模式</div>
@@ -447,12 +1517,13 @@
     </label>
     <button class="btn btn-primary" id="cdc-run-verification" type="button">确定并开始验算</button>
     <span class="text-small result-meta" id="cdc-run-status" aria-live="polite">数据已就绪，等待验算</span>
+    <div class="text-small result-meta" id="cdc-search-scope-note">常规验算固定基础区，只反推当前公式实际读取的 Buff。</div>
   </div>
   <div id="cdc-rage-input" hidden>
     <label class="form-label">未知来源的实测伤害
       <textarea class="form-control" id="cdc-rage-values" rows="2" placeholder="使用空格、逗号或换行分隔，例如：4413 5793 6612"></textarea>
     </label>
-    <div class="text-small result-meta">自动尝试全部已启用伤害技能、创生伤害、暴击/非暴击和其他技能倍率来源；同一来源可重复。</div>
+    <div class="text-small result-meta">自动尝试全部已启用常规技能、创生花、浊燃、黯星、暴击/非暴击和其他技能倍率来源；同一来源可重复。狂暴溯源会额外允许基础区失效。</div>
   </div>
   </div>
 
@@ -512,6 +1583,7 @@
       let draftTimer = null;
       let restoring = false;
       let verificationDirty = false;
+      let editingEffectScopeRow = null;
       const SKILL_PAGE_SIZE = 3;
       const DETAIL_PAGE_SIZE = 3;
       const REPORT_ERROR_LIMIT = 20;
@@ -523,6 +1595,37 @@
       const EXACT_RESULT_KEEP = 300;
       const PROFILE_STORAGE_KEY = 'game-calculator-profiles-v1';
       const DRAFT_STORAGE_KEY = 'game-calculator-draft-v1';
+      const FORMULA_SETTINGS_STORAGE_KEY = 'game-calculator-formula-settings-v1';
+      const CAPTURE_SIDECAR_STORAGE_KEY = 'nte-capture-sidecar-v1';
+      const CAPTURE_MAPPING_STORAGE_KEY = 'nte-capture-mappings-v1';
+      const DEFAULT_FORMULA_SETTINGS = Object.freeze({
+        creationBase: 9000,
+        turbidBase: 2700,
+        darkstarBase: 45000,
+        fusionDivisor: 600,
+        specialBaseBonus: 0.2,
+        specialFusionDivisor: 1400
+      });
+      function normalizeFormulaSettings(value = {}) {
+        const nonNegative = (candidate, fallback) => {
+          const parsed = Number(candidate);
+          return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+        };
+        return {
+          creationBase: nonNegative(value.creationBase, DEFAULT_FORMULA_SETTINGS.creationBase),
+          turbidBase: nonNegative(value.turbidBase, DEFAULT_FORMULA_SETTINGS.turbidBase),
+          darkstarBase: nonNegative(value.darkstarBase, DEFAULT_FORMULA_SETTINGS.darkstarBase),
+          fusionDivisor: Math.max(1, nonNegative(value.fusionDivisor, DEFAULT_FORMULA_SETTINGS.fusionDivisor)),
+          specialBaseBonus: nonNegative(value.specialBaseBonus, DEFAULT_FORMULA_SETTINGS.specialBaseBonus),
+          specialFusionDivisor: Math.max(1, nonNegative(value.specialFusionDivisor, DEFAULT_FORMULA_SETTINGS.specialFusionDivisor))
+        };
+      }
+      function readStoredFormulaSettings() {
+        try { return normalizeFormulaSettings(JSON.parse(localStorage.getItem(FORMULA_SETTINGS_STORAGE_KEY) || '{}')); }
+        catch (_error) { return { ...DEFAULT_FORMULA_SETTINGS }; }
+      }
+      let formulaSettings = readStoredFormulaSettings();
+      let specialEffect = 'none';
       const OCR_TARGETS = {
         panel_attack: { label: '非战斗面板攻击', input: 'cdc-panel' },
         base_attack: { label: '基础攻击', input: 'cdc-base' },
@@ -539,10 +1642,126 @@
       let desktopApiAvailable = false;
       let ocrCaptures = [];
       let ocrMergedRows = [];
+      let captureGroups = [];
+      let captureRawEvents = [];
+      let captureRawSelectedId = '';
+      let captureCoreAudit = [];
+      let captureCoreAuditPath = '';
+      let capturePollTimer = null;
+      let captureMarker = null;
+      let packetCaptureState = 'idle';
+
+      function formulaTraceMarkup(factors) {
+        return `<div class="formula-trace">${factors.map((factor, index) => {
+          const kind = ['base', 'attack', 'defense', 'resistance', 'damage', 'skill', 'fusion', 'dot', 'crit', 'independent'].includes(factor.kind)
+            ? factor.kind : 'independent';
+          const value = factor.display ?? format(factor.value);
+          const note = factor.note ? ` title="${escapeHtml(factor.note)}"` : '';
+          return `${index ? '<span class="formula-times">×</span>' : ''}<span class="formula-factor factor-${kind}"${note}><small>${escapeHtml(factor.label)}</small><strong>${escapeHtml(value)}</strong></span>`;
+        }).join('')}</div>`;
+      }
+
+      function renderFormulaCatalog() {
+        const catalog = byId('cdc-formula-catalog');
+        if (!catalog) return;
+        const fusion = `1 + 最终环合 / ${format(formulaSettings.fusionDivisor)}`;
+        const targeted = '仅自定义点名时 1 + 指定增伤';
+        const cards = [
+          {
+            model: 'skill',
+            title: '常规伤害 / 持续伤害',
+            note: '持续伤害额外读取持续伤害强化；浸染或覆纹只作用于常规模型，并读取该验算假设中的最终环合强度。',
+            factors: [
+              { kind: 'attack', label: '战斗攻击', display: '面板 + 基攻×攻击加成' },
+              { kind: 'defense', label: '防御区', display: '等级与穿透' },
+              { kind: 'resistance', label: '抗性区', display: '抗性与削弱' },
+              { kind: 'damage', label: '增伤区', display: '1 + 增伤总和' },
+              { kind: 'skill', label: '技能倍率', display: '基础 +/× 调整' },
+              { kind: 'independent', label: '可选独立区', display: `浸染/覆纹：1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合/${format(formulaSettings.specialFusionDivisor)}` },
+              { kind: 'crit', label: '暴击', display: '勾选时读取' }
+            ]
+          },
+          {
+            model: 'creation',
+            title: '创生花',
+            note: '不是持续伤害；不读取攻击、普通增伤、技能倍率、持续伤害、浸染或覆纹。',
+            factors: [
+              { kind: 'base', label: '固定基础', value: formulaSettings.creationBase },
+              { kind: 'defense', label: '防御区', display: '等级与穿透' },
+              { kind: 'resistance', label: '抗性区', display: '抗性与削弱' },
+              { kind: 'fusion', label: '环合修正', display: fusion },
+              { kind: 'damage', label: '指定增伤', display: targeted },
+              { kind: 'crit', label: '暴击', display: '勾选时读取' }
+            ]
+          },
+          {
+            model: 'turbid',
+            title: '浊燃',
+            note: '固定视为持续伤害；不读取攻击、普通增伤、技能倍率、浸染或覆纹。',
+            factors: [
+              { kind: 'base', label: '固定基础', value: formulaSettings.turbidBase },
+              { kind: 'defense', label: '防御区', display: '等级与穿透' },
+              { kind: 'resistance', label: '抗性区', display: '抗性与削弱' },
+              { kind: 'fusion', label: '环合修正', display: fusion },
+              { kind: 'dot', label: '持续伤害区', display: '1 + 持续强化' },
+              { kind: 'damage', label: '指定增伤', display: targeted },
+              { kind: 'crit', label: '暴击', display: '勾选时读取' }
+            ]
+          },
+          {
+            model: 'darkstar',
+            title: '黯星',
+            note: '无视防御，防御区永远为 1；不读取攻击、技能倍率、持续伤害、浸染或覆纹。',
+            factors: [
+              { kind: 'base', label: '固定基础', value: formulaSettings.darkstarBase },
+              { kind: 'defense', label: '防御区', display: '1（无视防御）' },
+              { kind: 'resistance', label: '抗性区', display: '抗性与削弱' },
+              { kind: 'fusion', label: '环合修正', display: fusion },
+              { kind: 'damage', label: '指定增伤', display: targeted },
+              { kind: 'crit', label: '暴击', display: '勾选时读取' }
+            ]
+          }
+        ];
+        catalog.innerHTML = cards.map((card) => `<article class="formula-card" data-model="${card.model}"><h3>${card.title}</h3>${formulaTraceMarkup(card.factors)}<div class="text-small result-meta">${card.note}</div></article>`).join('');
+      }
+
+      function syncFormulaEditor() {
+        byId('cdc-formula-creation-base').value = formulaSettings.creationBase;
+        byId('cdc-formula-turbid-base').value = formulaSettings.turbidBase;
+        byId('cdc-formula-darkstar-base').value = formulaSettings.darkstarBase;
+        byId('cdc-formula-fusion-divisor').value = formulaSettings.fusionDivisor;
+        byId('cdc-formula-special-base-bonus').value = formulaSettings.specialBaseBonus * 100;
+        byId('cdc-formula-special-fusion-divisor').value = formulaSettings.specialFusionDivisor;
+        renderSpecialEffectCard();
+        renderFormulaCatalog();
+      }
+
+      function persistFormulaSettings() {
+        try { localStorage.setItem(FORMULA_SETTINGS_STORAGE_KEY, JSON.stringify(formulaSettings)); }
+        catch (_error) { byId('cdc-formula-status').textContent = '公式已应用，但无法写入本机存储。'; }
+      }
+
+      function applyFormulaEditor(closeAfter = true) {
+        formulaSettings = normalizeFormulaSettings({
+          creationBase: byId('cdc-formula-creation-base').value,
+          turbidBase: byId('cdc-formula-turbid-base').value,
+          darkstarBase: byId('cdc-formula-darkstar-base').value,
+          fusionDivisor: byId('cdc-formula-fusion-divisor').value,
+          specialBaseBonus: Number(byId('cdc-formula-special-base-bonus').value) / 100,
+          specialFusionDivisor: byId('cdc-formula-special-fusion-divisor').value
+        });
+        persistFormulaSettings();
+        syncFormulaEditor();
+        byId('cdc-formula-status').textContent = `已应用：创生花 ${format(formulaSettings.creationBase)}；浊燃 ${format(formulaSettings.turbidBase)}；黯星 ${format(formulaSettings.darkstarBase)}；环合反应除数 ${format(formulaSettings.fusionDivisor)}；浸染/覆纹 ${format(formulaSettings.specialBaseBonus * 100)}% + 环合/${format(formulaSettings.specialFusionDivisor)}。`;
+        markDirty();
+        scheduleDraftSave();
+        if (closeAfter) byId('cdc-formula-dialog').close();
+      }
 
       function enableDesktopOcr() {
         desktopApiAvailable = true;
         byId('cdc-ocr-entry').hidden = false;
+        byId('cdc-open-capture').hidden = false;
       }
 
       function callDesktopApi(method, ...args) {
@@ -758,44 +1977,701 @@
         renderOcrResults();
       }
 
+      function captureSourceKey(group) {
+        return [group.char_id, group.gameplay_effect_name, group.ability_name, group.category, group.name]
+          .filter((value) => value !== null && value !== undefined && String(value).trim())
+          .join('|');
+      }
+
+      function captureArchiveKey() {
+        return `${byId('cdc-character').value.trim() || '未命名角色'}::${byId('cdc-version').value.trim() || '未标版本'}`;
+      }
+
+      function readCaptureMappings() {
+        try {
+          const value = JSON.parse(localStorage.getItem(CAPTURE_MAPPING_STORAGE_KEY) || '{}');
+          return value && typeof value === 'object' ? value : {};
+        } catch (_error) {
+          return {};
+        }
+      }
+
+      function mappedCaptureTarget(group) {
+        const mappings = readCaptureMappings();
+        return mappings[captureArchiveKey()]?.[captureSourceKey(group)]?.target || '';
+      }
+
+      function saveCaptureTarget(group, target) {
+        const mappings = readCaptureMappings();
+        const archive = captureArchiveKey();
+        if (!mappings[archive]) mappings[archive] = {};
+        if (target) {
+          mappings[archive][captureSourceKey(group)] = {
+            target,
+            sourceName: group.name || '',
+            updatedAt: new Date().toISOString()
+          };
+        } else {
+          delete mappings[archive][captureSourceKey(group)];
+        }
+        try {
+          localStorage.setItem(CAPTURE_MAPPING_STORAGE_KEY, JSON.stringify(mappings));
+        } catch (_error) {
+          byId('cdc-capture-diagnostics').textContent = '事件映射无法写入本机存储。';
+        }
+      }
+
+      function inferredCaptureTarget(group) {
+        const text = [group.name, group.category, group.ability_name, group.gameplay_effect_name]
+          .filter(Boolean).join(' ').toLowerCase();
+        if (text.includes('浊燃') || text.includes('reaction_5') || String(group.category || '').toLowerCase() === 'scorch') return 'model:turbid';
+        if (text.includes('创生花') || text.includes('创生') || text.includes('creation blossom')
+          || text.includes('reaction_1') || text.includes('reaction1_')) return 'model:creation';
+        const exact = Array.from(root.querySelectorAll('[data-skill-row]')).find((row) => {
+          const name = row.querySelector('[data-skill-name]').value.trim().toLowerCase();
+          return name && name === String(group.name || '').trim().toLowerCase();
+        });
+        return exact ? `skill:${exact.dataset.skillId}` : 'new:skill';
+      }
+
+      function captureTargetOptions(group) {
+        const skills = Array.from(root.querySelectorAll('[data-skill-row]'));
+        return [
+          '<option value="new:skill">新建常规技能</option>',
+          '<option value="model:creation">创生花</option>',
+          '<option value="model:turbid">浊燃</option>',
+          '<option value="model:darkstar">黯星</option>',
+          ...skills.map((row, index) => {
+            const name = row.querySelector('[data-skill-name]').value.trim() || `伤害技能${index + 1}`;
+            return `<option value="skill:${escapeHtml(row.dataset.skillId)}">现有 · ${escapeHtml(name)}</option>`;
+          })
+        ].join('');
+      }
+
+      function formatCaptureTime(unixMs) {
+        const date = new Date(Number(unixMs) || Date.now());
+        const base = date.toLocaleTimeString('zh-CN', { hour12: false, minute: '2-digit', second: '2-digit' });
+        return `${base}.${String(date.getMilliseconds()).padStart(3, '0')}`;
+      }
+
+      function coreAuditQuery() {
+        return byId('cdc-raw-event-character').value.trim().toLowerCase();
+      }
+
+      function coreAuditRecordText(record) {
+        return JSON.stringify([
+          record.method || '',
+          ...(record.schema || []),
+          ...(record.identifiers || []),
+          ...(record.samples || []).map((sample) => `${sample.path || ''}=${String(sample.value ?? '')}`)
+        ]).toLowerCase();
+      }
+
+      function isCoreControlRecord(record) {
+        const method = String(record.method || '').toLowerCase();
+        return method === 'event.capture.status' || method.startsWith('event.core.');
+      }
+
+      function filteredCoreAuditRecords() {
+        const query = coreAuditQuery();
+        const showSummary = byId('cdc-core-audit-show-summary').checked;
+        return captureCoreAudit.filter((record) => {
+          if (!showSummary && String(record.method || '').toLowerCase() === 'event.battle.summary') return false;
+          return isCoreControlRecord(record) || !query || coreAuditRecordText(record).includes(query);
+        });
+      }
+
+      function renderCoreAudit() {
+        const preview = byId('cdc-core-audit-preview');
+        const rows = filteredCoreAuditRecords();
+        const query = coreAuditQuery();
+        const contentRecords = captureCoreAudit.filter((record) => !isCoreControlRecord(record));
+        const matchingContent = query
+          ? contentRecords.filter((record) => coreAuditRecordText(record).includes(query))
+          : contentRecords;
+        const controlCount = captureCoreAudit.length - contentRecords.length;
+        byId('cdc-core-audit-count').textContent = `${rows.length} / ${captureCoreAudit.length} 条`;
+        const diagnostic = byId('cdc-core-audit-diagnostic');
+        if (!captureCoreAudit.length) {
+          diagnostic.textContent = '尚未收到 Core 通知。原始数据包中的 GA、GE、Default__Buff 等英文名称请在上方“原始事件预览”查看。';
+        } else if (!matchingContent.length) {
+          diagnostic.textContent = `Core 已上报 ${controlCount} 条运行状态，但没有上报${query ? `包含“${query}”的` : ''}内容通知；这不代表 PCAP 中没有对应字符串。`;
+        } else {
+          diagnostic.textContent = `Core 内容通知命中 ${matchingContent.length} 条，另有 ${controlCount} 条运行状态；下方仅审计 Core 主动上报的数据。`;
+        }
+        const file = byId('cdc-core-audit-file');
+        if (captureCoreAuditPath) {
+          const name = captureCoreAuditPath.split(/[\\/]/).pop();
+          file.textContent = `已保存 ${name} · 沿用上方角色关键词${query ? `“${query}”` : '（未筛选）'}`;
+          file.title = captureCoreAuditPath;
+        } else {
+          file.textContent = `开始抓包后自动保存精简审计日志 · 沿用上方角色关键词${query ? `“${query}”` : '（未筛选）'}`;
+          file.removeAttribute('title');
+        }
+        if (!rows.length) {
+          preview.innerHTML = `<div class="entry-row text-small result-meta">${captureCoreAudit.length && query ? `现有通知中没有包含“${escapeHtml(query)}”的记录。可清空角色关键词查看全部方法名。` : '等待 core 发出通知；战斗摘要默认隐藏。'}</div>`;
+          return;
+        }
+        preview.innerHTML = rows.slice(-200).reverse().map((record) => {
+          const identifiers = (record.identifiers || [])
+            .filter((value) => isCoreControlRecord(record) || !query || String(value).toLowerCase().includes(query))
+            .slice(0, 6);
+          const chips = identifiers.length
+            ? identifiers.map((value) => `<span class="core-audit-chip" title="${escapeHtml(value)}">${escapeHtml(value)}</span>`).join('')
+            : '<span class="text-small result-meta">无匹配字符串标识</span>';
+          const schema = (record.schema || []).slice(0, 80).join('\n') || '没有参数结构';
+          const samples = (record.samples || []).slice(0, 60).map((sample) => {
+            const value = typeof sample.value === 'string' ? sample.value : JSON.stringify(sample.value);
+            return `${sample.path || '(root)'} = ${value}`;
+          }).join('\n') || '没有标量样本';
+          return `<details class="core-audit-row">
+            <summary>
+              <span class="numeric text-small">${escapeHtml(formatCaptureTime(record.observed_at_unix_ms))}</span>
+              <span class="core-audit-method" title="${escapeHtml(record.method || '')}">${escapeHtml(record.method || '(未命名通知)')}</span>
+              <span class="core-audit-identifiers">${chips}</span>
+            </summary>
+            <div class="core-audit-detail">
+              <pre><strong>参数结构</strong>\n${escapeHtml(schema)}</pre>
+              <pre><strong>标量样本</strong>\n${escapeHtml(samples)}</pre>
+            </div>
+          </details>`;
+        }).join('');
+      }
+
+      function ingestCoreAudit(result) {
+        (result.audit_records || []).forEach((record) => captureCoreAudit.push(record));
+        if (captureCoreAudit.length > 1000) captureCoreAudit = captureCoreAudit.slice(-1000);
+        if (result.audit_path) captureCoreAuditPath = result.audit_path;
+        if ((result.audit_records || []).length || result.audit_path) renderCoreAudit();
+      }
+
+      function rawCharacterQuery() {
+        return byId('cdc-raw-event-character').value.trim().toLowerCase()
+          .replace(/^ga_/, '').replace(/[_*]+$/, '');
+      }
+
+      function rawEventMatchesCharacter(event, query = rawCharacterQuery()) {
+        if (!query) return true;
+        const name = String(event?.name || '').toLowerCase();
+        return name.startsWith(`ga_${query}_`) || name.includes(query);
+      }
+
+      function associatedRawGaEvent(event, query = rawCharacterQuery()) {
+        if (!event || !query) return null;
+        if (rawEventMatchesCharacter(event, query) && String(event.name || '').toLowerCase().startsWith('ga_')) return event;
+        const eventAt = Number(event.observed_at_unix_ms) || 0;
+        let nearest = null;
+        let nearestDistance = Infinity;
+        captureRawEvents.forEach((candidate) => {
+          if (!rawEventMatchesCharacter(candidate, query) || !String(candidate.name || '').toLowerCase().startsWith('ga_')) return;
+          const distance = Math.abs((Number(candidate.observed_at_unix_ms) || 0) - eventAt);
+          if (distance < nearestDistance) {
+            nearest = candidate;
+            nearestDistance = distance;
+          }
+        });
+        return nearestDistance <= 600 ? nearest : null;
+      }
+
+      function renderRawEventPreview() {
+        const preview = byId('cdc-raw-event-preview');
+        const targetSelect = byId('cdc-raw-event-target');
+        const previousTarget = targetSelect.value;
+        targetSelect.innerHTML = captureTargetOptions({});
+        if (Array.from(targetSelect.options).some((option) => option.value === previousTarget)) targetSelect.value = previousTarget;
+        if (!captureRawEvents.some((event) => event.id === captureRawSelectedId)) captureRawSelectedId = '';
+        const observed = Number(byId('cdc-raw-event-damage').value);
+        const hasObserved = Number.isFinite(observed) && observed > 0;
+        const characterQuery = rawCharacterQuery();
+        const showSystem = byId('cdc-show-system-events').checked;
+        let rows = captureRawEvents
+          .filter((event) => showSystem || event.category !== 'system')
+          .map((event) => ({ event, linkedGa: associatedRawGaEvent(event, characterQuery) }))
+          .filter(({ event, linkedGa }) => !characterQuery || rawEventMatchesCharacter(event, characterQuery) || (event.category === 'carrier' && linkedGa))
+          .map(({ event, linkedGa }) => {
+            const matches = (event.candidates || [])
+              .map((value) => ({ value: Number(value), error: Math.abs(Number(value) - observed) }))
+              .filter((candidate) => Number.isFinite(candidate.value) && (!hasObserved || candidate.error <= REPORT_ERROR_LIMIT))
+              .sort((left, right) => left.error - right.error);
+            return { event, linkedGa, matches, score: matches[0]?.error ?? Infinity };
+          });
+        if (hasObserved) rows = rows.filter((row) => row.score <= REPORT_ERROR_LIMIT).sort((a, b) => a.score - b.score || b.event.observed_at_unix_ms - a.event.observed_at_unix_ms);
+        else rows.reverse();
+        byId('cdc-raw-event-count').textContent = `${rows.length} / ${captureRawEvents.length} 条${captureRawSelectedId ? ' · 已选 1' : ''}`;
+        if (!rows.length) {
+          preview.innerHTML = `<div class="entry-row text-small result-meta">${hasObserved ? `没有发现与 ${escapeHtml(format(observed))} 相差 ±${REPORT_ERROR_LIMIT} 的事件候选；可清空数值查看全部事件名。` : '尚未发现可读事件名；请开始抓包并在游戏内进行一次动作。'}</div>`;
+          return;
+        }
+        preview.innerHTML = rows.slice(0, 200).map(({ event, linkedGa, matches }) => {
+          const category = { action: '动作', effect: '效果', carrier: '载体', system: '系统' }[event.category] || '未知';
+          const direction = event.direction === 'C2S' ? '发送' : '接收';
+          const candidates = hasObserved
+            ? matches.slice(0, 5).map((candidate) => `<span class="raw-event-candidate is-match" title="与实测相差 ${escapeHtml(format(candidate.error))}">${escapeHtml(format(candidate.value))}</span>`).join('')
+            : '<span class="text-small result-meta">输入实测值后筛选</span>';
+          return `<div class="raw-event-row" data-category="${escapeHtml(event.category || 'system')}">
+            <label class="form-check raw-event-select" title="选择这一次事件记录作为伤害证据"><input class="form-check-input" data-raw-event-selected="${escapeHtml(event.id)}" name="cdc-raw-event-source" type="radio" ${event.id === captureRawSelectedId ? 'checked' : ''} ${hasObserved ? '' : 'disabled'}><span class="sr-only">选择 ${escapeHtml(event.name)}</span></label>
+            <span class="numeric text-small">${escapeHtml(formatCaptureTime(event.observed_at_unix_ms))}</span>
+            <span class="raw-event-direction" data-direction="${escapeHtml(event.direction || '')}">${direction}</span>
+            <span class="raw-event-name" title="${escapeHtml(event.name)}">${escapeHtml(event.name)}${event.category === 'carrier' && linkedGa ? `<span class="raw-event-link">↳ ${escapeHtml(linkedGa.name)}</span>` : ''}</span>
+            <span class="raw-event-kind" title="英文名称在 UDP 载荷中跨字节出现时，需要按此 bit 位移重组后读取；这不是字段长度。">${category} · 位移 ${escapeHtml(event.bit_shift ?? 0)} bit · 包长 ${escapeHtml(event.packet_size ?? 0)} B</span>
+            <span class="raw-event-candidates">${candidates}</span>
+            <button class="btn btn-ghost raw-event-copy" data-copy-raw-event="${escapeHtml(event.name)}" type="button" title="复制事件名称">⧉</button>
+          </div>`;
+        }).join('');
+      }
+
+      function renderCaptureTimeline() {
+        const timeline = byId('cdc-capture-timeline');
+        if (!captureGroups.length) {
+          timeline.innerHTML = '<div class="text-small result-meta">开始抓包后，新的伤害增量会显示在这里。</div>';
+          return;
+        }
+        timeline.innerHTML = captureGroups.slice().reverse().map((group) => {
+          const savedTarget = mappedCaptureTarget(group);
+          const target = savedTarget || inferredCaptureTarget(group);
+          const ids = [group.ability_name, group.gameplay_effect_name].filter(Boolean).join(' · ') || '尚无 GA / GE 名称';
+          const source = [group.marker, group.name || group.category].filter(Boolean).join(' · ');
+          return `<div class="capture-event" data-capture-event="${escapeHtml(group.id)}">
+            <label class="form-check" title="采用这一条单段伤害">
+              <input class="form-check-input" data-capture-selected type="checkbox" ${group.single_hit ? 'checked' : 'disabled'}>
+              <span class="numeric text-small">${escapeHtml(formatCaptureTime(group.observed_at_unix_ms))}</span>
+            </label>
+            <div class="capture-source" title="${escapeHtml(source)}"><strong>${escapeHtml(source)}</strong><div class="text-small result-meta">${escapeHtml(group.category || '未知类别')}</div></div>
+            <div class="capture-ids" title="${escapeHtml(ids)}">${escapeHtml(ids)}</div>
+            <div class="capture-value">${escapeHtml(format(group.damage))}</div>
+            <span class="capture-hit-badge${group.single_hit ? '' : ' is-multihit'}">${group.single_hit ? '1 HIT' : `${group.hits} HIT 合计`}</span>
+            <label class="capture-map"><span class="sr-only">映射到</span><select class="form-select" data-capture-target>${captureTargetOptions(group)}</select></label>
+          </div>`;
+        }).join('');
+        Array.from(timeline.querySelectorAll('[data-capture-event]')).forEach((row) => {
+          const group = captureGroups.find((item) => item.id === row.dataset.captureEvent);
+          if (!group) return;
+          row.querySelector('[data-capture-target]').value = mappedCaptureTarget(group) || inferredCaptureTarget(group);
+        });
+      }
+
+      function setPacketCaptureState(state, message = '') {
+        packetCaptureState = state || 'idle';
+        const status = byId('cdc-capture-status');
+        status.dataset.state = packetCaptureState;
+        status.textContent = message || ({ idle: '尚未启动', starting: '正在启动', capturing: '正在抓包', stopped: '已停止', disconnected: '连接已中断' }[packetCaptureState] || packetCaptureState);
+        byId('cdc-start-capture').disabled = ['starting', 'capturing'].includes(packetCaptureState);
+        byId('cdc-stop-capture').disabled = packetCaptureState !== 'capturing';
+      }
+
+      async function discoverPacketCaptureSidecar() {
+        const input = byId('cdc-capture-sidecar');
+        if (input.value.trim()) return;
+        const remembered = localStorage.getItem(CAPTURE_SIDECAR_STORAGE_KEY) || '';
+        if (remembered) {
+          input.value = remembered;
+          return;
+        }
+        try {
+          const result = await callDesktopApi('find_packet_capture_sidecars');
+          if (result.ok && result.paths?.length) input.value = result.paths[0];
+        } catch (_error) {
+          // The input remains available for a manual path.
+        }
+      }
+
+      async function choosePacketCaptureSidecar() {
+        const result = await callDesktopApi('choose_packet_capture_sidecar');
+        if (!result.ok) throw new Error(result.error || '没有选择解析核心。');
+        if (result.path) {
+          byId('cdc-capture-sidecar').value = result.path;
+          localStorage.setItem(CAPTURE_SIDECAR_STORAGE_KEY, result.path);
+        }
+      }
+
+      async function pollPacketCapture() {
+        if (packetCaptureState !== 'capturing') return;
+        try {
+          const result = await callDesktopApi('poll_packet_capture');
+          if (!result.ok) throw new Error(result.error || '读取抓包事件失败。');
+          (result.groups || []).forEach((group) => {
+            const withinMarkerWindow = captureMarker
+              && Number(group.observed_at_unix_ms) >= captureMarker.at
+              && Number(group.observed_at_unix_ms) - captureMarker.at <= 12000;
+            captureGroups.push({ ...group, marker: withinMarkerWindow ? captureMarker.name : '' });
+          });
+          (result.raw_events || []).forEach((event) => captureRawEvents.push(event));
+          ingestCoreAudit(result);
+          if (captureGroups.length > 300) captureGroups = captureGroups.slice(-300);
+          if (captureRawEvents.length > 500) captureRawEvents = captureRawEvents.slice(-500);
+          if ((result.groups || []).length) renderCaptureTimeline();
+          if ((result.raw_events || []).length) renderRawEventPreview();
+          if ((result.errors || []).length) byId('cdc-capture-diagnostics').textContent = (result.errors || []).slice(-2).join(' · ');
+          if (result.state && result.state !== 'capturing') {
+            setPacketCaptureState(result.state);
+            clearInterval(capturePollTimer);
+            capturePollTimer = null;
+          }
+        } catch (error) {
+          setPacketCaptureState('disconnected', error.message);
+          clearInterval(capturePollTimer);
+          capturePollTimer = null;
+        }
+      }
+
+      async function startPacketCapture() {
+        const path = byId('cdc-capture-sidecar').value.trim();
+        if (!path) {
+          setPacketCaptureState('idle', '请先选择 nte-core.exe');
+          return;
+        }
+        setPacketCaptureState('starting');
+        byId('cdc-capture-diagnostics').textContent = '';
+        localStorage.setItem(CAPTURE_SIDECAR_STORAGE_KEY, path);
+        try {
+          captureRawEvents = [];
+          captureRawSelectedId = '';
+          captureCoreAudit = [];
+          captureCoreAuditPath = '';
+          renderRawEventPreview();
+          renderCoreAudit();
+          const result = await callDesktopApi('start_packet_capture', path);
+          if (!result.ok) throw new Error(result.error || '抓包启动失败。');
+          ingestCoreAudit(result);
+          setPacketCaptureState('capturing', `正在抓包${result.core_version ? ` · core ${result.core_version}` : ''}`);
+          if (capturePollTimer) clearInterval(capturePollTimer);
+          capturePollTimer = setInterval(pollPacketCapture, 600);
+          pollPacketCapture();
+        } catch (error) {
+          setPacketCaptureState('stopped', error.message);
+        }
+      }
+
+      async function stopPacketCapture() {
+        byId('cdc-stop-capture').disabled = true;
+        try {
+          const result = await callDesktopApi('stop_packet_capture');
+          (result.raw_events || []).forEach((event) => captureRawEvents.push(event));
+          ingestCoreAudit(result);
+          if (captureRawEvents.length > 500) captureRawEvents = captureRawEvents.slice(-500);
+          if ((result.raw_events || []).length) renderRawEventPreview();
+          setPacketCaptureState(result.ok ? (result.state || 'stopped') : 'disconnected', result.warning || result.error || '已停止');
+        } catch (error) {
+          setPacketCaptureState('disconnected', error.message);
+        } finally {
+          if (capturePollTimer) clearInterval(capturePollTimer);
+          capturePollTimer = null;
+        }
+      }
+
+      function markCaptureAction() {
+        const name = byId('cdc-capture-marker').value.trim() || `动作 ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
+        captureMarker = { name, at: Date.now() };
+        byId('cdc-capture-marker-status').textContent = `已标记“${name}”；接下来 12 秒内出现的事件会归到该动作。`;
+      }
+
+      function selectedCaptureGroups() {
+        return Array.from(byId('cdc-capture-timeline').querySelectorAll('[data-capture-event]'))
+          .filter((row) => row.querySelector('[data-capture-selected]')?.checked)
+          .map((row) => ({
+            row,
+            group: captureGroups.find((item) => item.id === row.dataset.captureEvent),
+            target: row.querySelector('[data-capture-target]').value
+          }))
+          .filter((item) => item.group?.single_hit);
+      }
+
+      function rawEventAsCaptureGroup(event, observed) {
+        const name = String(event?.name || '原始事件');
+        const lowered = name.toLowerCase();
+        const linkedGa = associatedRawGaEvent(event);
+        return {
+          id: `raw-import-${event.id}`,
+          observed_at_unix_ms: event.observed_at_unix_ms,
+          char_id: '',
+          name,
+          category: event.category === 'carrier' ? '伤害载体' : `原始${event.category || '事件'}`,
+          ability_name: lowered.startsWith('ga_') ? name : linkedGa?.name || '',
+          gameplay_effect_name: lowered.startsWith('ge_') ? name : '',
+          hits: 1,
+          damage: Math.round(observed),
+          single_hit: true,
+          marker: captureMarker?.name || ''
+        };
+      }
+
+      function selectedRawCaptureGroups() {
+        const observed = Number(byId('cdc-raw-event-damage').value);
+        const event = captureRawEvents.find((item) => item.id === captureRawSelectedId);
+        if (!event || !Number.isFinite(observed) || observed <= 0) return [];
+        return [{
+          group: rawEventAsCaptureGroup(event, observed),
+          target: byId('cdc-raw-event-target').value || 'new:skill',
+          raw: true
+        }];
+      }
+
+      function appendCapturedSkill(group, target, usedRows) {
+        const observed = Math.round(Number(group.damage) || 0);
+        let targetRow = target.startsWith('skill:')
+          ? Array.from(root.querySelectorAll('[data-skill-row]')).find((row) => row.dataset.skillId === target.slice(6))
+          : null;
+        const model = target === 'model:creation' ? 'creation'
+          : target === 'model:turbid' ? 'turbid'
+            : target === 'model:darkstar' ? 'darkstar' : 'skill';
+        if (!targetRow && model !== 'skill') {
+          targetRow = Array.from(root.querySelectorAll('[data-skill-row]')).find((row) => row.querySelector('[data-skill-model]').value === model);
+        }
+        if (targetRow && !usedRows.has(targetRow)) {
+          targetRow.querySelector('[data-skill-observed]').value = String(observed);
+          targetRow.querySelector('[data-skill-enabled]').checked = true;
+          usedRows.add(targetRow);
+          return;
+        }
+        if (targetRow) {
+          const name = targetRow.querySelector('[data-skill-name]').value || group.name;
+          const multiplier = Number(targetRow.querySelector('[data-skill-multiplier]').value) || 0;
+          const tag = skillTagForRow(targetRow);
+          addSkill(`${name} · 抓包`, targetRow.querySelector('[data-skill-model]').value, multiplier, observed, false, true, tag);
+          return;
+        }
+        addSkill(group.marker || group.name || '抓包伤害', model, 0, observed, false, true, model === 'turbid' ? 'dot' : 'direct');
+      }
+
+      function importCapturedNormal() {
+        const rawSelected = selectedRawCaptureGroups();
+        const selected = [...selectedCaptureGroups(), ...rawSelected];
+        if (!selected.length) {
+          byId('cdc-capture-diagnostics').textContent = '请选择一条已匹配实测伤害的原始记录，或勾选可直接采用的 1 Hit 摘要。';
+          return;
+        }
+        calculatorType = 'damage';
+        verificationMode = 'normal';
+        const usedRows = new Set();
+        selected.forEach(({ group, target }) => appendCapturedSkill(group, target, usedRows));
+        rawSelected.forEach(({ group, target }) => saveCaptureTarget(group, target));
+        updateCalculatorType();
+        updateSkillPagination(true);
+        markDirty();
+        scheduleDraftSave();
+        captureRawSelectedId = '';
+        renderRawEventPreview();
+        byId('cdc-capture-diagnostics').textContent = `已写入 ${selected.length} 条伤害证据；请在技能区人工确认倍率和“暴击”。`;
+      }
+
+      function importCapturedRage() {
+        const rawSelected = selectedRawCaptureGroups();
+        const selected = [...selectedCaptureGroups(), ...rawSelected];
+        if (!selected.length) {
+          byId('cdc-capture-diagnostics').textContent = '请选择一条已匹配实测伤害的原始记录，或勾选可用于溯源的 1 Hit 摘要。';
+          return;
+        }
+        calculatorType = 'damage';
+        verificationMode = 'rage';
+        const existing = readRageValues();
+        const incoming = selected.map(({ group }) => Math.round(Number(group.damage) || 0));
+        rawSelected.forEach(({ group, target }) => saveCaptureTarget(group, target));
+        byId('cdc-rage-values').value = [...existing, ...incoming].join(' ');
+        updateCalculatorType();
+        markDirty();
+        scheduleDraftSave();
+        captureRawSelectedId = '';
+        renderRawEventPreview();
+        byId('cdc-capture-diagnostics').textContent = `已将 ${incoming.length} 条伤害证据加入狂暴溯源。`;
+      }
+
+      function makeRowId(prefix) {
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+          return `${prefix}-${window.crypto.randomUUID()}`;
+        }
+        return `${prefix}-${Date.now().toString(36)}-${rowCounter.toString(36)}`;
+      }
+
+      function normalizedScopeMode(value) {
+        return ['all', 'dot', 'direct', 'custom'].includes(value) ? value : 'all';
+      }
+
+      function effectScopeSkillIds(row) {
+        try {
+          const parsed = JSON.parse(row.dataset.scopeSkillIds || '[]');
+          return Array.isArray(parsed) ? parsed.map(String) : [];
+        } catch (_error) {
+          return [];
+        }
+      }
+
+      function updateEffectScopeSummary(row) {
+        const button = row.querySelector('[data-edit-effect-scope]');
+        if (!button) return;
+        const mode = normalizedScopeMode(row.dataset.scopeMode);
+        if (mode === 'all') button.textContent = '作用：全部技能';
+        if (mode === 'dot') button.textContent = '作用：持续伤害';
+        if (mode === 'direct') button.textContent = '作用：非持续伤害';
+        if (mode !== 'custom') return;
+        const selected = new Set(effectScopeSkillIds(row));
+        const names = Array.from(root.querySelectorAll('[data-skill-row]'))
+          .filter((skillRow) => selected.has(skillRow.dataset.skillId))
+          .map((skillRow, index) => skillRow.querySelector('[data-skill-name]').value.trim() || `技能${index + 1}`);
+        button.textContent = names.length === 0
+          ? '作用：未选择技能'
+          : names.length === 1 ? `作用：${names[0]}` : `作用：${names[0]}等${names.length}项`;
+        button.title = names.length ? names.join('、') : '当前 Buff 不作用于任何伤害技能';
+      }
+
+      function updateAllEffectScopeSummaries() {
+        root.querySelectorAll('[data-effect-row]').forEach(updateEffectScopeSummary);
+      }
+
+      function renderEffectScopeSkillList(selectedIds = []) {
+        const list = byId('cdc-effect-scope-skills');
+        const selected = new Set(selectedIds.map(String));
+        const skills = Array.from(root.querySelectorAll('[data-skill-row]'));
+        list.innerHTML = skills.length ? skills.map((row, index) => {
+          const name = row.querySelector('[data-skill-name]').value.trim() || `伤害技能${index + 1}`;
+          const tag = skillTagForRow(row) === 'dot' ? ' · 持续伤害' : '';
+          return `<label class="form-check scope-skill-option">
+            <input class="form-check-input" data-scope-skill-id="${escapeHtml(row.dataset.skillId)}" type="checkbox" ${selected.has(row.dataset.skillId) ? 'checked' : ''}>
+            <span class="form-check-label">${escapeHtml(name + tag)}</span>
+          </label>`;
+        }).join('') : '<div class="text-small result-meta">请先在技能区添加至少一个伤害技能。</div>';
+      }
+
+      function openEffectScopeEditor(row) {
+        editingEffectScopeRow = row;
+        const mode = normalizedScopeMode(row.dataset.scopeMode);
+        byId('cdc-scope-effect-name').textContent = `当前 Buff：${row.querySelector('[data-effect-name]').value.trim() || '未命名效果'}`;
+        byId('cdc-effect-scope-mode').value = mode;
+        renderEffectScopeSkillList(effectScopeSkillIds(row));
+        byId('cdc-effect-scope-skills').hidden = mode !== 'custom';
+        byId('cdc-effect-scope-dialog').showModal();
+      }
+
+      function closeEffectScopeEditor() {
+        editingEffectScopeRow = null;
+        byId('cdc-effect-scope-dialog').close();
+      }
+
+      function applyEffectScopeEditor() {
+        if (!editingEffectScopeRow) return;
+        const mode = normalizedScopeMode(byId('cdc-effect-scope-mode').value);
+        const selectedIds = Array.from(byId('cdc-effect-scope-skills').querySelectorAll('[data-scope-skill-id]:checked'))
+          .map((checkbox) => checkbox.dataset.scopeSkillId);
+        editingEffectScopeRow.dataset.scopeMode = mode;
+        editingEffectScopeRow.dataset.scopeSkillIds = JSON.stringify(selectedIds);
+        updateEffectScopeSummary(editingEffectScopeRow);
+        closeEffectScopeEditor();
+        markDirty();
+        scheduleDraftSave();
+      }
+
+      function boundedStackValue(value, fallback = 1, minimum = 0) {
+        const parsed = Math.trunc(Number(value));
+        return Number.isFinite(parsed) ? Math.max(minimum, Math.min(30, parsed)) : fallback;
+      }
+
+      function updateEffectStackFields(row) {
+        const enabled = row.querySelector('[data-effect-stack-enabled]').checked;
+        const mode = row.querySelector('[data-effect-stack-mode]').value === 'fixed' ? 'fixed' : 'auto';
+        const settings = row.querySelector('[data-effect-stack-settings]');
+        const fixedField = row.querySelector('[data-effect-fixed-stacks-field]');
+        const maxInput = row.querySelector('[data-effect-max-stacks]');
+        const fixedInput = row.querySelector('[data-effect-fixed-stacks]');
+        settings.hidden = !enabled;
+        fixedField.hidden = !enabled || mode !== 'fixed';
+        const maxStacks = boundedStackValue(maxInput.value, 6, 1);
+        maxInput.value = String(maxStacks);
+        fixedInput.max = String(maxStacks);
+        const minimumFixed = row.dataset.searchState === 'locked' && mode === 'fixed' ? 1 : 0;
+        fixedInput.min = String(minimumFixed);
+        fixedInput.value = String(Math.max(minimumFixed, Math.min(maxStacks, boundedStackValue(fixedInput.value, maxStacks, 0))));
+      }
+
+      function normalizedEffectSearchState(value) {
+        return ['locked', 'suspended'].includes(value) ? value : 'auto';
+      }
+
+      function updateEffectSearchState(row) {
+        const select = row.querySelector('[data-effect-search-state]');
+        const state = normalizedEffectSearchState(select?.value || row.dataset.searchState);
+        row.dataset.searchState = state;
+        if (select) select.value = state;
+        const priority = row.querySelector('[data-effect-priority]');
+        if (priority) {
+          priority.disabled = state !== 'auto';
+          priority.closest('.effect-priority').title = state === 'auto'
+            ? '同等误差时，更优先保留该 Buff 生效'
+            : state === 'locked' ? '锁定状态已经强制该 Buff 生效' : '挂起状态不会读取该 Buff';
+        }
+        updateEffectStackFields(row);
+      }
+
       function addEffect(name = '', values = {}) {
         if (root.querySelectorAll('[data-effect-row]').length >= 12) return;
         rowCounter += 1;
         const row = document.createElement('div');
-        row.className = 'entry-row';
+        row.className = 'entry-row effect-row';
         row.dataset.effectRow = String(rowCounter);
+        row.dataset.searchState = normalizedEffectSearchState(values.searchState);
+        row.dataset.scopeMode = normalizedScopeMode(values.scopeMode);
+        row.dataset.scopeSkillIds = JSON.stringify(Array.isArray(values.scopeSkillIds) ? values.scopeSkillIds : []);
         row.innerHTML = `
-          <label class="form-label">名称<input class="form-control" data-effect-name type="text" value="${escapeHtml(name)}"></label>
-          <label class="form-label">攻击加成（%）<input class="form-control" data-effect-attack type="number" step="0.01" value="${values.attack || 0}"></label>
-          <label class="form-label" data-effect-damage-field>防御穿透（%）<input class="form-control" data-effect-penetration type="number" step="0.01" value="${values.penetration || 0}"></label>
-          <label class="form-label" data-effect-damage-field>抗性削弱（%）<input class="form-control" data-effect-res-shred type="number" step="0.01" value="${values.resShred || 0}"></label>
-          <label class="form-label" data-effect-damage-field>增伤（%）<input class="form-control" data-effect-damage type="number" step="0.01" value="${values.damage || 0}"></label>
-          <label class="form-label" data-effect-damage-field>暴击伤害（%）<input class="form-control" data-effect-crit type="number" step="0.01" value="${values.crit || 0}"></label>
-          <label class="form-label" data-effect-damage-field>技能倍率（%）<input class="form-control" data-effect-skill type="number" step="0.01" value="${values.skill || 0}"></label>
-          <label class="form-check" data-effect-damage-field><input class="form-check-input" data-effect-skill-multiply type="checkbox" ${values.skillMultiply ? 'checked' : ''}><span class="form-check-label">技能倍率乘算</span></label>
-          <label class="form-label" data-effect-fusion-field hidden>环合强度提升（%）<input class="form-control" data-effect-fusion-percent type="number" step="0.01" value="${values.fusionPercent || 0}"></label>
-          <label class="form-label" data-effect-fusion-field hidden>环合强度固定提升<input class="form-control" data-effect-fusion-flat type="number" step="0.01" value="${values.fusionFlat || 0}"></label>
-          <label class="form-label" data-effect-heal-field hidden>治疗加成（%）<input class="form-control" data-effect-heal-bonus type="number" step="0.01" value="${values.healBonus ?? values.heal ?? 0}"></label>
-          <button class="btn btn-ghost" type="button" data-remove-effect>删除此效果</button>`;
+          <div class="effect-identity">
+            <label class="form-label">名称<input class="form-control" data-effect-name type="text" value="${escapeHtml(name)}"></label>
+            <label class="form-label effect-search-state">验算状态<select class="form-select" data-effect-search-state><option value="auto">参与搜索</option><option value="locked">锁定生效</option><option value="suspended">挂起排除</option></select></label>
+            <label class="form-check effect-priority" title="同等误差时，更优先保留该 Buff 生效">
+              <input class="form-check-input" data-effect-priority type="checkbox" ${values.priority !== false ? 'checked' : ''}>
+              <span class="form-check-label">高触发优先</span>
+            </label>
+            <label class="form-check effect-stack-toggle" title="仅层数型 Buff 开启；开启后下方数值按每层填写">
+              <input class="form-check-input" data-effect-stack-enabled type="checkbox" ${values.stackEnabled ? 'checked' : ''}>
+              <span class="form-check-label">叠层 Buff</span>
+            </label>
+            <button class="btn effect-scope-button" type="button" data-edit-effect-scope data-effect-damage-field>作用：全部技能</button>
+            <button class="btn btn-ghost" type="button" data-remove-effect>删除此效果</button>
+          </div>
+          <div class="effect-stack-settings" data-effect-stack-settings ${values.stackEnabled ? '' : 'hidden'}>
+            <div class="effect-stack-note">下方所有非零属性均按“每层数值”填写。自动反推会验算 0～最大层数。</div>
+            <label class="form-label">层数方式<select class="form-select" data-effect-stack-mode><option value="auto" ${values.stackMode !== 'fixed' ? 'selected' : ''}>自动反推</option><option value="fixed" ${values.stackMode === 'fixed' ? 'selected' : ''}>固定层数</option></select></label>
+            <label class="form-label">最大层数<input class="form-control" data-effect-max-stacks type="number" min="1" max="30" step="1" value="${boundedStackValue(values.maxStacks, 6, 1)}"></label>
+            <label class="form-label" data-effect-fixed-stacks-field ${values.stackMode === 'fixed' ? '' : 'hidden'}>当前层数<input class="form-control" data-effect-fixed-stacks type="number" min="0" max="30" step="1" value="${boundedStackValue(values.fixedStacks, values.maxStacks || 6, 0)}"></label>
+          </div>
+          <div class="effect-values">
+            <label class="form-label">攻击加成（%）<input class="form-control" data-effect-attack type="number" step="0.01" value="${values.attack || 0}"></label>
+            <label class="form-label" data-effect-damage-field>防御穿透（%）<input class="form-control" data-effect-penetration type="number" step="0.01" value="${values.penetration || 0}"></label>
+            <label class="form-label" data-effect-damage-field>抗性削弱（%）<input class="form-control" data-effect-res-shred type="number" step="0.01" value="${values.resShred || 0}"></label>
+            <label class="form-label" data-effect-damage-field>增伤（%）<input class="form-control" data-effect-damage type="number" step="0.01" value="${values.damage || 0}"></label>
+            <label class="form-label" data-effect-damage-field>持续伤害强化（%）<input class="form-control" data-effect-dot-damage type="number" step="0.01" value="${values.dotDamage || 0}"></label>
+            <label class="form-label" data-effect-damage-field>暴击伤害（%）<input class="form-control" data-effect-crit type="number" step="0.01" value="${values.crit || 0}"></label>
+            <label class="form-label" data-effect-damage-field>技能倍率（%）<input class="form-control" data-effect-skill type="number" step="0.01" value="${values.skill || 0}"></label>
+            <label class="form-check" data-effect-damage-field><input class="form-check-input" data-effect-skill-multiply type="checkbox" ${values.skillMultiply ? 'checked' : ''}><span class="form-check-label">技能倍率乘算</span></label>
+            <label class="form-label" data-effect-fusion-field hidden>环合强度提升（%）<input class="form-control" data-effect-fusion-percent type="number" step="0.01" value="${values.fusionPercent || 0}"></label>
+            <label class="form-label" data-effect-fusion-field hidden>环合强度固定提升<input class="form-control" data-effect-fusion-flat type="number" step="0.01" value="${values.fusionFlat || 0}"></label>
+            <label class="form-label" data-effect-heal-field hidden>治疗加成（%）<input class="form-control" data-effect-heal-bonus type="number" step="0.01" value="${values.healBonus ?? values.heal ?? 0}"></label>
+          </div>`;
         byId('cdc-effects').appendChild(row);
+        row.querySelector('[data-effect-search-state]').value = row.dataset.searchState;
+        updateEffectStackFields(row);
+        updateEffectSearchState(row);
+        updateEffectScopeSummary(row);
         updateCalculatorType();
       }
 
-      function addSkill(name = '', model = 'skill', multiplier = 0, observed = 0, critical = false, enabled = true) {
+      function addSkill(name = '', model = 'skill', multiplier = 0, observed = 0, critical = false, enabled = true, tag = 'direct', id = '') {
         rowCounter += 1;
         const row = document.createElement('div');
         row.className = 'entry-row';
         row.dataset.skillRow = String(rowCounter);
+        row.dataset.skillId = id || makeRowId('skill');
         row.innerHTML = `
           <label class="form-label">技能名称<input class="form-control" data-skill-name type="text" value="${escapeHtml(name)}"></label>
-          <label class="form-label">伤害模型<select class="form-select" data-skill-model><option value="skill">常规技能</option><option value="creation">创生伤害</option></select></label>
-          <label class="form-label">基础倍率（%）<input class="form-control" data-skill-multiplier type="number" min="0" step="0.01" value="${multiplier}"></label>
+          <label class="form-label">伤害模型<select class="form-select" data-skill-model><option value="skill">常规技能</option><option value="creation">创生花伤害</option><option value="turbid">浊燃伤害</option><option value="darkstar">黯星伤害</option></select></label>
+          <label class="form-label" data-skill-tag-field>伤害 Tag<select class="form-select" data-skill-tag><option value="direct">非持续</option><option value="dot">持续伤害</option></select></label>
+          <label class="form-label" data-skill-multiplier-field>基础倍率（%）<input class="form-control" data-skill-multiplier type="number" min="0" step="0.01" value="${multiplier}"></label>
           <label class="form-label" data-normal-skill-field>实测显示伤害<input class="form-control" data-skill-observed type="number" min="0" step="1" value="${observed}"></label>
-          <label class="form-check" data-normal-skill-field><input class="form-check-input" data-skill-critical type="checkbox" ${critical ? 'checked' : ''}><span class="form-check-label">暴击</span></label>
-          <label class="form-check"><input class="form-check-input" data-skill-enabled type="checkbox" ${enabled ? 'checked' : ''}><span class="form-check-label" data-skill-enabled-label>${verificationMode === 'rage' ? '作为候选来源' : '纳入验算'}</span></label>
+          <div class="skill-options">
+            <label class="form-check" data-normal-skill-field><input class="form-check-input" data-skill-critical type="checkbox" ${critical ? 'checked' : ''}><span class="form-check-label">暴击</span></label>
+            <label class="form-check"><input class="form-check-input" data-skill-enabled type="checkbox" ${enabled ? 'checked' : ''}><span class="form-check-label" data-skill-enabled-label>${verificationMode === 'rage' ? '作为候选来源' : '纳入验算'}</span></label>
+          </div>
           <button class="btn btn-ghost" type="button" data-remove-skill>删除此技能</button>`;
         row.querySelector('[data-skill-model]').value = model;
+        row.querySelector('[data-skill-tag]').value = model === 'turbid' || (model === 'skill' && tag === 'dot') ? 'dot' : 'direct';
         byId('cdc-skills').appendChild(row);
+        updateAllEffectScopeSummaries();
       }
 
       function addHeal(name = '', multiplier = 0, observed = 0, enabled = true) {
@@ -815,10 +2691,19 @@
       function readEffects() {
         return Array.from(root.querySelectorAll('[data-effect-row]')).map((row, index) => ({
           name: row.querySelector('[data-effect-name]').value.trim() || `候选效果${index + 1}`,
+          searchState: normalizedEffectSearchState(row.querySelector('[data-effect-search-state]').value),
+          priority: row.querySelector('[data-effect-priority]').checked,
+          scopeMode: normalizedScopeMode(row.dataset.scopeMode),
+          scopeSkillIds: effectScopeSkillIds(row),
+          stackEnabled: row.querySelector('[data-effect-stack-enabled]').checked,
+          stackMode: row.querySelector('[data-effect-stack-mode]').value === 'fixed' ? 'fixed' : 'auto',
+          maxStacks: boundedStackValue(row.querySelector('[data-effect-max-stacks]').value, 6, 1),
+          fixedStacks: boundedStackValue(row.querySelector('[data-effect-fixed-stacks]').value, 0, 0),
           attack: Number(row.querySelector('[data-effect-attack]').value) / 100 || 0,
           penetration: Number(row.querySelector('[data-effect-penetration]').value) / 100 || 0,
           resShred: Number(row.querySelector('[data-effect-res-shred]').value) / 100 || 0,
           damage: Number(row.querySelector('[data-effect-damage]').value) / 100 || 0,
+          dotDamage: Number(row.querySelector('[data-effect-dot-damage]').value) / 100 || 0,
           crit: Number(row.querySelector('[data-effect-crit]').value) / 100 || 0,
           skill: Number(row.querySelector('[data-effect-skill]').value) / 100 || 0,
           skillMultiply: row.querySelector('[data-effect-skill-multiply]').checked,
@@ -831,8 +2716,10 @@
       function readSkills() {
         return Array.from(root.querySelectorAll('[data-skill-row]')).map((row, index) => ({
           index,
+          id: row.dataset.skillId,
           name: row.querySelector('[data-skill-name]').value.trim() || `伤害技能${index + 1}`,
           model: row.querySelector('[data-skill-model]').value,
+          tag: skillTagForRow(row),
           multiplier: Number(row.querySelector('[data-skill-multiplier]').value) / 100 || 0,
           observed: Number(row.querySelector('[data-skill-observed]').value) || 0,
           critical: row.querySelector('[data-skill-critical]').checked,
@@ -857,9 +2744,38 @@
           .filter((value) => Number.isFinite(value) && value >= 0);
       }
 
+      function normalizeSpecialEffect(value) {
+        return ['infusion', 'overlay'].includes(value) ? value : 'none';
+      }
+
+      function renderSpecialEffectCard() {
+        specialEffect = normalizeSpecialEffect(specialEffect);
+        root.querySelectorAll('[data-special-effect-option]').forEach((button) => {
+          button.setAttribute('aria-pressed', String(button.dataset.specialEffectOption === specialEffect));
+        });
+        const card = byId('cdc-special-effect-card');
+        card.hidden = calculatorType !== 'damage' || specialEffect === 'none';
+        if (specialEffect === 'none') return;
+        const name = specialEffect === 'overlay' ? '覆纹' : '浸染';
+        byId('cdc-special-effect-name').textContent = name;
+        byId('cdc-special-effect-formula').textContent = `独立倍率 = 1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合强度 / ${format(formulaSettings.specialFusionDivisor)}`;
+      }
+
+      function setSpecialEffect(value) {
+        specialEffect = normalizeSpecialEffect(value);
+        renderSpecialEffectCard();
+        updateCalculatorType();
+      }
+
       function needsFusionStrength() {
-        return calculatorType === 'damage' && (byId('cdc-infusion-enabled').checked
-          || Array.from(root.querySelectorAll('[data-skill-model]')).some((select) => select.value === 'creation'));
+        return calculatorType === 'damage' && (specialEffect !== 'none'
+          || Array.from(root.querySelectorAll('[data-skill-model]')).some((select) => ['creation', 'turbid', 'darkstar'].includes(select.value)));
+      }
+
+      function skillTagForRow(row) {
+        const model = row.querySelector('[data-skill-model]').value;
+        if (model === 'turbid') return 'dot';
+        return model === 'skill' && row.querySelector('[data-skill-tag]').value === 'dot' ? 'dot' : 'direct';
       }
 
       function updateCalculatorType() {
@@ -874,11 +2790,21 @@
         root.querySelectorAll('[data-heal-only]').forEach((element) => { element.hidden = damageMode; });
         root.querySelectorAll('[data-effect-damage-field]').forEach((element) => { element.hidden = !damageMode; });
         root.querySelectorAll('[data-effect-heal-field]').forEach((element) => { element.hidden = damageMode; });
+        root.querySelectorAll('[data-skill-row]').forEach((row) => {
+          const model = row.querySelector('[data-skill-model]').value;
+          const normalModel = model === 'skill';
+          if (model === 'turbid') row.querySelector('[data-skill-tag]').value = 'dot';
+          else if (!normalModel) row.querySelector('[data-skill-tag]').value = 'direct';
+          const tagField = row.querySelector('[data-skill-tag-field]');
+          const multiplierField = row.querySelector('[data-skill-multiplier-field]');
+          if (tagField) tagField.hidden = !normalModel;
+          if (multiplierField) multiplierField.hidden = !normalModel;
+        });
         const showFusion = needsFusionStrength();
         root.querySelectorAll('[data-fusion-field], [data-effect-fusion-field]').forEach((element) => {
           element.hidden = !showFusion;
         });
-        byId('cdc-special-field').hidden = !damageMode || !byId('cdc-special-enabled').checked;
+        renderSpecialEffectCard();
         updateVerificationMode();
       }
 
@@ -898,6 +2824,11 @@
         byId('cdc-run-verification').textContent = calculatorType === 'heal'
           ? '确定并开始治疗验算'
           : verificationMode === 'rage' ? '确定并开始溯源' : '确定并开始验算';
+        byId('cdc-search-scope-note').textContent = calculatorType === 'heal'
+          ? '治疗验算固定基础区，只反推实际进入治疗公式的 Buff。'
+          : verificationMode === 'rage'
+            ? '狂暴溯源会验算相关基础区失效，并自动排除候选来源公式不读取的 Buff。'
+            : '常规验算固定基础区，只反推当前技能公式实际读取的 Buff。';
       }
 
       function updateSkillPagination(goToLast = false) {
@@ -927,15 +2858,24 @@
         const scalarIds = ['cdc-character', 'cdc-version', 'cdc-panel', 'cdc-base', 'cdc-atk-bonus',
           'cdc-heal-bonus', 'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-fusion',
           'cdc-penetration', 'cdc-res-shred', 'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit',
-          'cdc-special-multiplier', 'cdc-rage-values', 'cdc-search-strength'];
+          'cdc-rage-values', 'cdc-search-strength'];
         const scalars = {};
         scalarIds.forEach((id) => { scalars[id] = byId(id).value; });
         const effects = Array.from(root.querySelectorAll('[data-effect-row]')).map((row) => ({
           name: row.querySelector('[data-effect-name]').value,
+          searchState: normalizedEffectSearchState(row.querySelector('[data-effect-search-state]').value),
+          priority: row.querySelector('[data-effect-priority]').checked,
+          scopeMode: normalizedScopeMode(row.dataset.scopeMode),
+          scopeSkillIds: effectScopeSkillIds(row),
+          stackEnabled: row.querySelector('[data-effect-stack-enabled]').checked,
+          stackMode: row.querySelector('[data-effect-stack-mode]').value === 'fixed' ? 'fixed' : 'auto',
+          maxStacks: boundedStackValue(row.querySelector('[data-effect-max-stacks]').value, 6, 1),
+          fixedStacks: boundedStackValue(row.querySelector('[data-effect-fixed-stacks]').value, 0, 0),
           attack: Number(row.querySelector('[data-effect-attack]').value) || 0,
           penetration: Number(row.querySelector('[data-effect-penetration]').value) || 0,
           resShred: Number(row.querySelector('[data-effect-res-shred]').value) || 0,
           damage: Number(row.querySelector('[data-effect-damage]').value) || 0,
+          dotDamage: Number(row.querySelector('[data-effect-dot-damage]').value) || 0,
           crit: Number(row.querySelector('[data-effect-crit]').value) || 0,
           skill: Number(row.querySelector('[data-effect-skill]').value) || 0,
           skillMultiply: row.querySelector('[data-effect-skill-multiply]').checked,
@@ -944,8 +2884,10 @@
           healBonus: Number(row.querySelector('[data-effect-heal-bonus]').value) || 0
         }));
         const skills = Array.from(root.querySelectorAll('[data-skill-row]')).map((row) => ({
+          id: row.dataset.skillId,
           name: row.querySelector('[data-skill-name]').value,
           model: row.querySelector('[data-skill-model]').value,
+          tag: skillTagForRow(row),
           multiplier: Number(row.querySelector('[data-skill-multiplier]').value) || 0,
           observed: Number(row.querySelector('[data-skill-observed]').value) || 0,
           critical: row.querySelector('[data-skill-critical]').checked,
@@ -958,13 +2900,13 @@
           enabled: row.querySelector('[data-heal-enabled]').checked
         }));
         return {
-          schema: 3,
+          schema: 8,
           calculatorType,
           mode: verificationMode,
+          formulaSettings: { ...formulaSettings },
           scalars,
           options: {
-            infusionEnabled: byId('cdc-infusion-enabled').checked,
-            specialEnabled: byId('cdc-special-enabled').checked
+            specialEffect
           },
           effects,
           skills,
@@ -977,7 +2919,6 @@
         restoring = true;
         byId('cdc-heal-bonus').value = '0';
         byId('cdc-fusion').value = '360';
-        byId('cdc-special-multiplier').value = '1';
         Object.entries(data.scalars).forEach(([id, value]) => {
           const element = byId(id);
           if (element) element.value = value;
@@ -986,17 +2927,24 @@
         byId('cdc-fusion').value = String(Number.isFinite(storedFusion)
           ? Math.max(0, Math.min(360, storedFusion))
           : 0);
-        byId('cdc-infusion-enabled').checked = Boolean(data.options?.infusionEnabled);
-        byId('cdc-special-enabled').checked = Boolean(data.options?.specialEnabled);
+        specialEffect = normalizeSpecialEffect(data.options?.specialEffect
+          || (data.options?.infusionEnabled ? 'infusion' : '')
+          || (data.options?.specialEnabled ? 'overlay' : 'none'));
+        if (data.formulaSettings) {
+          formulaSettings = normalizeFormulaSettings(data.formulaSettings);
+          persistFormulaSettings();
+          syncFormulaEditor();
+        }
         byId('cdc-effects').innerHTML = '';
         byId('cdc-skills').innerHTML = '';
         byId('cdc-heals').innerHTML = '';
         (data.effects || []).forEach((effect) => addEffect(effect.name, effect));
-        (data.skills || []).forEach((skill) => addSkill(skill.name, skill.model, skill.multiplier, skill.observed, skill.critical, skill.enabled));
+        (data.skills || []).forEach((skill) => addSkill(skill.name, skill.model, skill.multiplier, skill.observed, skill.critical, skill.enabled, skill.tag, skill.id));
         (data.heals || []).forEach((heal) => addHeal(heal.name, heal.multiplier, heal.observed, heal.enabled));
         calculatorType = data.calculatorType === 'heal' ? 'heal' : 'damage';
         verificationMode = calculatorType === 'damage' && data.mode === 'rage' ? 'rage' : 'normal';
         updateCalculatorType();
+        updateAllEffectScopeSummaries();
         skillPage = 0;
         detailPage = 0;
         updateSkillPagination();
@@ -1011,12 +2959,11 @@
         const scalarIds = ['cdc-character', 'cdc-version', 'cdc-panel', 'cdc-base', 'cdc-atk-bonus',
           'cdc-heal-bonus', 'cdc-char-level', 'cdc-enemy-level', 'cdc-resistance', 'cdc-fusion',
           'cdc-penetration', 'cdc-res-shred', 'cdc-general', 'cdc-elemental', 'cdc-extra', 'cdc-crit',
-          'cdc-special-multiplier', 'cdc-rage-values', 'cdc-search-strength'];
+          'cdc-rage-values', 'cdc-search-strength'];
         const scalars = {};
         scalarIds.forEach((id) => { scalars[id] = ''; });
         scalars['cdc-search-strength'] = 'deep';
-        scalars['cdc-special-multiplier'] = '1';
-        applyData({ schema: 3, calculatorType: 'damage', mode: 'normal', scalars, options: {}, effects: [], skills: [], heals: [] });
+        applyData({ schema: 8, calculatorType: 'damage', mode: 'normal', formulaSettings: { ...formulaSettings }, scalars, options: { specialEffect: 'none' }, effects: [], skills: [], heals: [] });
         clearTimeout(draftTimer);
         try {
           localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(captureData()));
@@ -1080,36 +3027,135 @@
         { id: 'zone-skill', label: '技能倍率区整体', component: 'zoneSkill', modes: ['damage'] },
         { id: 'base-fusion', label: '基础环合强度', component: 'baseFusion', modes: ['damage'], conditional: 'fusion' },
         { id: 'zone-fusion', label: '环合强度独立乘区', component: 'zoneFusion', modes: ['damage'], conditional: 'fusion' },
-        { id: 'base-special', label: '特殊独立乘区', component: 'baseSpecial', modes: ['damage'], conditional: 'special' },
+        { id: 'base-special', label: '浸染 / 覆纹乘区', component: 'baseSpecial', modes: ['damage'], conditional: 'special' },
         { id: 'base-heal-bonus', label: '基础治疗加成', component: 'baseHealBonus', modes: ['heal'] },
         { id: 'zone-heal-bonus', label: '治疗加成区整体', component: 'zoneHealBonus', modes: ['heal'] }
       ];
       const componentLabels = {
-        attack: '攻击加成', penetration: '防御穿透', resShred: '抗性削弱', damage: '增伤',
+        attack: '攻击加成', penetration: '防御穿透', resShred: '抗性削弱', damage: '增伤', dotDamage: '持续伤害强化',
         crit: '暴击伤害', skill: '技能倍率', fusionPercent: '环合强度百分比提升',
         fusionFlat: '环合强度固定提升', healBonus: '治疗加成'
       };
 
-      function createAtoms(effects) {
+      function componentAffectsDamageTarget(component, effect, target) {
+        if (!scopeAppliesToSkill(effect, target)) return false;
+        const canCrit = verificationMode === 'rage' || target.critical;
+        if (target.model === 'skill') {
+          if (['attack', 'penetration', 'resShred', 'damage', 'skill'].includes(component)) return true;
+          if (component === 'crit') return canCrit;
+          if (component === 'dotDamage') return target.tag === 'dot';
+          if (['fusionPercent', 'fusionFlat'].includes(component)) return specialEffect !== 'none';
+          return false;
+        }
+        if (component === 'resShred') return true;
+        if (component === 'penetration') return target.model !== 'darkstar';
+        if (component === 'crit') return canCrit;
+        if (['fusionPercent', 'fusionFlat'].includes(component)) return true;
+        if (component === 'dotDamage') return target.model === 'turbid';
+        if (component === 'damage') return effect.scopeMode === 'custom';
+        return false;
+      }
+
+      function relevantEffectComponents(effect, skills, heals) {
+        if (effect.searchState === 'suspended') return [];
+        if (calculatorType === 'heal') {
+          return heals.some((heal) => heal.enabled) ? ['attack', 'healBonus'] : [];
+        }
+        const targets = skills.filter((skill) => skill.enabled);
+        return ['attack', 'penetration', 'resShred', 'damage', 'dotDamage', 'crit', 'skill', 'fusionPercent', 'fusionFlat']
+          .filter((component) => effect[component] && targets.some((target) => componentAffectsDamageTarget(component, effect, target)));
+      }
+
+      function baseAtomAffectsTargets(atom, effects, skills, heals) {
+        if (calculatorType === 'heal') {
+          if (!heals.some((heal) => heal.enabled)) return false;
+          if (atom.id === 'base-attack') return percent('cdc-atk-bonus') !== 0;
+          if (atom.id === 'base-heal-bonus') return percent('cdc-heal-bonus') !== 0;
+          return atom.id === 'zone-heal-bonus';
+        }
+        const targets = skills.filter((skill) => skill.enabled);
+        const normalTargets = targets.filter((target) => target.model === 'skill');
+        const defenseTargets = targets.filter((target) => ['skill', 'creation', 'turbid'].includes(target.model));
+        const reactionTargets = targets.filter((target) => ['creation', 'turbid', 'darkstar'].includes(target.model));
+        const canCrit = verificationMode === 'rage' ? targets.length > 0 : targets.some((target) => target.critical);
+        const fusionUsed = reactionTargets.length > 0 || (specialEffect !== 'none' && normalTargets.length > 0);
+        const explicitReactionDamage = effects.some((effect) => effect.searchState !== 'suspended'
+          && effect.damage
+          && reactionTargets.some((target) => componentAffectsDamageTarget('damage', effect, target)));
+        if (atom.id === 'base-attack') return normalTargets.length > 0 && percent('cdc-atk-bonus') !== 0;
+        if (atom.id === 'base-penetration') return defenseTargets.length > 0 && percent('cdc-penetration') !== 0;
+        if (atom.id === 'base-res-shred') return targets.length > 0 && percent('cdc-res-shred') !== 0;
+        if (atom.id === 'base-general') return normalTargets.length > 0 && percent('cdc-general') !== 0;
+        if (atom.id === 'base-elemental') return normalTargets.length > 0 && percent('cdc-elemental') !== 0;
+        if (atom.id === 'base-extra') return normalTargets.length > 0 && percent('cdc-extra') !== 0;
+        if (atom.id === 'base-crit') return canCrit && percent('cdc-crit') !== 0;
+        if (atom.id === 'zone-defense') return defenseTargets.length > 0;
+        if (atom.id === 'zone-resistance') return targets.length > 0;
+        if (atom.id === 'zone-damage') return normalTargets.length > 0 || explicitReactionDamage;
+        if (atom.id === 'zone-crit') return canCrit;
+        if (atom.id === 'zone-skill') return normalTargets.length > 0;
+        if (atom.id === 'base-fusion') return fusionUsed && number('cdc-fusion') !== 0;
+        if (atom.id === 'zone-fusion') return fusionUsed;
+        if (atom.id === 'base-special') return specialEffect !== 'none' && normalTargets.length > 0;
+        return false;
+      }
+
+      function createAtoms(effects, skills, heals) {
         const fusionNeeded = needsFusionStrength();
         const atoms = baseAtoms
           .filter((atom) => atom.modes.includes(calculatorType))
           .filter((atom) => atom.conditional !== 'fusion' || fusionNeeded)
-          .filter((atom) => atom.conditional !== 'special' || byId('cdc-special-enabled').checked)
+          .filter((atom) => atom.conditional !== 'special' || specialEffect !== 'none')
+          .filter((atom) => baseAtomAffectsTargets(atom, effects, skills, heals))
           .map((atom) => ({ ...atom, expected: true, kind: 'base' }));
-        const components = calculatorType === 'heal'
-          ? ['attack', 'healBonus']
-          : ['attack', 'penetration', 'resShred', 'damage', 'crit', 'skill']
-            .concat(fusionNeeded ? ['fusionPercent', 'fusionFlat'] : []);
         effects.forEach((effect, effectIndex) => {
+          const components = relevantEffectComponents(effect, skills, heals);
+          if (!components.length) return;
+          const common = {
+            expected: true,
+            effectIndex,
+            effectName: effect.name,
+            searchState: effect.searchState,
+            priorityWeight: effect.priority ? 2 : 1,
+            scopeMode: normalizedScopeMode(effect.scopeMode),
+            scopeSkillIds: Array.isArray(effect.scopeSkillIds) ? effect.scopeSkillIds.map(String) : [],
+            skillMultiply: effect.skillMultiply
+          };
+          if (effect.stackEnabled) {
+            const values = {};
+            components.forEach((component) => { values[component] = effect[component]; });
+            if (!Object.keys(values).length) return;
+            const maxStacks = boundedStackValue(effect.maxStacks, 6, 1);
+            if (effect.stackMode === 'fixed') {
+              const fixedStacks = Math.min(maxStacks, boundedStackValue(effect.fixedStacks, 0, 0));
+              if (fixedStacks > 0) atoms.push({
+                ...common,
+                id: `effect-${effectIndex}-stack-fixed`,
+                kind: 'stack-fixed',
+                values,
+                stackCount: fixedStacks,
+                stackMax: maxStacks
+              });
+              return;
+            }
+            for (let layer = 1; layer <= maxStacks; layer += 1) {
+              atoms.push({
+                ...common,
+                id: `effect-${effectIndex}-stack-${layer}`,
+                kind: 'stack',
+                values,
+                stackLayer: layer,
+                stackCount: 1,
+                stackMax: maxStacks
+              });
+            }
+            return;
+          }
           components.forEach((component) => {
-            if (!effect[component]) return;
             atoms.push({
+              ...common,
               id: `effect-${effectIndex}-${component}`,
               kind: 'effect',
-              expected: true,
-              effectIndex,
-              effectName: effect.name,
               component,
               value: effect[component],
               skillMultiply: component === 'skill' && effect.skillMultiply
@@ -1117,6 +3163,39 @@
           });
         });
         return atoms;
+      }
+
+      function isStackAtom(atom) {
+        return atom.kind === 'stack' || atom.kind === 'stack-fixed';
+      }
+
+      function effectAtomEntries(atom) {
+        if (!isStackAtom(atom)) return [[atom.component, atom.value]];
+        const scale = atom.stackCount || 1;
+        return Object.entries(atom.values).map(([component, value]) => [component, value * scale]);
+      }
+
+      function finalizeState(state) {
+        const enabled = (id) => state.active.has(id);
+        state.combatAttack = number('cdc-panel') + number('cdc-base') * state.attackBonus;
+        state.fusionStrength = state.fusionBase * (1 + state.fusionPercent) + state.fusionFlat;
+        const characterFactor = 100 + number('cdc-char-level');
+        const enemyFactor = (100 + number('cdc-enemy-level')) * (1 - state.penetration);
+        const calculatedDefense = characterFactor / (characterFactor + enemyFactor);
+        const calculatedResistance = 1 - percent('cdc-resistance') + state.resShred;
+        state.defenseZone = enabled('zone-defense') ? calculatedDefense : 1;
+        state.resistanceZone = enabled('zone-resistance') ? calculatedResistance : 1;
+        state.damageZoneEnabled = enabled('zone-damage');
+        state.damageZone = enabled('zone-damage') ? 1 + state.damageBonus : 1;
+        state.dotDamageZone = 1 + state.dotDamageBonus;
+        state.critZoneEnabled = enabled('zone-crit');
+        state.skillZoneEnabled = enabled('zone-skill');
+        state.healBonusZone = enabled('zone-heal-bonus') ? 1 + state.healBonus : 1;
+        state.creationFusionZone = enabled('zone-fusion') ? 1 + state.fusionStrength / formulaSettings.fusionDivisor : 1;
+        state.specialZone = specialEffect !== 'none' && enabled('base-special') && enabled('zone-fusion')
+          ? 1 + formulaSettings.specialBaseBonus + state.fusionStrength / formulaSettings.specialFusionDivisor
+          : 1;
+        return state;
       }
 
       function buildState(activeIds, atoms) {
@@ -1129,84 +3208,201 @@
           damageBonus: (enabled('base-general') ? percent('cdc-general') : 0)
             + (enabled('base-elemental') ? percent('cdc-elemental') : 0)
             + (enabled('base-extra') ? percent('cdc-extra') : 0),
+          dotDamageBonus: 0,
           // The game panel shows bonus critical damage. The actual critical
           // multiplier always includes the implicit base multiplier of 1.
           critDamage: 1 + (enabled('base-crit') ? percent('cdc-crit') : 0),
           skillAdd: 0,
           skillProduct: 1,
           healBonus: enabled('base-heal-bonus') ? percent('cdc-heal-bonus') : 0,
-          fusionBase: enabled('base-fusion') ? number('cdc-fusion') : 0,
+          fusionBase: enabled('base-fusion') ? Math.max(0, Math.min(360, number('cdc-fusion'))) : 0,
           fusionPercent: 0,
           fusionFlat: 0,
           active,
           baseFailures: atoms.filter((atom) => atom.kind === 'base' && !active.has(atom.id)).map((atom) => atom.label),
-          activeEffectAtoms: atoms.filter((atom) => atom.kind === 'effect' && active.has(atom.id))
+          activeEffectAtoms: atoms.filter((atom) => atom.kind !== 'base' && active.has(atom.id)),
+          effectStackCounts: {}
         };
+        state.activeScopedAtoms = state.activeEffectAtoms.filter((atom) => atom.scopeMode !== 'all');
+        const stackSkillMultiplyTotals = {};
         state.activeEffectAtoms.forEach((atom) => {
-          if (atom.component === 'attack') state.attackBonus += atom.value;
-          if (atom.component === 'penetration') state.penetration += atom.value;
-          if (atom.component === 'resShred') state.resShred += atom.value;
-          if (atom.component === 'damage') state.damageBonus += atom.value;
-          if (atom.component === 'crit') state.critDamage += atom.value;
-          if (atom.component === 'skill' && atom.skillMultiply) state.skillProduct *= 1 + atom.value;
-          if (atom.component === 'skill' && !atom.skillMultiply) state.skillAdd += atom.value;
-          if (atom.component === 'healBonus') state.healBonus += atom.value;
-          if (atom.component === 'fusionPercent') state.fusionPercent += atom.value;
-          if (atom.component === 'fusionFlat') state.fusionFlat += atom.value;
+          if (isStackAtom(atom)) {
+            state.effectStackCounts[atom.effectIndex] = (state.effectStackCounts[atom.effectIndex] || 0) + (atom.stackCount || 1);
+          }
+          effectAtomEntries(atom).forEach(([component, value]) => {
+            if (component === 'attack') state.attackBonus += value;
+            if (component === 'penetration') state.penetration += value;
+            if (component === 'resShred') state.resShred += value;
+            if (component === 'damage') state.damageBonus += value;
+            if (component === 'dotDamage') state.dotDamageBonus += value;
+            if (component === 'crit') state.critDamage += value;
+            if (component === 'skill' && atom.skillMultiply && isStackAtom(atom)) {
+              stackSkillMultiplyTotals[atom.effectIndex] = (stackSkillMultiplyTotals[atom.effectIndex] || 0) + value;
+            }
+            if (component === 'skill' && atom.skillMultiply && !isStackAtom(atom)) state.skillProduct *= 1 + value;
+            if (component === 'skill' && !atom.skillMultiply) state.skillAdd += value;
+            if (component === 'healBonus') state.healBonus += value;
+            if (component === 'fusionPercent') state.fusionPercent += value;
+            if (component === 'fusionFlat') state.fusionFlat += value;
+          });
         });
-        state.combatAttack = number('cdc-panel') + number('cdc-base') * state.attackBonus;
-        state.fusionStrength = state.fusionBase * (1 + state.fusionPercent) + state.fusionFlat;
-        const characterFactor = 100 + number('cdc-char-level');
-        const enemyFactor = (100 + number('cdc-enemy-level')) * (1 - state.penetration);
-        const calculatedDefense = characterFactor / (characterFactor + enemyFactor);
-        const calculatedResistance = 1 - percent('cdc-resistance') + state.resShred;
-        state.defenseZone = enabled('zone-defense') ? calculatedDefense : 1;
-        state.resistanceZone = enabled('zone-resistance') ? calculatedResistance : 1;
-        state.damageZone = enabled('zone-damage') ? 1 + state.damageBonus : 1;
-        state.critZoneEnabled = enabled('zone-crit');
-        state.skillZoneEnabled = enabled('zone-skill');
-        state.healBonusZone = enabled('zone-heal-bonus') ? 1 + state.healBonus : 1;
-        state.infusionZone = byId('cdc-infusion-enabled').checked && enabled('zone-fusion')
-          ? 1.2 * state.fusionStrength / 600
-          : 1;
-        state.creationFusionZone = enabled('zone-fusion') ? 1 + state.fusionStrength / 600 : 1;
-        state.specialZone = byId('cdc-special-enabled').checked && enabled('base-special')
-          ? number('cdc-special-multiplier')
-          : 1;
+        Object.values(stackSkillMultiplyTotals).forEach((value) => { state.skillProduct *= 1 + value; });
+        state.stackSkillMultiplyTotals = stackSkillMultiplyTotals;
+        return finalizeState(state);
+      }
+
+      function scopeAppliesToSkill(atom, target) {
+        if (atom.scopeMode === 'all') return true;
+        const targetTag = target.model === 'turbid' ? 'dot' : target.tag;
+        if (atom.scopeMode === 'dot') return targetTag === 'dot';
+        if (atom.scopeMode === 'direct') return targetTag !== 'dot';
+        return atom.scopeSkillIds.includes(String(target.id));
+      }
+
+      function stateForSkill(globalState, target) {
+        const excluded = globalState.activeScopedAtoms.filter((atom) => !scopeAppliesToSkill(atom, target));
+        let state = globalState;
+        if (excluded.length) {
+          state = { ...globalState };
+          const excludedStackSkillTotals = {};
+          excluded.forEach((atom) => {
+            effectAtomEntries(atom).forEach(([component, value]) => {
+              if (component === 'attack') state.attackBonus -= value;
+              if (component === 'penetration') state.penetration -= value;
+              if (component === 'resShred') state.resShred -= value;
+              if (component === 'damage') state.damageBonus -= value;
+              if (component === 'dotDamage') state.dotDamageBonus -= value;
+              if (component === 'crit') state.critDamage -= value;
+              if (component === 'skill' && atom.skillMultiply && isStackAtom(atom)) {
+                excludedStackSkillTotals[atom.effectIndex] = (excludedStackSkillTotals[atom.effectIndex] || 0) + value;
+              }
+              if (component === 'skill' && atom.skillMultiply && !isStackAtom(atom)) state.skillProduct /= 1 + value;
+              if (component === 'skill' && !atom.skillMultiply) state.skillAdd -= value;
+              if (component === 'healBonus') state.healBonus -= value;
+              if (component === 'fusionPercent') state.fusionPercent -= value;
+              if (component === 'fusionFlat') state.fusionFlat -= value;
+            });
+          });
+          Object.values(excludedStackSkillTotals).forEach((value) => { state.skillProduct /= 1 + value; });
+          state = finalizeState(state);
+        }
+        if (['creation', 'turbid', 'darkstar'].includes(target.model)) {
+          let explicitDamageBonus = 0;
+          globalState.activeEffectAtoms
+            .filter((atom) => atom.scopeMode === 'custom' && scopeAppliesToSkill(atom, target))
+            .forEach((atom) => {
+              effectAtomEntries(atom).forEach(([component, value]) => {
+                if (component === 'damage') explicitDamageBonus += value;
+              });
+            });
+          const appliedExplicitBonus = state.damageZoneEnabled ? explicitDamageBonus : 0;
+          state = { ...state, explicitReactionDamageBonus: appliedExplicitBonus, explicitReactionDamageZone: 1 + appliedExplicitBonus };
+        }
         return state;
+      }
+
+      function priorityPenalty(activeIds, atoms, effects) {
+        const active = activeIds instanceof Set ? activeIds : new Set(activeIds);
+        return effects.reduce((sum, effect, effectIndex) => {
+          const effectAtoms = atoms.filter((atom) => atom.kind !== 'base' && atom.effectIndex === effectIndex);
+          if (!effectAtoms.length) return sum;
+          if (effect.stackEnabled) {
+            const hasActiveLayer = effectAtoms.some((atom) => active.has(atom.id));
+            return sum + (hasActiveLayer ? 0 : (effect.priority ? 2 : 1));
+          }
+          const inactiveRatio = effectAtoms.filter((atom) => !active.has(atom.id)).length / effectAtoms.length;
+          return sum + inactiveRatio * (effect.priority ? 2 : 1);
+        }, 0);
+      }
+
+      function effectFailureCount(activeIds, atoms, effects) {
+        const active = activeIds instanceof Set ? activeIds : new Set(activeIds);
+        return effects.reduce((sum, effect, effectIndex) => {
+          const effectAtoms = atoms.filter((atom) => atom.kind !== 'base' && atom.effectIndex === effectIndex);
+          if (!effectAtoms.length) return sum;
+          if (effect.stackEnabled) return sum + Number(!effectAtoms.some((atom) => active.has(atom.id)));
+          return sum + effectAtoms.filter((atom) => !active.has(atom.id)).length;
+        }, 0);
       }
 
       function describeHypothesis(state, atoms, effects) {
         const effectDescriptions = effects.map((effect, effectIndex) => {
-          const effectAtoms = atoms.filter((atom) => atom.kind === 'effect' && atom.effectIndex === effectIndex);
+          if (effect.searchState === 'suspended') return '';
+          const effectAtoms = atoms.filter((atom) => atom.kind !== 'base' && atom.effectIndex === effectIndex);
           if (!effectAtoms.length) return '';
+          if (effect.stackEnabled && effect.stackMode === 'fixed' && boundedStackValue(effect.fixedStacks, 0, 0) === 0) {
+            return `${effect.name}固定 0/${boundedStackValue(effect.maxStacks, 6, 1)} 层`;
+          }
+          if (effect.stackEnabled) {
+            const count = state.effectStackCounts[effectIndex] || 0;
+            const maximum = boundedStackValue(effect.maxStacks, 6, 1);
+            if (!count) return `${effect.name}未生效（0/${maximum} 层）`;
+            if (effect.searchState === 'locked') return `${effect.name}锁定 ${count}/${maximum} 层生效`;
+            return effect.stackMode === 'fixed'
+              ? `${effect.name}固定 ${count}/${maximum} 层生效`
+              : `${effect.name}推测 ${count}/${maximum} 层生效`;
+          }
           const activeAtoms = effectAtoms.filter((atom) => state.active.has(atom.id));
           if (!activeAtoms.length) return `${effect.name}未生效`;
+          if (effect.searchState === 'locked') return `${effect.name}锁定生效`;
           if (activeAtoms.length === effectAtoms.length) return `${effect.name}全部生效`;
           return `${effect.name}仅${activeAtoms.map((atom) => componentLabels[atom.component]).join('、')}生效`;
         }).filter(Boolean);
         const baseDescription = state.baseFailures.length
           ? `基础异常：${state.baseFailures.join('、')}未生效`
-          : '基础乘区正常';
+          : verificationMode === 'rage' ? '基础乘区正常' : '基础区锁定（仅验算 Buff）';
         return effectDescriptions.concat(baseDescription).join('；');
       }
 
       function predictSkill(target, source, state) {
-        let exact;
+        const factors = [];
+        const push = (kind, label, value, note = '') => factors.push({ kind, label, value, note });
         if (target.model === 'creation') {
-          exact = 9000 * state.defenseZone * state.resistanceZone * state.creationFusionZone;
+          push('base', '固定基础', formulaSettings.creationBase);
+          push('defense', '防御区', state.defenseZone);
+          push('resistance', '抗性区', state.resistanceZone);
+          push('fusion', '环合修正', state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
+        } else if (target.model === 'turbid') {
+          push('base', '固定基础', formulaSettings.turbidBase);
+          push('defense', '防御区', state.defenseZone);
+          push('resistance', '抗性区', state.resistanceZone);
+          push('fusion', '环合修正', state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
+          push('dot', '持续伤害区', state.dotDamageZone);
+        } else if (target.model === 'darkstar') {
+          push('base', '固定基础', formulaSettings.darkstarBase);
+          push('defense', '防御区', 1, '黯星无视防御，防御乘区固定为 1');
+          push('resistance', '抗性区', state.resistanceZone);
+          push('fusion', '环合修正', state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
         } else {
           const calculatedMultiplier = (source.multiplier + state.skillAdd) * state.skillProduct;
           const finalMultiplier = state.skillZoneEnabled ? calculatedMultiplier : 1;
-          exact = state.combatAttack * state.defenseZone * state.resistanceZone * state.damageZone
-            * finalMultiplier * state.infusionZone * state.specialZone;
+          push('attack', '战斗面板攻击', state.combatAttack);
+          push('defense', '防御区', state.defenseZone);
+          push('resistance', '抗性区', state.resistanceZone);
+          push('damage', '增伤区', state.damageZone);
+          push('skill', '技能倍率', finalMultiplier);
+          if (specialEffect !== 'none') {
+            const specialName = specialEffect === 'overlay' ? '覆纹区' : '浸染区';
+            push('independent', specialName, state.specialZone, `1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合强度 ${format(state.fusionStrength)} / ${format(formulaSettings.specialFusionDivisor)}`);
+          }
+          if (target.tag === 'dot') push('dot', '持续伤害区', state.dotDamageZone);
         }
-        if (target.critical && state.critZoneEnabled) exact *= state.critDamage;
-        return { exact, displayed: Math.round(exact) };
+        if (['creation', 'turbid', 'darkstar'].includes(target.model)
+          && state.explicitReactionDamageZone !== 1) {
+          push('damage', '自定义点名增伤', state.explicitReactionDamageZone, '只有作用范围为“自定义技能”并明确勾选该反应的增伤会进入此区');
+        }
+        if (target.critical) push('crit', '暴击区', state.critZoneEnabled ? state.critDamage : 1);
+        const exact = factors.reduce((product, factor) => product * factor.value, 1);
+        return { exact, displayed: Math.round(exact), formula: factors };
       }
 
       function evaluateCombination(activeIds, atoms, effects, skills, heals) {
         const state = buildState(activeIds, atoms);
+        const skillStateCache = new Map();
+        const getSkillState = (target) => {
+          if (!skillStateCache.has(target.id)) skillStateCache.set(target.id, stateForSkill(state, target));
+          return skillStateCache.get(target.id);
+        };
         const damageDetails = [];
         const healDetails = [];
         let normalizedScore = 0;
@@ -1214,8 +3410,9 @@
         let wrongMultiplierCount = 0;
 
         skills.filter((skill) => skill.enabled).forEach((target) => {
-          if (target.model === 'creation') {
-            const prediction = predictSkill(target, target, state);
+          const targetState = getSkillState(target);
+          if (['creation', 'turbid', 'darkstar'].includes(target.model)) {
+            const prediction = predictSkill(target, target, targetState);
             const error = Math.abs(prediction.displayed - target.observed);
             normalizedScore += error / Math.max(1, target.observed);
             totalDisplayError += error;
@@ -1223,7 +3420,7 @@
             return;
           }
           const sourceCandidates = skills.filter((skill) => skill.model === 'skill').map((source) => {
-            const prediction = predictSkill(target, source, state);
+            const prediction = predictSkill(target, source, targetState);
             const error = Math.abs(prediction.displayed - target.observed);
             return { target, source, ...prediction, error, wrongSource: source.index !== target.index };
           });
@@ -1236,12 +3433,17 @@
         });
 
         heals.filter((heal) => heal.enabled).forEach((heal) => {
-          const exact = state.combatAttack * heal.multiplier * state.healBonusZone;
+          const formula = [
+            { kind: 'attack', label: '战斗面板攻击', value: state.combatAttack },
+            { kind: 'skill', label: '治疗倍率', value: heal.multiplier },
+            { kind: 'damage', label: '治疗加成区', value: state.healBonusZone }
+          ];
+          const exact = formula.reduce((product, factor) => product * factor.value, 1);
           const displayed = Math.round(exact);
           const error = Math.abs(displayed - heal.observed);
           normalizedScore += error / Math.max(1, heal.observed);
           totalDisplayError += error;
-          healDetails.push({ heal, exact, displayed, error });
+          healDetails.push({ heal, exact, displayed, error, formula });
         });
 
         const itemErrors = damageDetails.map((detail) => detail.error).concat(healDetails.map((detail) => detail.error));
@@ -1250,8 +3452,9 @@
         return {
           activeIds: new Set(activeIds), state, damageDetails, healDetails, normalizedScore, totalDisplayError,
           wrongMultiplierCount, baseFailureCount: state.baseFailures.length,
+          priorityPenalty: priorityPenalty(activeIds, atoms, effects),
           activeEffectCount: state.activeEffectAtoms.length,
-          effectFailureCount: atoms.filter((atom) => atom.kind === 'effect').length - state.activeEffectAtoms.length,
+          effectFailureCount: effectFailureCount(activeIds, atoms, effects),
           maxItemError, overLimitCount,
           description: describeHypothesis(state, atoms, effects)
         };
@@ -1259,16 +3462,22 @@
 
       function evaluateRageCombination(activeIds, atoms, effects, skills, rageValues) {
         const state = buildState(activeIds, atoms);
+        const skillStateCache = new Map();
+        const getSkillState = (target) => {
+          if (!skillStateCache.has(target.id)) skillStateCache.set(target.id, stateForSkill(state, target));
+          return skillStateCache.get(target.id);
+        };
         const enabledSkills = skills.filter((skill) => skill.enabled);
         const multiplierSources = enabledSkills.filter((skill) => skill.model === 'skill');
         const sourceCandidates = [];
 
         enabledSkills.forEach((target) => {
           const criticalStates = [false, true];
-          if (target.model === 'creation') {
+          const targetState = getSkillState(target);
+          if (['creation', 'turbid', 'darkstar'].includes(target.model)) {
             criticalStates.forEach((critical) => {
               const testTarget = { ...target, critical };
-              const prediction = predictSkill(testTarget, testTarget, state);
+              const prediction = predictSkill(testTarget, testTarget, targetState);
               sourceCandidates.push({ target: testTarget, source: null, wrongSource: false, ...prediction });
             });
             return;
@@ -1276,7 +3485,7 @@
           multiplierSources.forEach((source) => {
             criticalStates.forEach((critical) => {
               const testTarget = { ...target, critical };
-              const prediction = predictSkill(testTarget, source, state);
+              const prediction = predictSkill(testTarget, source, targetState);
               sourceCandidates.push({
                 target: testTarget,
                 source,
@@ -1327,8 +3536,9 @@
         return {
           activeIds: new Set(activeIds), state, damageDetails, healDetails: [], normalizedScore, totalDisplayError,
           wrongMultiplierCount, baseFailureCount: state.baseFailures.length,
+          priorityPenalty: priorityPenalty(activeIds, atoms, effects),
           activeEffectCount: state.activeEffectAtoms.length,
-          effectFailureCount: atoms.filter((atom) => atom.kind === 'effect').length - state.activeEffectAtoms.length,
+          effectFailureCount: effectFailureCount(activeIds, atoms, effects),
           maxItemError, overLimitCount,
           description: describeHypothesis(state, atoms, effects),
           rageMode: true
@@ -1340,6 +3550,7 @@
           || a.normalizedScore - b.normalizedScore
           || a.baseFailureCount - b.baseFailureCount
           || a.wrongMultiplierCount - b.wrongMultiplierCount
+          || a.priorityPenalty - b.priorityPenalty
           || a.effectFailureCount - b.effectFailureCount;
       }
 
@@ -1356,32 +3567,70 @@
         if (results.length > limit) results.pop();
       }
 
+      function buildSearchDimensions(atoms) {
+        const dimensions = [];
+        const handledStackEffects = new Set();
+        atoms.forEach((atom) => {
+          if (atom.kind !== 'stack') {
+            const forcedActive = (atom.kind === 'base' && verificationMode !== 'rage') || atom.searchState === 'locked';
+            dimensions.push({ atomIds: [atom.id], options: forcedActive ? [[atom.id]] : [[], [atom.id]] });
+            return;
+          }
+          if (handledStackEffects.has(atom.effectIndex)) return;
+          handledStackEffects.add(atom.effectIndex);
+          const layers = atoms
+            .filter((candidate) => candidate.kind === 'stack' && candidate.effectIndex === atom.effectIndex)
+            .sort((a, b) => a.stackLayer - b.stackLayer);
+          const options = [];
+          const minimumCount = layers[0]?.searchState === 'locked' ? 1 : 0;
+          for (let count = minimumCount; count <= layers.length; count += 1) {
+            options.push(layers.slice(0, count).map((layer) => layer.id));
+          }
+          dimensions.push({ atomIds: layers.map((layer) => layer.id), options });
+        });
+        return dimensions;
+      }
+
       function searchHypotheses(atoms, effects, skills, heals, rageValues) {
         const preset = SEARCH_PRESETS[byId('cdc-search-strength').value] || SEARCH_PRESETS.deep;
         const evaluateState = (activeIds) => verificationMode === 'rage'
           ? evaluateRageCombination(activeIds, atoms, effects, skills, rageValues)
           : evaluateCombination(activeIds, atoms, effects, skills, heals);
-        const totalLabel = atoms.length <= 52 ? (2 ** atoms.length).toLocaleString('zh-CN') : `2^${atoms.length}`;
-        if (atoms.length <= preset.exactLimit) {
+        const dimensions = buildSearchDimensions(atoms);
+        const totalStates = dimensions.reduce((total, dimension) => total * BigInt(dimension.options.length), 1n);
+        const totalLabel = totalStates.toLocaleString('zh-CN');
+        const exactThreshold = 2n ** BigInt(preset.exactLimit);
+        if (totalStates <= exactThreshold) {
           const results = [];
-          const combinations = 2 ** atoms.length;
-          for (let mask = 0; mask < combinations; mask += 1) {
-            const activeIds = new Set();
-            atoms.forEach((atom, index) => { if ((mask & (1 << index)) !== 0) activeIds.add(atom.id); });
-            keepRankedResult(results, evaluateState(activeIds), EXACT_RESULT_KEEP);
-          }
-          return { results, tested: combinations, totalLabel, mode: `${preset.label} · 完整枚举` };
+          const activeIds = new Set();
+          let tested = 0;
+          const visit = (dimensionIndex) => {
+            if (dimensionIndex >= dimensions.length) {
+              tested += 1;
+              keepRankedResult(results, evaluateState(activeIds), EXACT_RESULT_KEEP);
+              return;
+            }
+            const dimension = dimensions[dimensionIndex];
+            dimension.options.forEach((option) => {
+              option.forEach((id) => activeIds.add(id));
+              visit(dimensionIndex + 1);
+              option.forEach((id) => activeIds.delete(id));
+            });
+          };
+          visit(0);
+          return { results, tested, totalLabel, mode: `${preset.label} · 完整枚举（含离散层数）` };
         }
 
         const width = preset.beamWidth;
         const visited = new Set();
         let beam = [new Set(atoms.filter((atom) => atom.expected).map((atom) => atom.id))];
-        atoms.forEach((atom) => {
+        dimensions.forEach((dimension) => {
           const candidates = [];
           beam.forEach((previous) => {
-            [false, true].forEach((isActive) => {
+            dimension.options.forEach((option) => {
               const activeIds = new Set(previous);
-              if (isActive) activeIds.add(atom.id); else activeIds.delete(atom.id);
+              dimension.atomIds.forEach((id) => activeIds.delete(id));
+              option.forEach((id) => activeIds.add(id));
               visited.add(atoms.map((candidateAtom) => activeIds.has(candidateAtom.id) ? '1' : '0').join(''));
               candidates.push(evaluateState(activeIds));
             });
@@ -1391,7 +3640,27 @@
         });
         const results = beam.map((activeIds) => evaluateState(activeIds));
         results.sort(compareResults);
-        return { results, tested: visited.size, totalLabel, mode: `${preset.label} · 全生效起点逐项排除 · 限宽 ${width.toLocaleString('zh-CN')}` };
+        return { results, tested: visited.size, totalLabel, mode: `${preset.label} · 全生效/满层起点逐项排除 · 限宽 ${width.toLocaleString('zh-CN')}` };
+      }
+
+      function skillModelName(skill) {
+        if (skill.model === 'creation') return '创生花伤害';
+        if (skill.model === 'turbid') return '浊燃伤害';
+        if (skill.model === 'darkstar') return '黯星伤害';
+        return skill.name;
+      }
+
+      function skillTagMarkup(skill) {
+        return skill.model === 'turbid' || skill.tag === 'dot'
+          ? ' <span class="damage-tag">持续伤害</span>'
+          : '';
+      }
+
+      function fixedDamageSource(skill) {
+        if (skill.model === 'creation') return `固定基础值 ${format(formulaSettings.creationBase)} × 环合强度修正`;
+        if (skill.model === 'turbid') return `固定基础值 ${format(formulaSettings.turbidBase)} × 环合强度修正 × 持续伤害强化`;
+        if (skill.model === 'darkstar') return `固定基础值 ${format(formulaSettings.darkstarBase)} × 无视防御 × 环合强度修正`;
+        return '';
       }
 
       function verify() {
@@ -1418,11 +3687,11 @@
         }
         if (verificationMode === 'rage' && !skills.some((skill) => skill.enabled)) {
           byId('cdc-best-combination').textContent = '没有候选伤害来源';
-          byId('cdc-verification-note').textContent = '请至少启用一个伤害技能或创生伤害模型。';
+          byId('cdc-verification-note').textContent = '请至少启用一个常规技能、创生花、浊燃或黯星伤害模型。';
           return;
         }
 
-        const atoms = createAtoms(effects);
+        const atoms = createAtoms(effects, skills, heals);
         const search = searchHypotheses(atoms, effects, skills, heals, rageValues);
         const results = search.results;
         const eligibleResults = results.filter((result) => result.overLimitCount === 0);
@@ -1449,6 +3718,7 @@
         const tied = reportableResults.filter((result) => Math.abs(result.normalizedScore - best.normalizedScore) < 1e-12
           && result.baseFailureCount === best.baseFailureCount
           && result.wrongMultiplierCount === best.wrongMultiplierCount
+          && Math.abs(result.priorityPenalty - best.priorityPenalty) < 1e-12
           && result.effectFailureCount === best.effectFailureCount).length;
         const abnormal = best.damageDetails.filter((detail) => detail.matched !== false && detail.wrongSource);
 
@@ -1478,28 +3748,28 @@
                 <div><div class="text-small text-muted">±20 内来源数</div><div class="detail-value">0</div></div>
               </div>`;
             }
-            const modelName = detail.target.model === 'creation' ? '创生伤害' : detail.target.name;
+            const modelName = skillModelName(detail.target);
             const critName = detail.target.critical ? '暴击' : '非暴击';
-            const multiplierName = detail.target.model === 'creation'
-              ? '固定基础值 9000 × 环合强度修正'
-              : detail.wrongSource ? `倍率疑似来自：${detail.source.name}` : '本技能倍率';
+            const multiplierName = fixedDamageSource(detail.target)
+              || (detail.wrongSource ? `倍率疑似来自：${detail.source.name}` : '本技能倍率');
             return `<div class="entry-row">
               <div><div class="text-small text-muted">实测项目</div><div>未知伤害 ${detail.index + 1} · ${detail.observed.toLocaleString('zh-CN')}</div></div>
-              <div><div class="text-small text-muted">可能来源</div><div>${escapeHtml(modelName)} · ${critName}</div></div>
+              <div><div class="text-small text-muted">可能来源</div><div>${escapeHtml(modelName)}${skillTagMarkup(detail.target)} · ${critName}</div></div>
               <div><div class="text-small text-muted">倍率来源</div><div>${escapeHtml(multiplierName)}</div></div>
               <div><div class="text-small text-muted">理论值 → 显示值</div><div class="detail-value">${format(detail.exact)} → ${detail.displayed.toLocaleString('zh-CN')}</div></div>
               <div><div class="text-small text-muted">误差 / ±20 内来源数</div><div class="detail-value">${detail.error} / ${detail.alternatives}</div></div>
+              ${formulaTraceMarkup(detail.formula || [])}
             </div>`;
           }
-          const source = detail.target.model === 'creation'
-            ? '固定基础值 9000 × 环合强度修正'
-            : detail.wrongSource ? `疑似误用：${detail.source.name}` : '本技能倍率';
+          const source = fixedDamageSource(detail.target)
+            || (detail.wrongSource ? `疑似误用：${detail.source.name}` : '本技能倍率');
           return `<div class="entry-row">
-            <div><div class="text-small text-muted">实测项目</div><div>${escapeHtml(detail.target.name)}</div></div>
+            <div><div class="text-small text-muted">实测项目</div><div>${escapeHtml(skillModelName(detail.target))}${skillTagMarkup(detail.target)}</div></div>
             <div><div class="text-small text-muted">倍率来源</div><div>${escapeHtml(source)}</div></div>
             <div><div class="text-small text-muted">理论精确值 → 显示值</div><div class="detail-value">${format(detail.exact)} → ${detail.displayed.toLocaleString('zh-CN')}</div></div>
             <div><div class="text-small text-muted">实测值</div><div class="detail-value">${detail.target.observed.toLocaleString('zh-CN')}</div></div>
             <div><div class="text-small text-muted">误差</div><div class="detail-value">${detail.error.toLocaleString('zh-CN')}</div></div>
+            ${formulaTraceMarkup(detail.formula || [])}
           </div>`;
         });
         const healRows = verificationMode === 'rage' ? [] : best.healDetails.map((detail) => `<div class="entry-row">
@@ -1508,6 +3778,7 @@
           <div><div class="text-small text-muted">理论精确值 → 显示值</div><div class="detail-value">${format(detail.exact)} → ${detail.displayed.toLocaleString('zh-CN')}</div></div>
           <div><div class="text-small text-muted">实测值</div><div class="detail-value">${detail.heal.observed.toLocaleString('zh-CN')}</div></div>
           <div><div class="text-small text-muted">误差</div><div class="detail-value">${detail.error.toLocaleString('zh-CN')}</div></div>
+          ${formulaTraceMarkup(detail.formula || [])}
         </div>`);
         detailRows = damageRows.concat(healRows);
         renderDetailPage();
@@ -1515,7 +3786,7 @@
         byId('cdc-combination-results').innerHTML = top.length ? top.map((result) => `<div class="entry-row">
           <div><div class="text-small text-muted">效果与失效状态</div><div>${escapeHtml(result.description)}</div></div>
           <div><div class="text-small text-muted">显示值总误差</div><div class="detail-value">${result.totalDisplayError.toLocaleString('zh-CN')}</div></div>
-          <div><div class="text-small text-muted">无来源 / 倍率误用 / 基础失效 / 效果失效</div><div class="detail-value">${result.overLimitCount} / ${result.wrongMultiplierCount} / ${result.baseFailureCount} / ${result.effectFailureCount}</div></div>
+          <div><div class="text-small text-muted">无来源 / 倍率误用 / 基础失效 / Buff 优先级违背 / 效果失效</div><div class="detail-value">${result.overLimitCount} / ${result.wrongMultiplierCount} / ${result.baseFailureCount} / ${format(result.priorityPenalty)} / ${result.effectFailureCount}</div></div>
         </div>`).join('') : '<div class="text-small result-meta">无零误差全局状态</div>';
       }
 
@@ -1539,6 +3810,13 @@
       }
 
       function runVerification() {
+        const fusionInput = byId('cdc-fusion');
+        const fusionValue = Number(fusionInput.value);
+        if (needsFusionStrength() && (!Number.isFinite(fusionValue) || fusionValue < 0 || fusionValue > 360)) {
+          byId('cdc-run-status').textContent = '基础环合强度必须在 0～360；Buff 结算后的最终环合强度可以超过 360。';
+          fusionInput.focus();
+          return;
+        }
         const button = byId('cdc-run-verification');
         button.disabled = true;
         byId('cdc-run-status').textContent = '正在计算组合，请稍候…';
@@ -1560,20 +3838,33 @@
 
       root.addEventListener('input', (event) => {
         if (event.target.matches('input, select, textarea')) {
+          if (event.target.matches('[data-skill-name]')) updateAllEffectScopeSummaries();
           if (event.target.id !== 'cdc-profile-select') markDirty();
           scheduleDraftSave();
         }
       });
       root.addEventListener('change', (event) => {
         if (event.target.matches('input, select, textarea')) {
-          if (event.target.matches('[data-skill-model], #cdc-infusion-enabled, #cdc-special-enabled')) {
+          if (event.target.matches('[data-effect-stack-enabled], [data-effect-stack-mode], [data-effect-max-stacks], [data-effect-fixed-stacks]')) {
+            updateEffectStackFields(event.target.closest('[data-effect-row]'));
+          }
+          if (event.target.matches('[data-effect-search-state]')) {
+            updateEffectSearchState(event.target.closest('[data-effect-row]'));
+          }
+          if (event.target.matches('[data-skill-model]')) {
             updateCalculatorType();
           }
+          if (event.target.matches('[data-skill-tag]')) updateAllEffectScopeSummaries();
           if (event.target.id !== 'cdc-profile-select') markDirty();
           scheduleDraftSave();
         }
       });
       root.addEventListener('click', (event) => {
+        const editEffectScope = event.target.closest('[data-edit-effect-scope]');
+        if (editEffectScope) {
+          openEffectScopeEditor(editEffectScope.closest('[data-effect-row]'));
+          return;
+        }
         const removeEffect = event.target.closest('[data-remove-effect]');
         const removeSkill = event.target.closest('[data-remove-skill]');
         const removeHeal = event.target.closest('[data-remove-heal]');
@@ -1582,11 +3873,19 @@
         if (removeHeal) removeHeal.closest('[data-heal-row]').remove();
         if (removeEffect || removeSkill || removeHeal) {
           updateSkillPagination();
+          updateAllEffectScopeSummaries();
           markDirty();
           scheduleDraftSave();
         }
       });
       byId('cdc-add-effect').addEventListener('click', () => { addEffect(); markDirty(); scheduleDraftSave(); });
+      root.querySelectorAll('[data-special-effect-option]').forEach((button) => {
+        button.addEventListener('click', () => {
+          setSpecialEffect(button.dataset.specialEffectOption);
+          markDirty();
+          scheduleDraftSave();
+        });
+      });
       byId('cdc-add-skill').addEventListener('click', () => {
         addSkill();
         updateSkillPagination(true);
@@ -1648,6 +3947,20 @@
         }
       });
       byId('cdc-clear-current').addEventListener('click', clearCurrentConfiguration);
+      byId('cdc-open-formula').addEventListener('click', () => {
+        syncFormulaEditor();
+        byId('cdc-formula-dialog').showModal();
+      });
+      byId('cdc-close-formula').addEventListener('click', () => byId('cdc-formula-dialog').close());
+      byId('cdc-apply-formula').addEventListener('click', () => applyFormulaEditor(true));
+      byId('cdc-reset-formula').addEventListener('click', () => {
+        formulaSettings = { ...DEFAULT_FORMULA_SETTINGS };
+        persistFormulaSettings();
+        syncFormulaEditor();
+        byId('cdc-formula-status').textContent = '已恢复默认公式：创生花 9000、浊燃 2700、黯星 45000、环合反应除数 600、浸染/覆纹为 20% + 最终环合强度 / 1400。';
+        markDirty();
+        scheduleDraftSave();
+      });
       byId('cdc-open-ocr').addEventListener('click', () => {
         byId('cdc-ocr-dialog').showModal();
         refreshCaptureWindows();
@@ -1658,7 +3971,114 @@
       byId('cdc-clear-ocr').addEventListener('click', clearOcrResults);
       byId('cdc-apply-ocr').addEventListener('click', applyOcrResults);
       byId('cdc-ocr-files').addEventListener('change', (event) => importOcrFiles(event.target.files));
+      byId('cdc-open-capture').addEventListener('click', () => {
+        byId('cdc-capture-dialog').showModal();
+        discoverPacketCaptureSidecar();
+        renderRawEventPreview();
+        renderCoreAudit();
+        renderCaptureTimeline();
+        if (packetCaptureState === 'capturing') pollPacketCapture();
+      });
+      byId('cdc-close-capture').addEventListener('click', () => byId('cdc-capture-dialog').close());
+      byId('cdc-choose-capture-sidecar').addEventListener('click', async () => {
+        try {
+          await choosePacketCaptureSidecar();
+        } catch (error) {
+          setPacketCaptureState('idle', error.message);
+        }
+      });
+      byId('cdc-start-capture').addEventListener('click', startPacketCapture);
+      byId('cdc-stop-capture').addEventListener('click', stopPacketCapture);
+      byId('cdc-mark-capture-action').addEventListener('click', markCaptureAction);
+      byId('cdc-clear-capture-events').addEventListener('click', () => {
+        captureGroups = [];
+        captureRawEvents = [];
+        captureRawSelectedId = '';
+        captureCoreAudit = [];
+        captureMarker = null;
+        byId('cdc-capture-marker-status').textContent = '已清除本次事件和动作标记；已保存的事件映射不受影响。';
+        byId('cdc-capture-diagnostics').textContent = '';
+        renderRawEventPreview();
+        renderCoreAudit();
+        renderCaptureTimeline();
+      });
+      byId('cdc-import-capture-normal').addEventListener('click', importCapturedNormal);
+      byId('cdc-import-capture-rage').addEventListener('click', importCapturedRage);
+      byId('cdc-capture-sidecar').addEventListener('change', (event) => {
+        if (event.target.value.trim()) localStorage.setItem(CAPTURE_SIDECAR_STORAGE_KEY, event.target.value.trim());
+      });
+      byId('cdc-capture-timeline').addEventListener('change', (event) => {
+        if (!event.target.matches('[data-capture-target]')) return;
+        const row = event.target.closest('[data-capture-event]');
+        const group = captureGroups.find((item) => item.id === row?.dataset.captureEvent);
+        if (group) saveCaptureTarget(group, event.target.value);
+      });
+      byId('cdc-raw-event-damage').addEventListener('input', () => {
+        captureRawSelectedId = '';
+        renderRawEventPreview();
+      });
+      byId('cdc-raw-event-character').addEventListener('input', () => {
+        captureRawSelectedId = '';
+        renderRawEventPreview();
+        renderCoreAudit();
+      });
+      byId('cdc-show-system-events').addEventListener('change', renderRawEventPreview);
+      byId('cdc-core-audit-show-summary').addEventListener('change', renderCoreAudit);
+      byId('cdc-clear-core-audit').addEventListener('click', () => {
+        captureCoreAudit = [];
+        renderCoreAudit();
+        byId('cdc-capture-diagnostics').textContent = '已清空审计显示；本机 NDJSON 日志仍然保留。';
+      });
+      byId('cdc-copy-core-audit').addEventListener('click', async () => {
+        const rows = filteredCoreAuditRecords();
+        if (!rows.length) {
+          byId('cdc-capture-diagnostics').textContent = '当前筛选条件下没有可复制的 Core 通知。';
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(rows.map((record) => JSON.stringify(record)).join('\n'));
+          byId('cdc-capture-diagnostics').textContent = `已复制 ${rows.length} 条精简 Core 通知。`;
+        } catch (_error) {
+          byId('cdc-capture-diagnostics').textContent = '无法访问剪贴板；审计日志已经保存在本机 capture 文件夹。';
+        }
+      });
+      byId('cdc-raw-event-target').addEventListener('change', (event) => {
+        const rawEvent = captureRawEvents.find((item) => item.id === captureRawSelectedId);
+        const observed = Number(byId('cdc-raw-event-damage').value);
+        if (rawEvent && Number.isFinite(observed) && observed > 0) saveCaptureTarget(rawEventAsCaptureGroup(rawEvent, observed), event.target.value);
+      });
+      byId('cdc-raw-event-preview').addEventListener('change', (event) => {
+        if (!event.target.matches('[data-raw-event-selected]')) return;
+        captureRawSelectedId = event.target.dataset.rawEventSelected || '';
+        const rawEvent = captureRawEvents.find((item) => item.id === captureRawSelectedId);
+        const observed = Number(byId('cdc-raw-event-damage').value);
+        if (rawEvent && Number.isFinite(observed) && observed > 0) {
+          const group = rawEventAsCaptureGroup(rawEvent, observed);
+          const suggested = mappedCaptureTarget(group) || inferredCaptureTarget(group);
+          const target = byId('cdc-raw-event-target');
+          if (Array.from(target.options).some((option) => option.value === suggested)) target.value = suggested;
+        }
+        renderRawEventPreview();
+      });
+      byId('cdc-raw-event-preview').addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-copy-raw-event]');
+        if (!button) return;
+        try {
+          await navigator.clipboard.writeText(button.dataset.copyRawEvent || '');
+          byId('cdc-capture-diagnostics').textContent = `已复制事件名称：${button.dataset.copyRawEvent}`;
+        } catch (_error) {
+          byId('cdc-capture-diagnostics').textContent = '无法访问剪贴板；请手动选择事件名称。';
+        }
+      });
+      byId('cdc-close-effect-scope').addEventListener('click', closeEffectScopeEditor);
+      byId('cdc-cancel-effect-scope').addEventListener('click', closeEffectScopeEditor);
+      byId('cdc-apply-effect-scope').addEventListener('click', applyEffectScopeEditor);
+      byId('cdc-effect-scope-mode').addEventListener('change', (event) => {
+        byId('cdc-effect-scope-skills').hidden = event.target.value !== 'custom';
+      });
+      byId('cdc-effect-scope-dialog').addEventListener('close', () => { editingEffectScopeRow = null; });
 
+      syncFormulaEditor();
       refreshProfileSelect();
       updateCalculatorType();
       let restoredDraft = false;
@@ -1672,7 +4092,7 @@
         addEffect('觉醒A', { damage: 20 });
         addEffect('武器B', { attack: 20 });
         addSkill('技能一', 'skill', 240, 4413, false);
-        addSkill('技能二', 'skill', 315, 5793, false);
+        addSkill('技能二', 'skill', 315, 5793, false, true, 'dot');
         addHeal('治疗一', 120, 2520);
         updateSkillPagination();
         updateCalculatorType();

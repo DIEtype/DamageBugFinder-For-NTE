@@ -151,6 +151,81 @@ setTimeout(() => {
 }, 800);
 """,
         )
+        render(
+            edge,
+            workspace,
+            base_page,
+            "07-buff-scope-dialog.png",
+            action="""
+document.querySelector('[data-edit-effect-scope]').click();
+const scopeMode = document.getElementById('cdc-effect-scope-mode');
+scopeMode.value = 'custom';
+scopeMode.dispatchEvent(new Event('change', { bubbles: true }));
+""",
+        )
+        render(
+            edge,
+            workspace,
+            base_page,
+            "08-stack-inference.png",
+            height=1500,
+            crop=(0, 430, 1800, 1500),
+            action="""
+const stackEffect = document.querySelector('[data-effect-row]');
+const stackToggle = stackEffect.querySelector('[data-effect-stack-enabled]');
+stackToggle.checked = true;
+stackToggle.dispatchEvent(new Event('change', { bubbles: true }));
+stackEffect.querySelector('[data-effect-max-stacks]').value = '6';
+stackEffect.querySelector('[data-effect-damage]').value = '6';
+const stackSkills = document.querySelectorAll('[data-skill-row]');
+stackSkills[0].querySelector('[data-skill-observed]').value = '4726';
+stackSkills[1].querySelector('[data-skill-observed]').value = '6203';
+document.getElementById('cdc-run-verification').click();
+""",
+        )
+        render(
+            edge,
+            workspace,
+            base_page,
+            "09-capture-event-learning.png",
+            height=1080,
+            action="""
+document.getElementById('cdc-open-capture').click();
+const captureStatus = document.getElementById('cdc-capture-status');
+captureStatus.dataset.state = 'capturing';
+captureStatus.textContent = '正在抓包 · core demo';
+document.getElementById('cdc-capture-sidecar').value = 'C:\\Tools\\nte-core.exe';
+document.getElementById('cdc-raw-event-damage').value = '4413';
+document.getElementById('cdc-raw-event-count').textContent = '3 / 3';
+document.getElementById('cdc-raw-event-preview').innerHTML = `
+  <div class="raw-event-row" data-category="action"><span class="numeric text-small">14:26:31.220</span><span class="raw-event-direction" data-direction="C2S">C2S</span><span class="raw-event-name">Melee1</span><span class="raw-event-kind">ACTION · 4b</span><span class="raw-event-candidates"><span class="raw-event-candidate is-match">4,413</span></span><button class="btn btn-ghost raw-event-copy">⧉</button></div>
+  <div class="raw-event-row" data-category="effect"><span class="numeric text-small">14:26:31.415</span><span class="raw-event-direction" data-direction="S2C">S2C</span><span class="raw-event-name">CritDamageBase</span><span class="raw-event-kind">EFFECT · 3b</span><span class="raw-event-candidates"><span class="raw-event-candidate is-match">4,413</span></span><button class="btn btn-ghost raw-event-copy">⧉</button></div>
+  <div class="raw-event-row" data-category="action"><span class="numeric text-small">14:26:31.573</span><span class="raw-event-direction" data-direction="C2S">C2S</span><span class="raw-event-name">Melee2</span><span class="raw-event-kind">ACTION · 4b</span><span class="raw-event-candidates"><span class="raw-event-candidate is-match">4,419</span></span><button class="btn btn-ghost raw-event-copy">⧉</button></div>`;
+document.getElementById('cdc-capture-marker-status').textContent = '已标记“真红 E 技能第 2 段”；接下来 12 秒内出现的事件会归到该动作。';
+document.getElementById('cdc-capture-timeline').innerHTML = `
+  <div class="capture-event">
+    <label class="form-check"><input class="form-check-input" type="checkbox" checked><span class="numeric text-small">14:26:31</span></label>
+    <div class="capture-source"><strong>真红 E 技能第 2 段 · 技能伤害</strong><div class="text-small result-meta">E技能</div></div>
+    <div class="capture-ids">GA_Player_Skill2 · GE_Player_Skill2_Damage</div>
+    <div class="capture-value">4,413</div><span class="capture-hit-badge">1 HIT</span>
+    <label class="capture-map"><select class="form-select"><option>现有 · 技能一</option></select></label>
+  </div>
+  <div class="capture-event">
+    <label class="form-check"><input class="form-check-input" type="checkbox" checked><span class="numeric text-small">14:26:34</span></label>
+    <div class="capture-source"><strong>环合反应 · 创生花</strong><div class="text-small result-meta">创生花</div></div>
+    <div class="capture-ids">GE_ActorReaction_1_Damage</div>
+    <div class="capture-value">10,842</div><span class="capture-hit-badge">1 HIT</span>
+    <label class="capture-map"><select class="form-select"><option>创生花</option></select></label>
+  </div>
+  <div class="capture-event">
+    <label class="form-check"><input class="form-check-input" type="checkbox" disabled><span class="numeric text-small">14:26:37</span></label>
+    <div class="capture-source"><strong>多段技能 · 短间隔合并</strong><div class="text-small result-meta">普攻</div></div>
+    <div class="capture-ids">GA_Player_NormalAttack · GE_Player_NormalAttack_Damage</div>
+    <div class="capture-value">6,821</div><span class="capture-hit-badge is-multihit">4 HIT 合计</span>
+    <label class="capture-map"><select class="form-select"><option>新建常规技能</option></select></label>
+  </div>`;
+""",
+        )
     finally:
         shutil.rmtree(workspace, ignore_errors=True)
     return 0
