@@ -127,7 +127,7 @@ DamageBugFinderForNTE\DamageBugFinderForNTE.exe
 
 生命、防御、体力、暴击率、充能效率、倾陷强度及受治疗加成不会写入计算器；敌人等级、敌人抗性、防御穿透和抗性削弱仍需手动填写。截图与识别均在本机完成，程序不会保存完整截图，也不会导入画面中的 UID。
 
-### 抓包与事件学习（实验性，仅桌面版）
+### 抓包与事件学习（实验性）
 
 顶部点击“抓包 / EVENT LEARN”打开事件时间线。该功能通过本机标准输入输出与用户自行提供的 [`nte-core.exe`](https://github.com/kongbaiz/nte-dps-toolkit) 通信；本仓库及 MIT 发行包不包含该第三方程序。
 
