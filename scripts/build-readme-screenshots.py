@@ -226,6 +226,38 @@ document.getElementById('cdc-capture-timeline').innerHTML = `
   </div>`;
 """,
         )
+        render(
+            edge,
+            workspace,
+            base_page,
+            "10-inclination-team.png",
+            height=1500,
+            action="""
+const inclinationSkill = document.querySelector('[data-skill-row]');
+inclinationSkill.querySelector('[data-skill-model]').value = 'inclination';
+inclinationSkill.querySelector('[data-skill-model]').dispatchEvent(new Event('change', { bubbles: true }));
+inclinationSkill.querySelector('[data-skill-name]').value = '倾陷小队合计';
+inclinationSkill.querySelector('[data-skill-observed]').value = '70346';
+const inclinationEffects = document.querySelectorAll('[data-effect-row]');
+inclinationEffects[0].querySelector('[data-effect-name]').value = '仅角色甲倾陷增伤';
+inclinationEffects[0].querySelector('[data-effect-damage]').value = '0';
+inclinationEffects[0].querySelector('[data-effect-inclination-damage]').value = '10';
+inclinationEffects[0].querySelector('[data-effect-search-state]').value = 'locked';
+inclinationEffects[0].querySelector('[data-effect-search-state]').dispatchEvent(new Event('change', { bubbles: true }));
+inclinationEffects[1].querySelector('[data-effect-search-state]').value = 'suspended';
+inclinationEffects[1].querySelector('[data-effect-search-state]').dispatchEvent(new Event('change', { bubbles: true }));
+document.getElementById('cdc-add-inclination-contributor').click();
+const inclinationRows = document.querySelectorAll('[data-inclination-row]');
+inclinationRows[0].querySelector('[data-inclination-name]').value = '角色甲';
+inclinationRows[0].querySelector('[data-inclination-attribute]').value = 'light';
+inclinationRows[1].querySelector('[data-inclination-name]').value = '角色乙';
+inclinationRows[1].querySelector('[data-inclination-attribute]').value = 'curse';
+inclinationEffects[0].dataset.inclinationScopeMode = 'custom';
+inclinationEffects[0].dataset.inclinationContributorIds = JSON.stringify([inclinationRows[0].dataset.inclinationId]);
+inclinationEffects[0].querySelector('[data-edit-inclination-scope]').textContent = '倾陷：角色甲';
+document.getElementById('cdc-run-verification').click();
+""",
+        )
     finally:
         shutil.rmtree(workspace, ignore_errors=True)
     return 0

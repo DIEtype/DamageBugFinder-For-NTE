@@ -159,6 +159,45 @@ ExplicitReactionDamageBonus = 1 + Σ ExplicitlySelectedDamageBonus
 
 “全部技能”“仅持续伤害”或“仅非持续伤害”不会触发这个覆盖规则。攻击加成、普通技能倍率、浸染和覆纹乘区即使来自同一个 Buff，也仍不进入环合反应公式。
 
+## 倾陷伤害
+
+倾陷按小队中每名启用角色分别结算，再把所有精确贡献相加，最后统一四舍五入。它不能暴击，也不读取面板攻击、通用/属性/额外增伤、技能倍率、持续伤害强化、环合强度、浸染或覆纹。
+
+当前内置敌人预设为“塞润尼缇（高危6）”：敌人等级 `90`，倾陷上限 `70`；咒属性抗性为 `16%`，光、相、暗、灵、魂、心灵抗性均为 `20%`。80 级角色的单人固定基础值为 `3603`。
+
+```text
+InclinationCapZone = 70 / 3
+
+CharacterInclinationBonus = 1
+                             + CharacterBaseInclinationBonus
+                             + Σ ApplicableInclinationBuff
+
+CharacterDefense = (100 + CharacterLevel)
+                   / [(100 + CharacterLevel)
+                   + (100 + 90) × (1 - CharacterDefensePenetration)]
+
+CharacterResistance = 1
+                      - EnemyResistanceForCharacterAttribute
+                      + CharacterResistanceShred
+
+InclinationSpecialZone = 1 + ExplicitInclinationSpecialBonus
+
+CharacterContribution = 3603
+                        × CharacterInclinationBonus
+                        × InclinationCapZone
+                        × CharacterDefense
+                        × CharacterResistance
+                        × InclinationSpecialZone
+
+DisplayedTeamInclination = round(Σ CharacterContribution)
+```
+
+角色的最终防御穿透与抗性削弱，等于该角色填写的基础值加上当前假设中对该角色生效的 Buff。Buff 的“作用技能”与“倾陷作用角色”是两套独立范围：后者设为自定义时，可只把防御穿透、抗性削弱和倾陷增伤加入指定贡献角色。
+
+“倾陷专属特殊增伤”输入框填写额外百分比，默认通常为 `0%`，实际特殊乘区为 `1 + 输入值`。它只记录文本明确指明对倾陷生效的特殊增伤；浸染和覆纹不会进入倾陷公式。
+
+公式检查页允许修改单人固定基础值和倾陷上限除数。敌人等级、倾陷上限及七属性抗性目前固定使用上述预设；如后续确认其他敌人数据，可再扩展为可编辑预设。
+
 ## 持续伤害 Tag 与 Buff 作用范围
 
 “持续伤害”是常规伤害的 Tag，计算公式与其他常规技能完全相同。它可以作为 Buff 作用范围条件。
@@ -194,6 +233,16 @@ Healing = A_combat × HealingMultiplier × (1 + HealingBonus)
 `HealingBonus` 为基础治疗加成与已生效觉醒、武器等候选治疗加成之和。伤害技能和治疗技能分别记录、分别计算；治疗不读取防御、抗性、增伤、暴击、浸染或覆纹乘区。
 
 ## 精确值和显示值
+
+技能与治疗输入卡下方的实时预览固定采用以下正向假设：
+
+- “参与搜索”和“锁定生效”的普通 Buff 全部生效；
+- “挂起排除”的 Buff 不参与；
+- 自动反推的叠层 Buff 使用最大层数；
+- 固定层数 Buff 使用当前填写层数；
+- 技能的暴击勾选、伤害 Tag、作用范围以及倾陷作用角色仍按当前输入读取。
+
+该预览只用于快速检查输入后的理论结果，不参与“最符合实测的全局状态”排序。
 
 内部计算保留小数。游戏显示值只在最终结果处四舍五入：
 
