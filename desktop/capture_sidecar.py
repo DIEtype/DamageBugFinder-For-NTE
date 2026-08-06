@@ -769,7 +769,7 @@ class NteCoreCapture:
                 "core.hello",
                 {
                     "client_name": "Damage Bug Finder for NTE",
-                    "client_version": "0.9.7-experimental",
+                    "client_version": "0.9.9-experimental",
                     "protocol_min": 1,
                     "protocol_max": 1,
                 },

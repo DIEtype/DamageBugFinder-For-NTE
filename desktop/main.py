@@ -227,7 +227,8 @@ def self_test() -> int:
         "狂暴溯源",
         "搜索强度",
         "极限 · 完整 22 / 限宽 50,000",
-        "治疗计算",
+        "单人治疗",
+        "单人伤害",
         "基础治疗加成（%）",
         "浸染与覆纹使用同一公式",
         "独立倍率 = 1 + 20% + 最终环合强度 / 1400",
@@ -241,6 +242,8 @@ def self_test() -> int:
         "最大层数",
         "持续伤害",
         "浊燃伤害",
+        "倾陷伤害",
+        "倾陷小队贡献",
         "设置 Buff 作用范围",
         "自动读取游戏面板",
         "捕获当前面板",
@@ -329,13 +332,18 @@ def main() -> int:
                   document.getElementById('cdc-formula-turbid-base')?.value === '2700',
                   document.getElementById('cdc-formula-special-base-bonus')?.value === '20',
                   document.getElementById('cdc-formula-special-fusion-divisor')?.value === '1400',
+                  document.getElementById('cdc-formula-inclination-base')?.value === '3603',
+                  document.getElementById('cdc-formula-inclination-cap-divisor')?.value === '3',
                   Boolean(document.querySelector('[data-special-effect-option="overlay"]')),
                   Boolean(document.querySelector('[data-skill-model] option[value="darkstar"]')),
+                  Boolean(document.querySelector('[data-skill-model] option[value="inclination"]')),
+                  Boolean(document.querySelector('[data-calculator-type="inclination"]')),
+                  Boolean(document.querySelector('[data-skill-preview]')),
                   Boolean(document.querySelector('iframe'))
                 ]""")
                 expected_checks = [
                     "complete", True, True, True, True, True, True, True,
-                    True, True, True, True, True, True, True, False
+                    True, True, True, True, True, True, True, True, True, True, True, True, False
                 ]
                 if checks != expected_checks:
                     smoke_result["code"] = 6
@@ -355,6 +363,8 @@ def main() -> int:
                     effect = effects.querySelector('[data-effect-row]');
                   }
                   if (!skill || !effect) return false;
+                  document.querySelector('[data-calculator-type="damage"]').click();
+                  document.querySelector('[data-verification-mode="normal"]').click();
                   Array.from(skills.querySelectorAll('[data-skill-row]')).slice(1).forEach((row) => row.remove());
                   Array.from(effects.querySelectorAll('[data-effect-row]')).slice(1).forEach((row) => row.remove());
                   skill.querySelector('[data-skill-model]').value = 'darkstar';
@@ -548,14 +558,89 @@ def main() -> int:
                 if search_state_checks != [True, True, True, True, True, True, True, True]:
                     smoke_result["code"] = 18
                     return
+                inclination_prepared = window.evaluate_js("""(() => {
+                  const skill = document.querySelector('[data-skill-row]');
+                  const effects = Array.from(document.querySelectorAll('[data-effect-row]'));
+                  if (!skill || !effects.length) return false;
+                  skill.querySelector('[data-skill-model]').value = 'inclination';
+                  skill.querySelector('[data-skill-model]').dispatchEvent(new Event('change', { bubbles: true }));
+                  skill.querySelector('[data-skill-name]').value = '倾陷小队自检';
+                  skill.querySelector('[data-skill-observed]').value = '70346';
+                  effects.forEach((effect, index) => {
+                    effect.querySelectorAll('[data-effect-attack], [data-effect-penetration], [data-effect-res-shred], [data-effect-damage], [data-effect-dot-damage], [data-effect-inclination-damage], [data-effect-crit], [data-effect-skill], [data-effect-fusion-percent], [data-effect-fusion-flat]')
+                      .forEach((input) => { input.value = '0'; });
+                    effect.querySelector('[data-effect-search-state]').value = index === 0 ? 'locked' : 'suspended';
+                    effect.querySelector('[data-effect-search-state]').dispatchEvent(new Event('change', { bubbles: true }));
+                  });
+                  const effect = effects[0];
+                  effect.querySelector('[data-effect-name]').value = '仅角色甲倾陷增伤';
+                  effect.querySelector('[data-effect-inclination-damage]').value = '10';
+                  document.getElementById('cdc-inclination-contributors').innerHTML = '';
+                  document.getElementById('cdc-add-inclination-contributor').click();
+                  document.getElementById('cdc-add-inclination-contributor').click();
+                  const contributors = Array.from(document.querySelectorAll('[data-inclination-row]'));
+                  if (contributors.length !== 2) return false;
+                  contributors[0].querySelector('[data-inclination-name]').value = '角色甲';
+                  contributors[0].querySelector('[data-inclination-attribute]').value = 'light';
+                  contributors[1].querySelector('[data-inclination-name]').value = '角色乙';
+                  contributors[1].querySelector('[data-inclination-attribute]').value = 'curse';
+                  contributors.forEach((row) => {
+                    row.querySelector('[data-inclination-level]').value = '80';
+                    row.querySelector('[data-inclination-damage]').value = '0';
+                    row.querySelector('[data-inclination-penetration]').value = '0';
+                    row.querySelector('[data-inclination-res-shred]').value = '0';
+                    row.querySelector('[data-inclination-special]').value = '0';
+                    row.querySelector('[data-inclination-enabled]').checked = true;
+                  });
+                  effect.dataset.inclinationScopeMode = 'custom';
+                  effect.dataset.inclinationContributorIds = JSON.stringify([contributors[0].dataset.inclinationId]);
+                  document.querySelector('[data-verification-mode="normal"]').click();
+                  skill.querySelector('[data-skill-observed]').dispatchEvent(new Event('input', { bubbles: true }));
+                  document.getElementById('cdc-run-verification').click();
+                  return true;
+                })()""")
+                if not inclination_prepared:
+                    smoke_result["code"] = 19
+                    return
+                time.sleep(1.5)
+                inclination_checks = window.evaluate_js("""[
+                  document.getElementById('cdc-run-status')?.textContent === '倾陷验算完成',
+                  document.getElementById('cdc-best-details')?.textContent.includes('倾陷伤害（小队合计）'),
+                  document.getElementById('cdc-best-details')?.textContent.includes('70,346'),
+                  document.getElementById('cdc-best-details')?.textContent.includes('角色甲'),
+                  document.getElementById('cdc-best-details')?.textContent.includes('角色乙'),
+                  document.getElementById('cdc-best-details')?.textContent.includes('+'),
+                  document.getElementById('cdc-combination-count')?.textContent.includes('1 / 1'),
+                  document.querySelector('[data-skill-critical-field]')?.hidden === true,
+                  document.querySelector('[data-skill-preview]')?.textContent.includes('70,346'),
+                  document.querySelector('[data-skill-preview]')?.textContent.includes('自动叠层满层'),
+                  document.getElementById('compact-damage-calculator')?.dataset.workspaceMode === 'inclination',
+                  document.getElementById('cdc-panel-section')?.hidden === true,
+                  document.getElementById('cdc-inclination-section')?.hidden === false,
+                  document.getElementById('cdc-skill-section-title')?.textContent === '倾陷实测值',
+                  document.querySelector('[data-inclination-special]')?.value === '0',
+                  document.querySelector('.special-effect-picker')?.hidden === true,
+                  getComputedStyle(document.getElementById('cdc-inclination-contributors')).gridTemplateColumns.split(' ').length === 2,
+                  (() => {
+                    const calculator = document.getElementById('compact-damage-calculator');
+                    calculator.style.width = '886px';
+                    const fits = calculator.scrollWidth <= calculator.clientWidth;
+                    calculator.style.width = '';
+                    return fits;
+                  })()
+                ]""")
+                if inclination_checks != [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]:
+                    smoke_result["code"] = 21
+                    return
                 rage_base_prepared = window.evaluate_js("""(() => {
+                  document.querySelector('[data-calculator-type="damage"]').click();
                   document.querySelector('[data-verification-mode="rage"]').click();
                   document.getElementById('cdc-rage-values').value = '1000';
                   document.getElementById('cdc-run-verification').click();
                   return true;
                 })()""")
                 if not rage_base_prepared:
-                    smoke_result["code"] = 19
+                    smoke_result["code"] = 22
                     return
                 time.sleep(1.5)
                 rage_base_checks = window.evaluate_js("""[
@@ -563,7 +648,7 @@ def main() -> int:
                   document.getElementById('cdc-search-scope-note')?.textContent.includes('基础区失效'),
                   !document.getElementById('cdc-combination-count')?.textContent.includes('1 / 1')
                 ]""")
-                smoke_result["code"] = 0 if rage_base_checks == [True, True, True] else 20
+                smoke_result["code"] = 0 if rage_base_checks == [True, True, True] else 23
             except Exception:
                 smoke_result["code"] = 7
             finally:
