@@ -27,8 +27,19 @@ Defense = (100 + CharacterLevel)
 ## 抗性区
 
 ```text
-Resistance = 1 - BaseResistance + ResistanceShred
+EffectiveResistance = BaseResistance
+                      - ResistanceIgnore
+                      - ResistanceShred
+
+ResistanceZone = 1 - EffectiveResistance
+                 （EffectiveResistance >= 0）
+
+ResistanceZone = 1
+                 - EffectiveResistance / (1 - EffectiveResistance)
+                 （EffectiveResistance < 0）
 ```
+
+例如敌人原始抗性为 `20%`、我方抗性降低为 `24%`、无视抗性为 `0%`：有效抗性为 `-0.04`，因此抗性区为 `1 - (-0.04) / [1 - (-0.04)] = 1.038461538...`。
 
 ## 增伤区
 
@@ -68,12 +79,12 @@ FusionStrength = BaseFusionStrength × (1 + Σ FusionPercentBonus)
 启用浸染或覆纹时，两者使用同一个独立乘区；一次验算只选择其中一种：
 
 ```text
-SpecialBonus = 20% + FusionStrength / 1400
-InfusionOrOverlay = 1 + SpecialBonus
-                  = 1.2 + FusionStrength / 1400
+InfusionOrOverlay
+= 1.2 × [1 + (0.2 × FusionStrength)
+         / (180 + FusionStrength)]
 ```
 
-其中 `FusionStrength` 是本次验算假设下的最终环合强度，包含当前生效 Buff 提供的百分比提升和固定数值提升；它不是只读取基础面板值。未启用浸染或覆纹时 `InfusionOrOverlay = 1`。
+其中 `FusionStrength` 是本次验算假设下的最终环合强度，包含当前生效 Buff 提供的百分比提升和固定数值提升；它不是只读取基础面板值。未启用浸染或覆纹时 `InfusionOrOverlay = 1`。当最终环合强度为 `0` 时，该独立倍率仍为 `1.2`。
 
 游戏面板显示的是额外暴击伤害，计算器输入框和 OCR 均保留这个面板原值。实际暴击倍率为：
 
@@ -176,9 +187,11 @@ CharacterDefense = (100 + CharacterLevel)
                    / [(100 + CharacterLevel)
                    + (100 + 90) × (1 - CharacterDefensePenetration)]
 
-CharacterResistance = 1
-                      - EnemyResistanceForCharacterAttribute
-                      + CharacterResistanceShred
+CharacterEffectiveResistance = EnemyResistanceForCharacterAttribute
+                               - CharacterResistanceIgnore
+                               - CharacterResistanceShred
+
+CharacterResistance = ResistanceZone(CharacterEffectiveResistance)
 
 InclinationSpecialZone = 1 + ExplicitInclinationSpecialBonus
 
@@ -192,7 +205,7 @@ CharacterContribution = 3603
 DisplayedTeamInclination = round(Σ CharacterContribution)
 ```
 
-角色的最终防御穿透与抗性削弱，等于该角色填写的基础值加上当前假设中对该角色生效的 Buff。Buff 的“作用技能”与“倾陷作用角色”是两套独立范围：后者设为自定义时，可只把防御穿透、抗性削弱和倾陷增伤加入指定贡献角色。
+角色的最终防御穿透、无视抗性与抗性削弱，分别等于该角色填写的基础值加上当前假设中对该角色生效的 Buff。倾陷的抗性区同样使用上面的有效抗性分段函数。Buff 的“作用技能”与“倾陷作用角色”是两套独立范围：后者设为自定义时，可只把防御穿透、无视抗性、抗性削弱和倾陷增伤加入指定贡献角色。
 
 “倾陷专属特殊增伤”输入框填写额外百分比，默认通常为 `0%`，实际特殊乘区为 `1 + 输入值`。它只记录文本明确指明对倾陷生效的特殊增伤；浸染和覆纹不会进入倾陷公式。
 
@@ -288,6 +301,7 @@ Buff 的验算状态是更强的约束：`参与搜索`保留原有组合逻辑�
 - 基础攻击加成未生效；
 - 基础防御穿透未生效；
 - 基础抗性削弱未生效；
+- 基础无视抗性未生效；
 - 通用、属性或额外增伤未生效；
 - 基础暴击伤害未生效；
 - 基础环合强度未生效；
