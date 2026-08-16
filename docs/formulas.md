@@ -74,7 +74,7 @@ FusionStrength = BaseFusionStrength × (1 + Σ FusionPercentBonus)
                  + Σ FusionFlatBonus
 ```
 
-`BaseFusionStrength` 是非战斗面板值，合法范围为 `0～360`。该上限不限制觉醒、武器等 Buff 作用后的 `FusionStrength` 最终值。
+`BaseFusionStrength` 手动填写参与本次环合反应的两个角色中，非战斗面板环合强度较高的一方，合法范围为 `0～360`；OCR 不导入该字段。该上限不限制觉醒、武器等 Buff 作用后的 `FusionStrength` 最终值。
 
 启用浸染或覆纹时，两者使用同一个独立乘区；一次验算只选择其中一种：
 
@@ -187,9 +187,13 @@ CharacterDefense = (100 + CharacterLevel)
                    / [(100 + CharacterLevel)
                    + (100 + 90) × (1 - CharacterDefensePenetration)]
 
+SharedResistanceShred[Attribute]
+    = Σ EnabledCharacterTriggeredShredForAttribute
+    + Σ ActiveBuffShredForAttribute
+
 CharacterEffectiveResistance = EnemyResistanceForCharacterAttribute
-                               - CharacterResistanceIgnore
-                               - CharacterResistanceShred
+                               - PersonalResistanceIgnore
+                               - SharedResistanceShred[CharacterAttribute]
 
 CharacterResistance = ResistanceZone(CharacterEffectiveResistance)
 
@@ -205,7 +209,9 @@ CharacterContribution = 3603
 DisplayedTeamInclination = round(Σ CharacterContribution)
 ```
 
-角色的最终防御穿透、无视抗性与抗性削弱，分别等于该角色填写的基础值加上当前假设中对该角色生效的 Buff。倾陷的抗性区同样使用上面的有效抗性分段函数。Buff 的“作用技能”与“倾陷作用角色”是两套独立范围：后者设为自定义时，可只把防御穿透、无视抗性、抗性削弱和倾陷增伤加入指定贡献角色。
+防御穿透与无视抗性是个人乘区：分别等于角色填写值加上对该角色生效的倾陷 Buff，不会在队友之间共享。抗性削弱则先按属性汇总：所有启用角色触发的同属性减抗与对应 Buff 减抗相加，再由该属性的全部贡献角色共同读取。不同来源减抗可以叠加。
+
+倾陷使用独立 Buff 列表，不读取常规伤害/治疗 Buff。自定义作用角色时，防御穿透、无视抗性和倾陷增伤仅进入勾选角色；减抗会扩展给所有与勾选角色同属性的贡献者。
 
 “倾陷专属特殊增伤”输入框填写额外百分比，默认通常为 `0%`，实际特殊乘区为 `1 + 输入值`。它只记录文本明确指明对倾陷生效的特殊增伤；浸染和覆纹不会进入倾陷公式。
 

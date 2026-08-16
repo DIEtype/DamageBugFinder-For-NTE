@@ -1288,6 +1288,40 @@ html&gt;body{padding:0}&lt;/style&gt;
       gap: 8px;
     }
     #compact-damage-calculator .inclination-scope-button { white-space: nowrap; }
+    #compact-damage-calculator .inclination-buff-panel {
+      margin: 10px 0 12px;
+      padding: 10px;
+      border: 1px solid color-mix(in oklab, #9b6bd3 42%, var(--cdc-section-border));
+      border-radius: 8px;
+      background:
+        linear-gradient(105deg, color-mix(in oklab, #9b6bd3 9%, transparent), transparent 42%),
+        color-mix(in oklab, var(--cdc-entry-bg) 92%, var(--cdc-heading-bg));
+      box-shadow: inset 3px 0 0 color-mix(in oklab, #9b6bd3 76%, var(--primary));
+    }
+    #compact-damage-calculator .inclination-buff-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    #compact-damage-calculator .inclination-buff-heading strong {
+      font: 680 13px/1.25 var(--cdc-font-display);
+      letter-spacing: .01em;
+    }
+    #compact-damage-calculator .inclination-rule-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+    #compact-damage-calculator .inclination-rule-strip span {
+      padding: 2px 6px;
+      border: 1px solid color-mix(in oklab, #9b6bd3 32%, var(--cdc-section-border));
+      border-radius: 999px;
+      color: var(--muted-foreground);
+      font: 600 10px/1.25 var(--cdc-font-data);
+    }
     #compact-damage-calculator .effect-stack-settings {
       display: grid;
       grid-template-columns: minmax(190px, 1fr) minmax(120px, .55fr) minmax(100px, .45fr) minmax(100px, .45fr);
@@ -1415,6 +1449,23 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     #compact-damage-calculator .formula-factor small { color: var(--muted-foreground); font: 600 9px/1.1 var(--cdc-font-display); letter-spacing: .035em; }
     #compact-damage-calculator .formula-factor strong { font-size: 11px; font-weight: 700; }
+    #compact-damage-calculator .formula-factor[data-formula-help] {
+      position: relative;
+      padding-right: 22px;
+      cursor: help;
+    }
+    #compact-damage-calculator .formula-factor[data-formula-help]::after {
+      position: absolute;
+      top: 5px;
+      right: 7px;
+      color: color-mix(in oklab, var(--factor-color) 74%, var(--muted-foreground));
+      font: 700 9px/1 var(--cdc-font-data);
+      content: &quot;ƒ&quot;;
+    }
+    #compact-damage-calculator .formula-factor[data-formula-help]:focus-visible {
+      outline: 2px solid color-mix(in oklab, var(--factor-color) 76%, white);
+      outline-offset: 2px;
+    }
     #compact-damage-calculator .formula-times { align-self: center; color: var(--muted-foreground); font: 650 12px/1 var(--cdc-font-data); }
     #compact-damage-calculator .factor-base { --factor-color: var(--zone-base); }
     #compact-damage-calculator .factor-attack { --factor-color: var(--zone-attack); }
@@ -1534,7 +1585,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       border-radius: 10px;
     }
     #compact-damage-calculator #cdc-formula-dialog {
-      width: min(1180px, calc(100vw - 40px));
+      width: min(1560px, calc(100vw - 32px));
       max-width: none;
       max-height: calc(100vh - 40px);
       padding: 0;
@@ -1544,7 +1595,18 @@ html&gt;body{padding:0}&lt;/style&gt;
       border: 1px solid color-mix(in oklab, var(--zone-fusion) 42%, var(--cdc-section-border));
       border-radius: 10px;
     }
-    #compact-damage-calculator :is(#cdc-ocr-dialog, #cdc-effect-scope-dialog, #cdc-capture-dialog, #cdc-formula-dialog)::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
+    #compact-damage-calculator #cdc-formula-guide-dialog {
+      width: min(1440px, calc(100vw - 32px));
+      max-width: none;
+      max-height: calc(100vh - 40px);
+      padding: 0;
+      overflow: hidden;
+      color: var(--popover-foreground);
+      background: var(--popover);
+      border: 1px solid color-mix(in oklab, var(--zone-fusion) 48%, var(--cdc-section-border));
+      border-radius: 10px;
+    }
+    #compact-damage-calculator :is(#cdc-ocr-dialog, #cdc-effect-scope-dialog, #cdc-capture-dialog, #cdc-formula-dialog, #cdc-formula-guide-dialog)::backdrop { background: color-mix(in oklab, var(--background) 65%, transparent); }
     #compact-damage-calculator .formula-dialog-header,
     #compact-damage-calculator .formula-dialog-footer {
       display: flex;
@@ -1557,7 +1619,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     }
     #compact-damage-calculator .formula-dialog-body {
       display: grid;
-      grid-template-columns: minmax(240px, .58fr) minmax(0, 1.42fr);
+      grid-template-columns: minmax(260px, .42fr) minmax(0, 1.58fr);
       gap: 12px;
       max-height: calc(100vh - 176px);
       padding: 12px 16px;
@@ -1588,7 +1650,12 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .formula-card[data-model=&quot;creation&quot;] { border-left-color: var(--zone-fusion); }
     #compact-damage-calculator .formula-card[data-model=&quot;turbid&quot;] { border-left-color: var(--zone-dot); }
     #compact-damage-calculator .formula-card h3 { margin: 0; font: 650 13px/1.2 var(--cdc-font-display); }
-    #compact-damage-calculator .formula-card .formula-trace { padding-top: 0; border-top: 0; }
+    #compact-damage-calculator .formula-card .formula-trace {
+      flex-wrap: wrap;
+      padding-top: 0;
+      overflow-x: visible;
+      border-top: 0;
+    }
     #compact-damage-calculator .formula-rule-card { grid-column: 1 / -1; overflow-x: auto; }
     #compact-damage-calculator .formula-rule-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 10px; }
     #compact-damage-calculator .formula-rule-table th,
@@ -1598,6 +1665,178 @@ html&gt;body{padding:0}&lt;/style&gt;
     #compact-damage-calculator .rule-yes { color: #24866a; font-weight: 700; }
     #compact-damage-calculator .rule-no { color: var(--muted-foreground); }
     #compact-damage-calculator .rule-explicit { color: var(--zone-damage); font-weight: 700; }
+    #compact-damage-calculator .formula-guide-body {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      min-height: 480px;
+      max-height: calc(100vh - 150px);
+      overflow: hidden;
+    }
+    #compact-damage-calculator .formula-guide-nav {
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      padding: 14px;
+      border-right: 1px solid var(--cdc-section-border);
+      background: var(--cdc-heading-bg);
+    }
+    #compact-damage-calculator .formula-guide-nav .btn { justify-content: flex-start; text-align: left; }
+    #compact-damage-calculator .formula-guide-content {
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      padding: 18px;
+      overflow: auto;
+    }
+    #compact-damage-calculator .formula-guide-kicker {
+      color: var(--zone-fusion);
+      font: 700 10px/1 var(--cdc-font-data);
+      letter-spacing: .13em;
+    }
+    #compact-damage-calculator .formula-guide-content h2 {
+      margin: 0;
+      font: 650 clamp(20px, 2.2vw, 28px)/1.1 var(--cdc-font-display);
+    }
+    #compact-damage-calculator .formula-guide-equation {
+      padding: 14px;
+      border: 1px solid var(--cdc-section-border);
+      border-left: 3px solid var(--zone-fusion);
+      border-radius: 7px;
+      background: var(--cdc-entry-bg);
+    }
+    #compact-damage-calculator .formula-guide-equation .formula-trace {
+      flex-wrap: wrap;
+      padding-top: 0;
+      overflow-x: visible;
+      border-top: 0;
+    }
+    #compact-damage-calculator .formula-guide-notes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    #compact-damage-calculator .formula-guide-note {
+      padding: 10px;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 7px;
+      background: var(--cdc-panel);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+    #compact-damage-calculator .formula-guide-note strong { display: block; margin-bottom: 3px; color: var(--foreground); }
+    #compact-damage-calculator .formula-hover-card {
+      position: fixed;
+      z-index: 10050;
+      display: grid;
+      gap: 9px;
+      width: min(470px, calc(100vw - 24px));
+      padding: 13px 14px;
+      pointer-events: none;
+      color: var(--foreground);
+      background: color-mix(in oklab, var(--cdc-panel-raised) 97%, transparent);
+      border: 1px solid color-mix(in oklab, var(--zone-fusion) 54%, var(--cdc-section-border));
+      border-radius: 9px;
+      box-shadow: 0 16px 42px rgba(0, 0, 0, .34);
+      backdrop-filter: blur(14px);
+    }
+    #compact-damage-calculator .formula-hover-card[hidden] { display: none; }
+    #compact-damage-calculator .formula-hover-card[popover] {
+      inset: auto;
+      margin: 0;
+    }
+    #compact-damage-calculator .formula-hover-card[popover]::backdrop { background: transparent; }
+    #compact-damage-calculator .formula-hover-kicker {
+      color: var(--zone-fusion);
+      font: 700 9px/1 var(--cdc-font-data);
+      letter-spacing: .12em;
+    }
+    #compact-damage-calculator .formula-hover-card h3 { margin: 0; font: 650 15px/1.15 var(--cdc-font-display); }
+    #compact-damage-calculator .formula-hover-math {
+      display: grid;
+      gap: 7px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      color: var(--foreground);
+      background: color-mix(in oklab, var(--zone-fusion) 6%, var(--cdc-entry-bg));
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 6px;
+      scrollbar-width: thin;
+    }
+    #compact-damage-calculator .formula-hover-math math {
+      display: block;
+      width: max-content;
+      min-width: 100%;
+      font: 500 16px/1.45 var(--cdc-font-data);
+      text-align: center;
+    }
+    #compact-damage-calculator .formula-hover-copy { color: var(--muted-foreground); font-size: 11px; line-height: 1.55; }
+
+    #compact-damage-calculator .tour-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      pointer-events: none;
+    }
+    #compact-damage-calculator .tour-shade {
+      position: fixed;
+      background: rgba(6, 8, 12, .72);
+      transition: inset .2s ease, width .2s ease, height .2s ease;
+    }
+    #compact-damage-calculator .tour-focus {
+      position: fixed;
+      border: 2px solid color-mix(in oklab, var(--primary) 88%, white);
+      border-radius: 10px;
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--primary) 18%, transparent), 0 12px 36px rgba(0, 0, 0, .35);
+      transition: inset .2s ease, width .2s ease, height .2s ease;
+    }
+    #compact-damage-calculator .tour-card {
+      position: fixed;
+      display: grid;
+      gap: 10px;
+      width: min(390px, calc(100vw - 24px));
+      padding: 15px;
+      pointer-events: auto;
+      color: var(--foreground);
+      background: color-mix(in oklab, var(--cdc-panel-raised) 94%, transparent);
+      border: 1px solid color-mix(in oklab, var(--primary) 58%, var(--cdc-section-border));
+      border-radius: 10px;
+      box-shadow: 0 18px 54px rgba(0, 0, 0, .38);
+      backdrop-filter: blur(14px);
+    }
+    #compact-damage-calculator .tour-card::before {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      border-radius: 10px 0 0 10px;
+      background: var(--primary);
+      content: &quot;&quot;;
+    }
+    #compact-damage-calculator .tour-progress { color: var(--primary); font: 700 10px/1 var(--cdc-font-data); letter-spacing: .12em; }
+    #compact-damage-calculator .tour-card h2 { margin: 0; font: 650 20px/1.1 var(--cdc-font-display); }
+    #compact-damage-calculator .tour-card p { margin: 0; color: var(--muted-foreground); font-size: 12px; line-height: 1.6; }
+    #compact-damage-calculator .tour-action-hint {
+      padding: 8px 10px;
+      border: 1px solid color-mix(in oklab, var(--primary) 35%, var(--cdc-section-border));
+      border-radius: 6px;
+      color: color-mix(in oklab, var(--primary) 78%, var(--foreground));
+      background: color-mix(in oklab, var(--primary) 8%, var(--cdc-panel));
+      font: 650 11px/1.45 var(--cdc-font-display);
+    }
+    #compact-damage-calculator .tour-action-hint::before { margin-right: 6px; content: &quot;→&quot;; font-family: var(--cdc-font-data); }
+    #compact-damage-calculator .tour-actions { display: flex; gap: 7px; align-items: center; justify-content: flex-end; }
+    #compact-damage-calculator .tour-actions .tour-skip { margin-right: auto; }
+    #compact-damage-calculator .tour-key {
+      display: inline-grid;
+      min-width: 20px;
+      min-height: 20px;
+      margin-right: 5px;
+      place-content: center;
+      border: 1px solid var(--cdc-section-border);
+      border-radius: 4px;
+      color: var(--foreground);
+      background: var(--cdc-heading-bg);
+      font: 650 10px/1 var(--cdc-font-data);
+    }
     #compact-damage-calculator .scope-dialog-header,
     #compact-damage-calculator .scope-dialog-footer {
       display: flex;
@@ -1968,6 +2207,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       #compact-damage-calculator .scope-skill-list { grid-template-columns: 1fr; }
       #compact-damage-calculator .formula-dialog-body { grid-template-columns: 1fr; }
       #compact-damage-calculator .formula-setting-grid { grid-template-columns: 1fr; }
+      #compact-damage-calculator .formula-guide-body { grid-template-columns: 1fr; }
+      #compact-damage-calculator .formula-guide-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid var(--cdc-section-border); }
+      #compact-damage-calculator .formula-guide-notes { grid-template-columns: 1fr; }
       #compact-damage-calculator .capture-event { grid-template-columns: max-content 1fr max-content max-content; }
       #compact-damage-calculator .capture-ids,
       #compact-damage-calculator .capture-map { grid-column: 2 / -1; }
@@ -2016,6 +2258,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;masthead-tools&quot;&gt;
+      &lt;button class=&quot;btn capture-entry&quot; id=&quot;cdc-open-tour&quot; type=&quot;button&quot;&gt;使用教学 / GUIDE&lt;/button&gt;
       &lt;button class=&quot;btn capture-entry&quot; id=&quot;cdc-open-formula&quot; type=&quot;button&quot;&gt;公式 / FORMULA&lt;/button&gt;
       &lt;button class=&quot;btn capture-entry&quot; id=&quot;cdc-open-capture&quot; type=&quot;button&quot; hidden&gt;抓包 / EVENT LEARN&lt;/button&gt;
     &lt;/div&gt;
@@ -2028,7 +2271,10 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;div class=&quot;section-label&quot;&gt;公式检查与参数调整&lt;/div&gt;
         &lt;div class=&quot;text-small result-meta&quot;&gt;公式结构保持受控，只开放已确认的常量；修改会写入当前草稿和角色档案。&lt;/div&gt;
       &lt;/div&gt;
-      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-close-formula&quot; type=&quot;button&quot;&gt;关闭&lt;/button&gt;
+      &lt;div class=&quot;viz-controls&quot;&gt;
+        &lt;button class=&quot;btn&quot; id=&quot;cdc-open-formula-guide&quot; type=&quot;button&quot;&gt;公式教学&lt;/button&gt;
+        &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-close-formula&quot; type=&quot;button&quot;&gt;关闭&lt;/button&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;formula-dialog-body&quot;&gt;
       &lt;section class=&quot;formula-settings&quot;&gt;
@@ -2046,11 +2292,14 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;label class=&quot;form-label&quot;&gt;环合强度除数
             &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-fusion-divisor&quot; type=&quot;number&quot; min=&quot;1&quot; step=&quot;1&quot; value=&quot;600&quot;&gt;
           &lt;/label&gt;
-          &lt;label class=&quot;form-label&quot;&gt;浸染 / 覆纹基础增伤（%）
-            &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-special-base-bonus&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+          &lt;label class=&quot;form-label&quot;&gt;浸染 / 覆纹基础倍率
+            &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-special-base-multiplier&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;1.2&quot;&gt;
           &lt;/label&gt;
-          &lt;label class=&quot;form-label&quot;&gt;浸染 / 覆纹环合除数
-            &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-special-fusion-divisor&quot; type=&quot;number&quot; min=&quot;1&quot; step=&quot;1&quot; value=&quot;1400&quot;&gt;
+          &lt;label class=&quot;form-label&quot;&gt;浸染 / 覆纹环合系数（%）
+            &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-special-fusion-coefficient&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
+          &lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;浸染 / 覆纹环合常数
+            &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-special-fusion-offset&quot; type=&quot;number&quot; min=&quot;1&quot; step=&quot;1&quot; value=&quot;180&quot;&gt;
           &lt;/label&gt;
           &lt;label class=&quot;form-label&quot;&gt;80级倾陷基础伤害
             &lt;input class=&quot;form-control&quot; id=&quot;cdc-formula-inclination-base&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;1&quot; value=&quot;3603&quot;&gt;
@@ -2061,6 +2310,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;/div&gt;
         &lt;div class=&quot;verification-note text-small&quot; id=&quot;cdc-formula-status&quot;&gt;默认规则：创生花 9000；浊燃 2700；黯星 45000；环合修正为 1 + 最终环合强度 / 600。&lt;/div&gt;
         &lt;div class=&quot;text-small result-meta&quot;&gt;合法性：非战斗基础环合强度必须在 0～360；Buff 百分比与固定提升结算后的“最终环合强度”不设上限。&lt;/div&gt;
+        &lt;div class=&quot;text-small result-meta&quot;&gt;抗性规则：有效抗性 = 原始抗性 - 无视抗性 - 抗性削弱；有效抗性 ≥ 0 时，抗性区 = 1 - 有效抗性；有效抗性 &amp;lt; 0 时，抗性区 = 1 - 有效抗性 / (1 - 有效抗性)。&lt;/div&gt;
       &lt;/section&gt;
       &lt;section class=&quot;formula-catalog&quot; id=&quot;cdc-formula-catalog&quot; aria-live=&quot;polite&quot;&gt;&lt;/section&gt;
       &lt;section class=&quot;formula-rule-card&quot;&gt;
@@ -2080,13 +2330,63 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/section&gt;
     &lt;/div&gt;
     &lt;div class=&quot;formula-dialog-footer&quot;&gt;
-      &lt;span class=&quot;text-small result-meta&quot;&gt;每次验算会在结果下方按同样颜色展开实际采用的乘区与数值。&lt;/span&gt;
+      &lt;span class=&quot;text-small result-meta&quot;&gt;带“ƒ”的乘区支持悬停或键盘聚焦，可查看带分数线的完整公式与变量说明。&lt;/span&gt;
       &lt;div class=&quot;viz-controls&quot;&gt;
         &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-reset-formula&quot; type=&quot;button&quot;&gt;恢复默认公式&lt;/button&gt;
         &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-apply-formula&quot; type=&quot;button&quot;&gt;应用公式参数&lt;/button&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/dialog&gt;
+
+  &lt;dialog id=&quot;cdc-formula-guide-dialog&quot;&gt;
+    &lt;div class=&quot;formula-dialog-header&quot;&gt;
+      &lt;div&gt;
+        &lt;div class=&quot;section-label&quot;&gt;公式教学&lt;/div&gt;
+        &lt;div class=&quot;text-small result-meta&quot;&gt;先看一条伤害由哪些乘区组成，再回到公式页检查常量和模型白名单。&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-close-formula-guide&quot; type=&quot;button&quot;&gt;关闭&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;formula-guide-body&quot;&gt;
+      &lt;nav class=&quot;formula-guide-nav&quot; aria-label=&quot;公式教学章节&quot;&gt;
+        &lt;button class=&quot;btn btn-primary&quot; type=&quot;button&quot; data-formula-guide-page=&quot;0&quot; aria-pressed=&quot;true&quot;&gt;常规伤害&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-formula-guide-page=&quot;1&quot; aria-pressed=&quot;false&quot;&gt;防御与抗性&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-formula-guide-page=&quot;2&quot; aria-pressed=&quot;false&quot;&gt;环合反应&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-formula-guide-page=&quot;3&quot; aria-pressed=&quot;false&quot;&gt;治疗&lt;/button&gt;
+        &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-formula-guide-page=&quot;4&quot; aria-pressed=&quot;false&quot;&gt;倾陷小队&lt;/button&gt;
+      &lt;/nav&gt;
+      &lt;article class=&quot;formula-guide-content&quot; id=&quot;cdc-formula-guide-content&quot; aria-live=&quot;polite&quot;&gt;&lt;/article&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;formula-dialog-footer&quot;&gt;
+      &lt;span class=&quot;text-small result-meta&quot;&gt;颜色与验算结果保持一致；悬停或聚焦任一乘区，可查看带分数线的完整数学表达式。&lt;/span&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;cdc-back-to-formula-editor&quot; type=&quot;button&quot;&gt;返回公式检查&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/dialog&gt;
+
+  &lt;aside class=&quot;formula-hover-card&quot; id=&quot;cdc-formula-tooltip&quot; role=&quot;tooltip&quot; popover=&quot;manual&quot; hidden&gt;
+    &lt;div class=&quot;formula-hover-kicker&quot;&gt;FACTOR FORMULA&lt;/div&gt;
+    &lt;h3 id=&quot;cdc-formula-tooltip-title&quot;&gt;乘区计算方法&lt;/h3&gt;
+    &lt;div class=&quot;formula-hover-math&quot; id=&quot;cdc-formula-tooltip-math&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;formula-hover-copy&quot; id=&quot;cdc-formula-tooltip-copy&quot;&gt;&lt;/div&gt;
+  &lt;/aside&gt;
+
+  &lt;div class=&quot;tour-layer&quot; id=&quot;cdc-tour-layer&quot; hidden aria-live=&quot;polite&quot;&gt;
+    &lt;div class=&quot;tour-shade&quot; data-tour-shade=&quot;top&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;tour-shade&quot; data-tour-shade=&quot;left&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;tour-shade&quot; data-tour-shade=&quot;right&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;tour-shade&quot; data-tour-shade=&quot;bottom&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;tour-focus&quot; id=&quot;cdc-tour-focus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+    &lt;section class=&quot;tour-card&quot; id=&quot;cdc-tour-card&quot; role=&quot;dialog&quot; aria-modal=&quot;true&quot; aria-labelledby=&quot;cdc-tour-title&quot;&gt;
+      &lt;div class=&quot;tour-progress&quot; id=&quot;cdc-tour-progress&quot;&gt;STEP 1 / 8&lt;/div&gt;
+      &lt;h2 id=&quot;cdc-tour-title&quot;&gt;选择本次要解决的问题&lt;/h2&gt;
+      &lt;p id=&quot;cdc-tour-copy&quot;&gt;&lt;/p&gt;
+      &lt;div class=&quot;tour-action-hint&quot; id=&quot;cdc-tour-action&quot; hidden&gt;&lt;/div&gt;
+      &lt;div class=&quot;tour-actions&quot;&gt;
+        &lt;button class=&quot;btn btn-ghost tour-skip&quot; id=&quot;cdc-tour-skip&quot; type=&quot;button&quot;&gt;跳过教学&lt;/button&gt;
+        &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-tour-prev&quot; type=&quot;button&quot;&gt;上一步&lt;/button&gt;
+        &lt;button class=&quot;btn btn-primary&quot; id=&quot;cdc-tour-next&quot; type=&quot;button&quot;&gt;下一步&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/div&gt;
 
   &lt;div class=&quot;profile-bar&quot;&gt;
     &lt;div class=&quot;profile-ident&quot;&gt;
@@ -2137,8 +2437,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;label class=&quot;form-label&quot; data-damage-only&gt;敌人基础抗性（%）
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-resistance&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;20&quot;&gt;
       &lt;/label&gt;
-      &lt;label class=&quot;form-label&quot; data-fusion-field hidden&gt;基础环合强度
-        &lt;input class=&quot;form-control&quot; id=&quot;cdc-fusion&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;360&quot; step=&quot;0.01&quot; value=&quot;360&quot;&gt;
+      &lt;label class=&quot;form-label&quot; data-fusion-field hidden&gt;反应采用的基础环合强度
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-fusion&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;360&quot; step=&quot;0.01&quot; value=&quot;360&quot; title=&quot;填写参与本次环合反应的两个角色中，非战斗面板环合强度较高的一方&quot;&gt;
+        &lt;span class=&quot;text-small result-meta&quot;&gt;手动填写反应双方较高值，不从当前角色 OCR 面板导入&lt;/span&gt;
       &lt;/label&gt;
     &lt;/div&gt;
     &lt;div class=&quot;section-label&quot; data-damage-only&gt;基础伤害乘区&lt;/div&gt;
@@ -2148,6 +2449,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;/label&gt;
       &lt;label class=&quot;form-label&quot;&gt;基础抗性削弱（%）
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-res-shred&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;10&quot;&gt;
+      &lt;/label&gt;
+      &lt;label class=&quot;form-label&quot;&gt;基础无视抗性（%）
+        &lt;input class=&quot;form-control&quot; id=&quot;cdc-res-ignore&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;0&quot;&gt;
       &lt;/label&gt;
       &lt;label class=&quot;form-label&quot;&gt;通用增伤（%）
         &lt;input class=&quot;form-control&quot; id=&quot;cdc-general&quot; type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;30&quot;&gt;
@@ -2172,7 +2476,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;div class=&quot;ocr-header&quot;&gt;
       &lt;div&gt;
         &lt;div class=&quot;section-label&quot;&gt;截图识别基础面板&lt;/div&gt;
-        &lt;div class=&quot;text-small result-meta&quot;&gt;程序会在倒计时期间隐藏并切回游戏；可趁倒计时打开详情或滚动面板。&lt;/div&gt;
+        &lt;div class=&quot;text-small result-meta&quot;&gt;程序会在倒计时期间隐藏并切回游戏；可趁倒计时打开详情或滚动面板。环合强度不会识别，请按反应双方较高值手动填写。&lt;/div&gt;
       &lt;/div&gt;
       &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-close-ocr&quot; type=&quot;button&quot;&gt;关闭&lt;/button&gt;
     &lt;/div&gt;
@@ -2329,7 +2633,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         &lt;option value=&quot;custom&quot;&gt;自定义贡献角色&lt;/option&gt;
       &lt;/select&gt;
     &lt;/label&gt;
-    &lt;div class=&quot;text-small result-meta&quot;&gt;此范围只控制防御穿透、抗性削弱和倾陷增伤进入哪些角色的倾陷贡献，不影响普通技能作用范围。&lt;/div&gt;
+    &lt;div class=&quot;text-small result-meta&quot;&gt;防御穿透、无视抗性和倾陷增伤只进入勾选角色；抗性削弱会作用到所有与勾选角色同属性的贡献者，并与其他减抗来源叠加。此设置不影响普通技能。&lt;/div&gt;
     &lt;div class=&quot;scope-skill-list&quot; id=&quot;cdc-inclination-scope-contributors&quot; hidden&gt;&lt;/div&gt;
     &lt;div class=&quot;scope-dialog-footer&quot;&gt;
       &lt;button class=&quot;btn btn-ghost&quot; id=&quot;cdc-cancel-inclination-scope&quot; type=&quot;button&quot;&gt;取消&lt;/button&gt;
@@ -2354,7 +2658,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     &lt;div class=&quot;special-effect-card&quot; id=&quot;cdc-special-effect-card&quot; data-damage-only hidden&gt;
       &lt;strong id=&quot;cdc-special-effect-name&quot;&gt;浸染&lt;/strong&gt;
       &lt;div&gt;
-        &lt;div class=&quot;special-effect-formula&quot; id=&quot;cdc-special-effect-formula&quot;&gt;独立倍率 = 1 + 20% + 最终环合强度 / 1400&lt;/div&gt;
+        &lt;div class=&quot;special-effect-formula&quot; id=&quot;cdc-special-effect-formula&quot;&gt;独立倍率 = 1.2 × [1 + (20% × 最终环合强度) / (180 + 最终环合强度)]&lt;/div&gt;
         &lt;div class=&quot;text-small result-meta&quot;&gt;最终环合强度包含当前验算假设中生效的百分比与固定数值 Buff；基础面板仍限制为 0～360。&lt;/div&gt;
       &lt;/div&gt;
       &lt;span class=&quot;special-effect-badge&quot;&gt;SPECIAL BUFF&lt;/span&gt;
@@ -2376,6 +2680,20 @@ html&gt;body{padding:0}&lt;/style&gt;
       &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;倾陷上限区&lt;/div&gt;&lt;div class=&quot;inclination-preset-stat&quot;&gt;70 / 3&lt;/div&gt;&lt;/div&gt;
       &lt;div&gt;&lt;div class=&quot;text-small text-muted&quot;&gt;属性抗性&lt;/div&gt;&lt;div class=&quot;inclination-preset-stat&quot;&gt;咒 16% · 其他 20%&lt;/div&gt;&lt;/div&gt;
     &lt;/div&gt;
+    &lt;section class=&quot;inclination-buff-panel&quot; aria-labelledby=&quot;cdc-inclination-buff-title&quot;&gt;
+      &lt;div class=&quot;inclination-buff-heading&quot;&gt;
+        &lt;div&gt;
+          &lt;strong id=&quot;cdc-inclination-buff-title&quot;&gt;倾陷专用 Buff&lt;/strong&gt;
+          &lt;div class=&quot;inclination-rule-strip&quot; aria-label=&quot;倾陷 Buff 结算规则&quot;&gt;
+            &lt;span&gt;防御穿透：个人&lt;/span&gt;&lt;span&gt;无视抗性：个人&lt;/span&gt;&lt;span&gt;抗性削弱：同属性共享并叠加&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;button class=&quot;btn&quot; id=&quot;cdc-add-inclination-effect&quot; type=&quot;button&quot;&gt;添加倾陷 Buff&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;text-small result-meta&quot;&gt;这里与常规伤害 Buff 完全分开。自定义作用角色时，个人乘区只进入勾选角色；减抗会自动扩展给所有同属性贡献角色。&lt;/div&gt;
+      &lt;div class=&quot;entry-list&quot; id=&quot;cdc-inclination-effects&quot;&gt;&lt;/div&gt;
+    &lt;/section&gt;
+    &lt;div class=&quot;section-label&quot;&gt;贡献角色&lt;/div&gt;
     &lt;div class=&quot;entry-list&quot; id=&quot;cdc-inclination-contributors&quot;&gt;&lt;/div&gt;
     &lt;div class=&quot;viz-controls&quot;&gt;
       &lt;button class=&quot;btn&quot; id=&quot;cdc-add-inclination-contributor&quot; type=&quot;button&quot;&gt;添加贡献角色&lt;/button&gt;
@@ -2509,7 +2827,9 @@ html&gt;body{padding:0}&lt;/style&gt;
       const EXACT_RESULT_KEEP = 300;
       const PROFILE_STORAGE_KEY = &#x27;game-calculator-profiles-v1&#x27;;
       const DRAFT_STORAGE_KEY = &#x27;game-calculator-draft-v1&#x27;;
-      const FORMULA_SETTINGS_STORAGE_KEY = &#x27;game-calculator-formula-settings-v1&#x27;;
+      const FORMULA_SETTINGS_STORAGE_KEY = &#x27;game-calculator-formula-settings-v2&#x27;;
+      const TUTORIAL_STORAGE_KEY = &#x27;game-calculator-guided-tour-completed-v1&#x27;;
+      const TUTORIAL_MODE_STORAGE_PREFIX = &#x27;game-calculator-guided-tour-mode-seen-v1-&#x27;;
       const CAPTURE_SIDECAR_STORAGE_KEY = &#x27;nte-capture-sidecar-v1&#x27;;
       const CAPTURE_MAPPING_STORAGE_KEY = &#x27;nte-capture-mappings-v1&#x27;;
       const DEFAULT_FORMULA_SETTINGS = Object.freeze({
@@ -2517,8 +2837,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         turbidBase: 2700,
         darkstarBase: 45000,
         fusionDivisor: 600,
-        specialBaseBonus: 0.2,
-        specialFusionDivisor: 1400,
+        specialBaseMultiplier: 1.2,
+        specialFusionCoefficient: 0.2,
+        specialFusionOffset: 180,
         inclinationBase: 3603,
         inclinationCapDivisor: 3
       });
@@ -2532,8 +2853,9 @@ html&gt;body{padding:0}&lt;/style&gt;
           turbidBase: nonNegative(value.turbidBase, DEFAULT_FORMULA_SETTINGS.turbidBase),
           darkstarBase: nonNegative(value.darkstarBase, DEFAULT_FORMULA_SETTINGS.darkstarBase),
           fusionDivisor: Math.max(1, nonNegative(value.fusionDivisor, DEFAULT_FORMULA_SETTINGS.fusionDivisor)),
-          specialBaseBonus: nonNegative(value.specialBaseBonus, DEFAULT_FORMULA_SETTINGS.specialBaseBonus),
-          specialFusionDivisor: Math.max(1, nonNegative(value.specialFusionDivisor, DEFAULT_FORMULA_SETTINGS.specialFusionDivisor)),
+          specialBaseMultiplier: nonNegative(value.specialBaseMultiplier, DEFAULT_FORMULA_SETTINGS.specialBaseMultiplier),
+          specialFusionCoefficient: nonNegative(value.specialFusionCoefficient, DEFAULT_FORMULA_SETTINGS.specialFusionCoefficient),
+          specialFusionOffset: Math.max(1, nonNegative(value.specialFusionOffset, DEFAULT_FORMULA_SETTINGS.specialFusionOffset)),
           inclinationBase: nonNegative(value.inclinationBase, DEFAULT_FORMULA_SETTINGS.inclinationBase),
           inclinationCapDivisor: Math.max(1, nonNegative(value.inclinationCapDivisor, DEFAULT_FORMULA_SETTINGS.inclinationCapDivisor))
         };
@@ -2541,6 +2863,14 @@ html&gt;body{padding:0}&lt;/style&gt;
       function readStoredFormulaSettings() {
         try { return normalizeFormulaSettings(JSON.parse(localStorage.getItem(FORMULA_SETTINGS_STORAGE_KEY) || &#x27;{}&#x27;)); }
         catch (_error) { return { ...DEFAULT_FORMULA_SETTINGS }; }
+      }
+      function specialZoneMultiplier(fusionStrength) {
+        return formulaSettings.specialBaseMultiplier
+          * (1 + (formulaSettings.specialFusionCoefficient * fusionStrength)
+          / (formulaSettings.specialFusionOffset + fusionStrength));
+      }
+      function specialZoneFormulaText(fusionLabel = &#x27;最终环合强度&#x27;) {
+        return `${format(formulaSettings.specialBaseMultiplier)} × [1 + (${format(formulaSettings.specialFusionCoefficient * 100)}% × ${fusionLabel}) / (${format(formulaSettings.specialFusionOffset)} + ${fusionLabel})]`;
       }
       let formulaSettings = readStoredFormulaSettings();
       let specialEffect = &#x27;none&#x27;;
@@ -2550,6 +2880,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         cap: 70,
         resistances: Object.freeze({ light: 0.2, phase: 0.2, dark: 0.2, spirit: 0.2, soul: 0.2, curse: 0.16, mind: 0.2 })
       });
+      const INCLINATION_ATTRIBUTE_LABELS = Object.freeze({ light: &#x27;光&#x27;, phase: &#x27;相&#x27;, dark: &#x27;暗&#x27;, spirit: &#x27;灵&#x27;, soul: &#x27;魂&#x27;, curse: &#x27;咒&#x27;, mind: &#x27;心灵&#x27; });
       const OCR_TARGETS = {
         panel_attack: { label: &#x27;非战斗面板攻击&#x27;, input: &#x27;cdc-panel&#x27; },
         base_attack: { label: &#x27;基础攻击&#x27;, input: &#x27;cdc-base&#x27; },
@@ -2557,7 +2888,6 @@ html&gt;body{padding:0}&lt;/style&gt;
         crit_damage: { label: &#x27;面板暴击伤害&#x27;, input: &#x27;cdc-crit&#x27;, suffix: &#x27;%&#x27; },
         general_bonus: { label: &#x27;通用增伤&#x27;, input: &#x27;cdc-general&#x27;, suffix: &#x27;%&#x27; },
         elemental_bonus: { label: &#x27;属性增伤&#x27;, input: &#x27;cdc-elemental&#x27;, suffix: &#x27;%&#x27; },
-        fusion_strength: { label: &#x27;基础环合强度&#x27;, input: &#x27;cdc-fusion&#x27; },
         healing_bonus: { label: &#x27;基础治疗加成&#x27;, input: &#x27;cdc-heal-bonus&#x27;, suffix: &#x27;%&#x27; }
       };
       const OCR_ORDER = Object.keys(OCR_TARGETS);
@@ -2574,16 +2904,158 @@ html&gt;body{padding:0}&lt;/style&gt;
       let capturePollTimer = null;
       let captureMarker = null;
       let packetCaptureState = &#x27;idle&#x27;;
+      let formulaGuidePage = 0;
+      let tourIndex = 0;
+      let tourActive = false;
+      let tourType = &#x27;damage&#x27;;
+      let activeTourSteps = [];
+      let tourPositionTimer = null;
+      let formulaTooltipTarget = null;
 
-      function formulaTraceMarkup(factors) {
+      function formulaTraceMarkup(factors, interactive = false) {
         return `&lt;div class=&quot;formula-trace&quot;&gt;${factors.map((factor, index) =&gt; {
           const kind = [&#x27;base&#x27;, &#x27;attack&#x27;, &#x27;defense&#x27;, &#x27;resistance&#x27;, &#x27;damage&#x27;, &#x27;skill&#x27;, &#x27;fusion&#x27;, &#x27;dot&#x27;, &#x27;crit&#x27;, &#x27;independent&#x27;].includes(factor.kind)
             ? factor.kind : &#x27;independent&#x27;;
           const value = factor.display ?? format(factor.value);
           const note = factor.note ? ` title=&quot;${escapeHtml(factor.note)}&quot;` : &#x27;&#x27;;
+          const help = interactive
+            ? ` data-formula-help data-formula-kind=&quot;${kind}&quot; data-formula-label=&quot;${escapeHtml(factor.label)}&quot; tabindex=&quot;0&quot; aria-describedby=&quot;cdc-formula-tooltip&quot; aria-label=&quot;查看${escapeHtml(factor.label)}的详细公式&quot;`
+            : &#x27;&#x27;;
           const operator = factor.operator !== undefined ? factor.operator : &#x27;×&#x27;;
-          return `${index &amp;&amp; operator ? `&lt;span class=&quot;formula-times&quot;&gt;${escapeHtml(operator)}&lt;/span&gt;` : &#x27;&#x27;}&lt;span class=&quot;formula-factor factor-${kind}&quot;${note}&gt;&lt;small&gt;${escapeHtml(factor.label)}&lt;/small&gt;&lt;strong&gt;${escapeHtml(value)}&lt;/strong&gt;&lt;/span&gt;`;
+          return `${index &amp;&amp; operator ? `&lt;span class=&quot;formula-times&quot;&gt;${escapeHtml(operator)}&lt;/span&gt;` : &#x27;&#x27;}&lt;span class=&quot;formula-factor factor-${kind}&quot;${note}${help}&gt;&lt;small&gt;${escapeHtml(factor.label)}&lt;/small&gt;&lt;strong&gt;${escapeHtml(value)}&lt;/strong&gt;&lt;/span&gt;`;
         }).join(&#x27;&#x27;)}&lt;/div&gt;`;
+      }
+
+      function formulaHelpForFactor(element) {
+        const kind = element.dataset.formulaKind;
+        const label = element.dataset.formulaLabel || &#x27;乘区&#x27;;
+        const model = element.closest(&#x27;[data-model]&#x27;)?.dataset.model || &#x27;&#x27;;
+        const m = (content) =&gt; `&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mrow&gt;${content}&lt;/mrow&gt;&lt;/math&gt;`;
+        const sub = (symbol, text) =&gt; `&lt;msub&gt;&lt;mi&gt;${symbol}&lt;/mi&gt;&lt;mtext&gt;${text}&lt;/mtext&gt;&lt;/msub&gt;`;
+        const sum = &#x27;&lt;mo&gt;∑&lt;/mo&gt;&#x27;;
+        const defenseFraction = `&lt;mfrac&gt;&lt;mrow&gt;&lt;mn&gt;100&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;L&#x27;, &#x27;角色&#x27;)}&lt;/mrow&gt;&lt;mrow&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mn&gt;100&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;L&#x27;, &#x27;角色&#x27;)}&lt;mo&gt;)&lt;/mo&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mn&gt;100&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;L&#x27;, &#x27;敌人&#x27;)}&lt;mo&gt;)&lt;/mo&gt;&lt;mo&gt;×&lt;/mo&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mi&gt;P&lt;/mi&gt;&lt;mo&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;/mfrac&gt;`;
+        if (kind === &#x27;defense&#x27;) {
+          if (model === &#x27;darkstar&#x27; || element.querySelector(&#x27;strong&#x27;)?.textContent.includes(&#x27;无视防御&#x27;)) {
+            return {
+              title: `${label} · 无视防御`,
+              math: m(`${sub(&#x27;Z&#x27;, &#x27;防御&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;`),
+              copy: &#x27;黯星不进入等级与防御穿透分式，防御乘区固定为 1。&#x27;
+            };
+          }
+          return {
+            title: `${label} · 等级与防御穿透`,
+            math: m(`${sub(&#x27;Z&#x27;, &#x27;防御&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${defenseFraction}`),
+            copy: &#x27;L角色为当前贡献角色等级，L敌人为目标等级，P 为该角色最终防御穿透。倾陷会为每名贡献角色分别代入。&#x27;
+          };
+        }
+        if (kind === &#x27;resistance&#x27;) {
+          return {
+            title: `${label} · 有效抗性分段`,
+            math: [
+              m(`${sub(&#x27;R&#x27;, &#x27;有效&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${sub(&#x27;R&#x27;, &#x27;原始&#x27;)}&lt;mo&gt;−&lt;/mo&gt;&lt;mi&gt;I&lt;/mi&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mi&gt;S&lt;/mi&gt;`),
+              `&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mrow&gt;${sub(&#x27;Z&#x27;, &#x27;抗性&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mo&gt;{&lt;/mo&gt;&lt;mtable columnalign=&quot;left&quot;&gt;&lt;mtr&gt;&lt;mtd&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;−&lt;/mo&gt;${sub(&#x27;R&#x27;, &#x27;有效&#x27;)}&lt;/mtd&gt;&lt;mtd&gt;&lt;mtext&gt;，当 &lt;/mtext&gt;${sub(&#x27;R&#x27;, &#x27;有效&#x27;)}&lt;mo&gt;≥&lt;/mo&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/mtd&gt;&lt;/mtr&gt;&lt;mtr&gt;&lt;mtd&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;mfrac&gt;&lt;msub&gt;&lt;mi&gt;R&lt;/mi&gt;&lt;mtext&gt;有效&lt;/mtext&gt;&lt;/msub&gt;&lt;mrow&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;−&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;R&lt;/mi&gt;&lt;mtext&gt;有效&lt;/mtext&gt;&lt;/msub&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;/mtd&gt;&lt;mtd&gt;&lt;mtext&gt;，当 &lt;/mtext&gt;${sub(&#x27;R&#x27;, &#x27;有效&#x27;)}&lt;mo&gt;&amp;lt;&lt;/mo&gt;&lt;mn&gt;0&lt;/mn&gt;&lt;/mtd&gt;&lt;/mtr&gt;&lt;/mtable&gt;&lt;/mrow&gt;&lt;/math&gt;`
+            ].join(&#x27;&#x27;),
+            copy: &#x27;I 为无视抗性，S 为抗性削弱。有效抗性降到 0 以下后必须使用第二行分式，不能继续直接计算 1－抗性。&#x27;
+          };
+        }
+        if (kind === &#x27;attack&#x27;) {
+          return {
+            title: `${label} · 战斗攻击`,
+            math: m(`${sub(&#x27;A&#x27;, &#x27;战斗&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${sub(&#x27;A&#x27;, &#x27;非战斗面板&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;A&#x27;, &#x27;基础&#x27;)}&lt;mo&gt;×&lt;/mo&gt;&lt;mo&gt;(&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;攻击加成&#x27;)}&lt;mo&gt;)&lt;/mo&gt;`),
+            copy: &#x27;攻击加成按百分数换算为小数后求和，再乘基础攻击；结果加到非战斗面板攻击。&#x27;
+          };
+        }
+        if (kind === &#x27;fusion&#x27;) {
+          return {
+            title: `${label} · 环合修正`,
+            math: m(`${sub(&#x27;Z&#x27;, &#x27;环合&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mfrac&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;mn&gt;${format(formulaSettings.fusionDivisor)}&lt;/mn&gt;&lt;/mfrac&gt;`),
+            copy: &#x27;F 为 Buff 结算后的最终环合强度：基础环合×（1＋百分比提升）＋固定提升。&#x27;
+          };
+        }
+        if (kind === &#x27;dot&#x27;) {
+          return {
+            title: `${label} · 持续强化`,
+            math: m(`${sub(&#x27;Z&#x27;, &#x27;持续&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;持续伤害强化&#x27;)}`),
+            copy: &#x27;仅持续伤害读取。浊燃固定属于持续伤害；创生花和黯星不读取此乘区。&#x27;
+          };
+        }
+        if (kind === &#x27;crit&#x27;) {
+          return {
+            title: `${label} · 暴击伤害`,
+            math: m(`${sub(&#x27;Z&#x27;, &#x27;暴击&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;B&#x27;, &#x27;面板暴击伤害&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;其他爆伤&#x27;)}`),
+            copy: &#x27;仅在勾选暴击时读取。浊燃还会把“仅对持续伤害生效”的暴击伤害加入同一区域。&#x27;
+          };
+        }
+        if (kind === &#x27;skill&#x27;) {
+          if (label.includes(&#x27;治疗&#x27;)) {
+            return { title: `${label} · 治疗倍率`, math: m(`${sub(&#x27;M&#x27;, &#x27;治疗&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${sub(&#x27;M&#x27;, &#x27;填写值&#x27;)}`), copy: &#x27;治疗倍率直接使用技能中填写的数值，再与战斗攻击和治疗加成区相乘。&#x27; };
+          }
+          return {
+            title: `${label} · 加算或乘算`,
+            math: [
+              m(`${sub(&#x27;M&#x27;, &#x27;加算&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${sub(&#x27;M&#x27;, &#x27;基础&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sum}&lt;mi&gt;ΔM&lt;/mi&gt;`),
+              m(`${sub(&#x27;M&#x27;, &#x27;乘算&#x27;)}&lt;mo&gt;=&lt;/mo&gt;${sub(&#x27;M&#x27;, &#x27;基础&#x27;)}&lt;mo&gt;×&lt;/mo&gt;&lt;munderover&gt;&lt;mo&gt;∏&lt;/mo&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;mi&gt;n&lt;/mi&gt;&lt;/munderover&gt;&lt;mo&gt;(&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;msub&gt;&lt;mi&gt;b&lt;/mi&gt;&lt;mi&gt;i&lt;/mi&gt;&lt;/msub&gt;&lt;mo&gt;)&lt;/mo&gt;`)
+            ].join(&#x27;&#x27;),
+            copy: &#x27;普通“倍率提高 x%”通常使用加算；文本明确写成“变为原来的 x 倍”时使用乘算勾选。&#x27;
+          };
+        }
+        if (kind === &#x27;damage&#x27;) {
+          if (label.includes(&#x27;治疗&#x27;)) return { title: `${label} · 治疗加成`, math: m(`${sub(&#x27;Z&#x27;, &#x27;治疗&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;B&#x27;, &#x27;基础治疗&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;治疗 Buff&#x27;)}`), copy: &#x27;只读取基础面板治疗加成及明确提供治疗加成的 Buff。&#x27; };
+          if (label.includes(&#x27;倾陷&#x27;)) return { title: `${label} · 倾陷增伤`, math: m(`${sub(&#x27;Z&#x27;, &#x27;倾陷增伤&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;B&#x27;, &#x27;个人基础&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;适用倾陷 Buff&#x27;)}`), copy: &#x27;逐角色读取，只接受倾陷专用增伤；普通增伤、浸染和覆纹不会进入。&#x27; };
+          if (label.includes(&#x27;指定&#x27;)) return { title: `${label} · 自定义点名`, math: m(`${sub(&#x27;Z&#x27;, &#x27;指定&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;点名增伤&#x27;)}`), copy: &#x27;环合反应默认不读取普通增伤；只有 Buff 作用范围明确点名该反应时才加入。&#x27; };
+          return { title: `${label} · 同区加算`, math: m(`${sub(&#x27;Z&#x27;, &#x27;增伤&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;B&#x27;, &#x27;通用&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sub(&#x27;B&#x27;, &#x27;属性&#x27;)}&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;额外&#x27;)}`), copy: &#x27;同一增伤区先加算，再作为一个整体与攻击、防御、抗性、技能倍率等区域相乘。&#x27; };
+        }
+        if (kind === &#x27;independent&#x27;) {
+          if (label.includes(&#x27;可选&#x27;)) {
+            return {
+              title: `${label} · 浸染 / 覆纹`,
+              math: m(`${sub(&#x27;Z&#x27;, &#x27;浸染/覆纹&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;${format(formulaSettings.specialBaseMultiplier)}&lt;/mn&gt;&lt;mo&gt;×&lt;/mo&gt;&lt;mo&gt;[&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mfrac&gt;&lt;mrow&gt;&lt;mn&gt;${format(formulaSettings.specialFusionCoefficient)}&lt;/mn&gt;&lt;mo&gt;×&lt;/mo&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;mn&gt;${format(formulaSettings.specialFusionOffset)}&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;&lt;mi&gt;F&lt;/mi&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;mo&gt;]&lt;/mo&gt;`),
+              copy: &#x27;F 使用最终环合强度。浸染/覆纹只作用于常规伤害，不作用于创生花、浊燃、黯星或倾陷。&#x27;
+            };
+          }
+          if (label.includes(&#x27;上限&#x27;)) return { title: `${label} · 敌人上限`, math: m(`${sub(&#x27;Z&#x27;, &#x27;倾陷上限&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;${format(INCLINATION_PRESET.cap)}&lt;/mn&gt;&lt;mn&gt;${format(formulaSettings.inclinationCapDivisor)}&lt;/mn&gt;&lt;/mfrac&gt;`), copy: &#x27;当前塞润尼缇（高危6）预设为 70÷3，该区域对每名贡献角色相同。&#x27; };
+          return { title: `${label} · 独立乘区`, math: m(`${sub(&#x27;Z&#x27;, &#x27;独立&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;mo&gt;+&lt;/mo&gt;${sum}${sub(&#x27;B&#x27;, &#x27;明确指定增伤&#x27;)}`), copy: &#x27;只读取文本或作用范围明确指向该模型的独立增伤。&#x27; };
+        }
+        return {
+          title: `${label} · 固定基础值`,
+          math: m(`${sub(&#x27;B&#x27;, &#x27;固定&#x27;)}&lt;mo&gt;=&lt;/mo&gt;&lt;mn&gt;${escapeHtml(element.querySelector(&#x27;strong&#x27;)?.textContent || &#x27;0&#x27;)}&lt;/mn&gt;`),
+          copy: &#x27;固定基础值直接进入对应模型，不读取面板攻击或普通技能倍率。&#x27;
+        };
+      }
+
+      function positionFormulaTooltip() {
+        const tooltip = byId(&#x27;cdc-formula-tooltip&#x27;);
+        if (!formulaTooltipTarget || tooltip.hidden) return;
+        const anchor = formulaTooltipTarget.getBoundingClientRect();
+        const width = tooltip.offsetWidth;
+        const height = tooltip.offsetHeight;
+        const margin = 12;
+        let left = anchor.left + anchor.width / 2 - width / 2;
+        left = Math.max(margin, Math.min(window.innerWidth - width - margin, left));
+        let top = anchor.bottom + 10;
+        if (top + height &gt; window.innerHeight - margin) top = anchor.top - height - 10;
+        top = Math.max(margin, Math.min(window.innerHeight - height - margin, top));
+        Object.assign(tooltip.style, { left: `${left}px`, top: `${top}px` });
+      }
+
+      function showFormulaTooltip(element) {
+        const tooltip = byId(&#x27;cdc-formula-tooltip&#x27;);
+        const help = formulaHelpForFactor(element);
+        formulaTooltipTarget = element;
+        byId(&#x27;cdc-formula-tooltip-title&#x27;).textContent = help.title;
+        byId(&#x27;cdc-formula-tooltip-math&#x27;).innerHTML = help.math;
+        byId(&#x27;cdc-formula-tooltip-copy&#x27;).textContent = help.copy;
+        tooltip.hidden = false;
+        if (typeof tooltip.showPopover === &#x27;function&#x27; &amp;&amp; !tooltip.matches(&#x27;:popover-open&#x27;)) tooltip.showPopover();
+        positionFormulaTooltip();
+      }
+
+      function hideFormulaTooltip(element = null) {
+        if (element &amp;&amp; formulaTooltipTarget !== element) return;
+        const tooltip = byId(&#x27;cdc-formula-tooltip&#x27;);
+        if (typeof tooltip.hidePopover === &#x27;function&#x27; &amp;&amp; tooltip.matches(&#x27;:popover-open&#x27;)) tooltip.hidePopover();
+        tooltip.hidden = true;
+        formulaTooltipTarget = null;
       }
 
       function renderFormulaCatalog() {
@@ -2599,10 +3071,10 @@ html&gt;body{padding:0}&lt;/style&gt;
             factors: [
               { kind: &#x27;attack&#x27;, label: &#x27;战斗攻击&#x27;, display: &#x27;面板 + 基攻×攻击加成&#x27; },
               { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;等级与穿透&#x27; },
-              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;抗性与削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;按有效抗性分段&#x27; },
               { kind: &#x27;damage&#x27;, label: &#x27;增伤区&#x27;, display: &#x27;1 + 增伤总和&#x27; },
               { kind: &#x27;skill&#x27;, label: &#x27;技能倍率&#x27;, display: &#x27;基础 +/× 调整&#x27; },
-              { kind: &#x27;independent&#x27;, label: &#x27;可选独立区&#x27;, display: `浸染/覆纹：1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合/${format(formulaSettings.specialFusionDivisor)}` },
+              { kind: &#x27;independent&#x27;, label: &#x27;可选独立区&#x27;, display: `浸染/覆纹：${specialZoneFormulaText(&#x27;F&#x27;)}` },
               { kind: &#x27;crit&#x27;, label: &#x27;暴击&#x27;, display: &#x27;勾选时读取&#x27; }
             ]
           },
@@ -2613,7 +3085,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             factors: [
               { kind: &#x27;base&#x27;, label: &#x27;固定基础&#x27;, value: formulaSettings.creationBase },
               { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;等级与穿透&#x27; },
-              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;抗性与削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;按有效抗性分段&#x27; },
               { kind: &#x27;fusion&#x27;, label: &#x27;环合修正&#x27;, display: fusion },
               { kind: &#x27;damage&#x27;, label: &#x27;指定增伤&#x27;, display: targeted },
               { kind: &#x27;crit&#x27;, label: &#x27;暴击&#x27;, display: &#x27;勾选时读取&#x27; }
@@ -2626,7 +3098,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             factors: [
               { kind: &#x27;base&#x27;, label: &#x27;固定基础&#x27;, value: formulaSettings.turbidBase },
               { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;等级与穿透&#x27; },
-              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;抗性与削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;按有效抗性分段&#x27; },
               { kind: &#x27;fusion&#x27;, label: &#x27;环合修正&#x27;, display: fusion },
               { kind: &#x27;dot&#x27;, label: &#x27;持续伤害区&#x27;, display: &#x27;1 + 持续强化&#x27; },
               { kind: &#x27;damage&#x27;, label: &#x27;指定增伤&#x27;, display: targeted },
@@ -2640,7 +3112,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             factors: [
               { kind: &#x27;base&#x27;, label: &#x27;固定基础&#x27;, value: formulaSettings.darkstarBase },
               { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;1（无视防御）&#x27; },
-              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;抗性与削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;按有效抗性分段&#x27; },
               { kind: &#x27;fusion&#x27;, label: &#x27;环合修正&#x27;, display: fusion },
               { kind: &#x27;damage&#x27;, label: &#x27;指定增伤&#x27;, display: targeted },
               { kind: &#x27;crit&#x27;, label: &#x27;暴击&#x27;, display: &#x27;勾选时读取&#x27; }
@@ -2655,12 +3127,432 @@ html&gt;body{padding:0}&lt;/style&gt;
               { kind: &#x27;damage&#x27;, label: &#x27;倾陷增伤区&#x27;, display: &#x27;1 + 个人基础 + Buff&#x27; },
               { kind: &#x27;independent&#x27;, label: &#x27;倾陷上限区&#x27;, display: `${format(INCLINATION_PRESET.cap)} / ${format(formulaSettings.inclinationCapDivisor)}` },
               { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;逐角色等级与穿透&#x27; },
-              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;逐角色属性与削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;逐角色按有效抗性分段&#x27; },
               { kind: &#x27;independent&#x27;, label: &#x27;倾陷专属特殊区&#x27;, display: &#x27;1 + 指定增伤&#x27; }
             ]
           }
         ];
-        catalog.innerHTML = cards.map((card) =&gt; `&lt;article class=&quot;formula-card&quot; data-model=&quot;${card.model}&quot;&gt;&lt;h3&gt;${card.title}&lt;/h3&gt;${formulaTraceMarkup(card.factors)}&lt;div class=&quot;text-small result-meta&quot;&gt;${card.note}&lt;/div&gt;&lt;/article&gt;`).join(&#x27;&#x27;);
+        catalog.innerHTML = cards.map((card) =&gt; `&lt;article class=&quot;formula-card&quot; data-model=&quot;${card.model}&quot;&gt;&lt;h3&gt;${card.title}&lt;/h3&gt;${formulaTraceMarkup(card.factors, true)}&lt;div class=&quot;text-small result-meta&quot;&gt;${card.note}&lt;/div&gt;&lt;/article&gt;`).join(&#x27;&#x27;);
+      }
+
+      function formulaGuidePages() {
+        const fusion = `1 + 最终环合 / ${format(formulaSettings.fusionDivisor)}`;
+        return [
+          {
+            kicker: &#x27;NORMAL DAMAGE / DOT&#x27;,
+            title: &#x27;常规伤害：先确认每个乘区是否被读取&#x27;,
+            intro: &#x27;同一区域内的数值先加算，不同颜色的区域再彼此乘算。持续伤害沿用这条主公式，并额外读取持续伤害强化。&#x27;,
+            factors: [
+              { kind: &#x27;attack&#x27;, label: &#x27;战斗面板攻击&#x27;, display: &#x27;非战斗面板 + 基攻×攻击加成&#x27; },
+              { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;等级 + 防御穿透&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;有效抗性分段&#x27; },
+              { kind: &#x27;damage&#x27;, label: &#x27;增伤区&#x27;, display: &#x27;1 + 通用 + 属性 + 额外&#x27; },
+              { kind: &#x27;skill&#x27;, label: &#x27;技能倍率&#x27;, display: &#x27;填写倍率 +/× Buff&#x27; },
+              { kind: &#x27;independent&#x27;, label: &#x27;可选独立区&#x27;, display: &#x27;浸染 / 覆纹 / 指定特殊区&#x27; },
+              { kind: &#x27;crit&#x27;, label: &#x27;暴击区&#x27;, display: &#x27;暴击时：1 + 面板爆伤 + Buff&#x27; }
+            ],
+            notes: [
+              [&#x27;倍率输入&#x27;, &#x27;技能说明写“提高 x%”时通常选加算；明确写“变为原来的 x 倍”时选乘算。&#x27;],
+              [&#x27;面板暴击伤害&#x27;, &#x27;填写游戏面板显示值，例如 134%；程序计算暴击时自动补上基础 1，得到 2.34 倍。&#x27;],
+              [&#x27;持续伤害&#x27;, &#x27;给技能添加“持续伤害”Tag 后，才会读取持续伤害强化和仅对持续伤害生效的爆伤。&#x27;],
+              [&#x27;自定义点名&#x27;, &#x27;普通 Buff 默认不进入环合反应；只有在作用范围里明确勾选该反应，指定增伤才会进入。&#x27;]
+            ]
+          },
+          {
+            kicker: &#x27;DEFENSE / RESISTANCE&#x27;,
+            title: &#x27;防御与抗性：先求有效值，再进入分段公式&#x27;,
+            intro: &#x27;防御穿透影响防御区；无视抗性与抗性削弱共同改变有效抗性。负抗性不能继续使用简单的 1 − 抗性。&#x27;,
+            factors: [
+              { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;(100+角色等级) ÷ [(100+角色等级)+(100+敌人等级)×(1−穿透)]&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;有效抗性 R&#x27;, display: &#x27;原始抗性 − 无视抗性 − 抗性削弱&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;R ≥ 0&#x27;, display: &#x27;抗性区 = 1 − R&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;R &lt; 0&#x27;, display: &#x27;抗性区 = 1 − R ÷ (1 − R)&#x27; }
+            ],
+            notes: [
+              [&#x27;为什么分段&#x27;, &#x27;当减抗把有效抗性压到 0 以下时，负抗性的收益按第二段曲线结算。&#x27;],
+              [&#x27;倾陷中的区别&#x27;, &#x27;防御穿透与无视抗性属于个人；抗性削弱会共享给同属性贡献角色，并与其他来源叠加。&#x27;],
+              [&#x27;输入单位&#x27;, &#x27;穿透、原始抗性、无视抗性和削弱都直接按百分数填写，例如 24% 填 24。&#x27;],
+              [&#x27;验算提示&#x27;, &#x27;常规验算默认相信基础面板；只有狂暴溯源会把相关基础区失效也列为候选。&#x27;]
+            ]
+          },
+          {
+            kicker: &#x27;FUSION REACTION&#x27;,
+            title: &#x27;环合反应：固定基础值，不读取普通技能倍率&#x27;,
+            intro: &#x27;创生花、浊燃、黯星都使用反应双方非战斗面板环合强度较高的一方；Buff 结算后的最终环合强度不设上限。&#x27;,
+            factors: [
+              { kind: &#x27;base&#x27;, label: &#x27;固定基础&#x27;, display: `${format(formulaSettings.creationBase)} / ${format(formulaSettings.turbidBase)} / ${format(formulaSettings.darkstarBase)}` },
+              { kind: &#x27;defense&#x27;, label: &#x27;防御区&#x27;, display: &#x27;创生/浊燃读取；黯星固定 ×1&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;抗性区&#x27;, display: &#x27;读取&#x27; },
+              { kind: &#x27;fusion&#x27;, label: &#x27;环合修正&#x27;, display: fusion },
+              { kind: &#x27;dot&#x27;, label: &#x27;持续伤害区&#x27;, display: &#x27;仅浊燃读取&#x27; },
+              { kind: &#x27;crit&#x27;, label: &#x27;暴击区&#x27;, display: &#x27;按勾选读取&#x27; }
+            ],
+            notes: [
+              [&#x27;创生花&#x27;, `基础 ${format(formulaSettings.creationBase)}；不是持续伤害，不读取持续强化、浸染或覆纹。`],
+              [&#x27;浊燃&#x27;, `基础 ${format(formulaSettings.turbidBase)}；固定视为持续伤害，可读取持续强化及仅持续伤害爆伤。`],
+              [&#x27;黯星&#x27;, `基础 ${format(formulaSettings.darkstarBase)}；无视防御，因此防御区永远为 1。`],
+              [&#x27;浸染 / 覆纹&#x27;, `只作用于常规伤害：${format(formulaSettings.specialBaseMultiplier)} × [1 + (${format(formulaSettings.specialFusionCoefficient * 100)}% × F) / (${format(formulaSettings.specialFusionOffset)} + F)]。`]
+            ]
+          },
+          {
+            kicker: &#x27;HEALING&#x27;,
+            title: &#x27;治疗：切换后只保留真正有关的输入&#x27;,
+            intro: &#x27;治疗不读取敌人等级、防御、抗性、增伤或暴击。计算器切到治疗模式后会隐藏这些无关乘区。&#x27;,
+            factors: [
+              { kind: &#x27;attack&#x27;, label: &#x27;战斗面板攻击&#x27;, display: &#x27;非战斗面板 + 基攻×攻击加成&#x27; },
+              { kind: &#x27;skill&#x27;, label: &#x27;治疗倍率&#x27;, display: &#x27;技能填写值&#x27; },
+              { kind: &#x27;damage&#x27;, label: &#x27;治疗加成区&#x27;, display: &#x27;1 + 基础治疗加成 + Buff&#x27; }
+            ],
+            notes: [
+              [&#x27;实测治疗&#x27;, &#x27;把游戏内最终治疗跳字填到对应治疗技能，验算会反推哪些治疗 Buff 生效。&#x27;],
+              [&#x27;攻击 Buff&#x27;, &#x27;来自武器、觉醒等的攻击加成会先改变战斗面板攻击，再进入治疗公式。&#x27;],
+              [&#x27;独立工作区&#x27;, &#x27;切换计算类型不会删除伤害配置；伤害、治疗和倾陷可以保存在同一个角色档案中。&#x27;],
+              [&#x27;显示规则&#x27;, &#x27;内部结果保留小数，最终显示值按游戏跳字四舍五入后参与误差比较。&#x27;]
+            ]
+          },
+          {
+            kicker: &#x27;INCLINATION / TEAM SUM&#x27;,
+            title: &#x27;倾陷：逐角色结算，再把精确值求和&#x27;,
+            intro: &#x27;小队每名角色使用自己的属性、等级、穿透、无视抗性和倾陷增伤；同属性减抗共享后分别计算，最后统一取整。&#x27;,
+            factors: [
+              { kind: &#x27;base&#x27;, label: &#x27;单人基础&#x27;, value: formulaSettings.inclinationBase },
+              { kind: &#x27;damage&#x27;, label: &#x27;倾陷增伤区&#x27;, display: &#x27;1 + 个人基础 + 适用 Buff&#x27; },
+              { kind: &#x27;independent&#x27;, label: &#x27;倾陷上限区&#x27;, display: `70 ÷ ${format(formulaSettings.inclinationCapDivisor)}` },
+              { kind: &#x27;defense&#x27;, label: &#x27;个人防御区&#x27;, display: &#x27;等级 + 个人穿透&#x27; },
+              { kind: &#x27;resistance&#x27;, label: &#x27;属性抗性区&#x27;, display: &#x27;个人无视 + 同属性减抗&#x27; },
+              { kind: &#x27;independent&#x27;, label: &#x27;倾陷专属特殊区&#x27;, display: &#x27;1 + 明确指定的倾陷特殊增伤&#x27; }
+            ],
+            notes: [
+              [&#x27;最终公式&#x27;, &#x27;倾陷总伤害 = Σ（每名已勾选角色的精确贡献），求和后再四舍五入。&#x27;],
+              [&#x27;同属性减抗&#x27;, &#x27;两个同属性角色触发的减抗可以叠加，并共同作用于这一属性的全部贡献者。&#x27;],
+              [&#x27;独立 Buff 区&#x27;, &#x27;倾陷 Buff 与常规 Buff 分开保存，避免普通增伤、浸染或覆纹误入倾陷公式。&#x27;],
+              [&#x27;不可暴击&#x27;, &#x27;倾陷伤害不能暴击，游戏显示的是小队合计值。&#x27;]
+            ]
+          }
+        ];
+      }
+
+      function renderFormulaGuide(index = formulaGuidePage) {
+        const pages = formulaGuidePages();
+        formulaGuidePage = Math.max(0, Math.min(pages.length - 1, Number(index) || 0));
+        const page = pages[formulaGuidePage];
+        root.querySelectorAll(&#x27;[data-formula-guide-page]&#x27;).forEach((button) =&gt; {
+          const active = Number(button.dataset.formulaGuidePage) === formulaGuidePage;
+          button.classList.toggle(&#x27;btn-primary&#x27;, active);
+          button.setAttribute(&#x27;aria-pressed&#x27;, String(active));
+        });
+        byId(&#x27;cdc-formula-guide-content&#x27;).innerHTML = `
+          &lt;div class=&quot;formula-guide-kicker&quot;&gt;${escapeHtml(page.kicker)}&lt;/div&gt;
+          &lt;h2&gt;${escapeHtml(page.title)}&lt;/h2&gt;
+          &lt;p class=&quot;result-meta&quot;&gt;${escapeHtml(page.intro)}&lt;/p&gt;
+          &lt;div class=&quot;formula-guide-equation&quot;&gt;${formulaTraceMarkup(page.factors, true)}&lt;/div&gt;
+          &lt;div class=&quot;formula-guide-notes&quot;&gt;${page.notes.map(([title, copy]) =&gt; `&lt;div class=&quot;formula-guide-note&quot;&gt;&lt;strong&gt;${escapeHtml(title)}&lt;/strong&gt;&lt;span class=&quot;result-meta&quot;&gt;${escapeHtml(copy)}&lt;/span&gt;&lt;/div&gt;`).join(&#x27;&#x27;)}&lt;/div&gt;`;
+      }
+
+      function openFormulaGuide(index = 0) {
+        if (byId(&#x27;cdc-formula-dialog&#x27;).open) byId(&#x27;cdc-formula-dialog&#x27;).close();
+        renderFormulaGuide(index);
+        byId(&#x27;cdc-formula-guide-dialog&#x27;).showModal();
+      }
+
+      function formulaGuidePageForCalculator(type = workspaceMode) {
+        if (type === &#x27;heal&#x27;) return 3;
+        if (type === &#x27;inclination&#x27;) return 4;
+        return 0;
+      }
+
+      function tourStepsForType(type) {
+        const choose = {
+          target: &#x27;.calculator-mode-field&#x27;,
+          title: &#x27;先选择要计算的场景&#x27;,
+          copy: &#x27;单人伤害、单人治疗和倾陷小队使用不同工作区。此处切换后，后续教学会立即改走对应路线，也不会删除其他模式的数据。&#x27;,
+          action: &#x27;可以直接点击高亮区域中的计算类型，然后再点“下一步”。&#x27;
+        };
+        const formula = {
+          target: &#x27;#cdc-open-formula&#x27;,
+          title: &#x27;需要追公式时，从这里继续&#x27;,
+          copy: type === &#x27;heal&#x27;
+            ? &#x27;公式页用于检查参数；点击“公式教学”会直接进入治疗章节，说明战斗攻击、治疗倍率和治疗加成如何相乘。&#x27;
+            : type === &#x27;inclination&#x27;
+              ? &#x27;公式页用于检查倾陷基础值与上限区除数；点击“公式教学”会直接进入倾陷小队章节。&#x27;
+              : &#x27;公式页用于检查常量和模型读取白名单；公式教学会解释每种颜色代表的乘区及环合反应例外。&#x27;
+        };
+        if (type === &#x27;heal&#x27;) return [
+          choose,
+          {
+            target: &#x27;#cdc-panel-section .compact-fields&#x27;, open: &#x27;cdc-panel-section&#x27;,
+            title: &#x27;填写攻击与治疗基础面板&#x27;,
+            copy: &#x27;依次填写非战斗面板攻击、基础攻击、战斗攻击加成和基础治疗加成。治疗公式不会读取敌人、防御、抗性、普通增伤或暴击。&#x27;,
+            action: &#x27;现在可以直接点击高亮区域中的输入框填写数值。&#x27;
+          },
+          {
+            target: &#x27;#cdc-open-ocr&#x27;, fallback: &#x27;#cdc-panel-section .compact-fields&#x27;, open: &#x27;cdc-panel-section&#x27;,
+            title: &#x27;桌面版可以读取攻击与治疗加成&#x27;,
+            copy: &#x27;OCR 可以从角色面板读取攻击拆分与治疗加成；识别后仍可在面板区手动复核。截图和识别都只在本机完成。&#x27;,
+            action: &#x27;桌面版可直接点击高亮的“自动读取游戏面板”；HTML 版请手动填写。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-effect&#x27;, open: &#x27;cdc-effect-section&#x27;,
+            title: &#x27;先添加一张治疗 Buff 卡片&#x27;,
+            copy: &#x27;每个觉醒、武器、被动或队友效果使用一张独立卡片，之后可以分别判断它是否生效。&#x27;,
+            action: &#x27;点击高亮的“添加候选效果”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-effects [data-effect-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-effect&#x27;, open: &#x27;cdc-effect-section&#x27;,
+            title: &#x27;填写这张治疗 Buff 卡片&#x27;,
+            copy: &#x27;先写名称和验算状态，再填写攻击加成或治疗加成。锁定表示必须生效，挂起表示不参与；伤害字段在治疗模式下不会出现。&#x27;,
+            action: &#x27;在高亮卡片内填写实际效果；层数型 Buff 再开启“叠层 Buff”。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-heal&#x27;, open: &#x27;cdc-heal-section&#x27;,
+            title: &#x27;添加需要验证的治疗记录&#x27;,
+            copy: &#x27;不同技能、不同段或不同测试条件可以分别添加，并共享同一套候选 Buff 状态。&#x27;,
+            action: &#x27;点击高亮的“添加治疗技能”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-heals [data-heal-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-heal&#x27;, open: &#x27;cdc-heal-section&#x27;,
+            title: &#x27;填写治疗倍率与实测治疗&#x27;,
+            copy: &#x27;填写治疗名称、技能描述中的治疗倍率和游戏最终显示的治疗值；“全部生效预览”会随输入更新。&#x27;,
+            action: &#x27;直接在高亮卡片中录入倍率和实测值，并保持“纳入验算”勾选。&#x27;
+          },
+          {
+            target: &#x27;.verification-toolbar&#x27;,
+            title: &#x27;开始治疗验算&#x27;,
+            copy: &#x27;治疗模式固定基础区，只反推实际进入治疗公式的 Buff。搜索强度决定完整搜索与限宽规模。&#x27;,
+            action: &#x27;确认搜索强度后，点击高亮区域中的“确定并开始验算”。&#x27;
+          },
+          {
+            target: &#x27;.result-row &gt; .card:first-child&#x27;,
+            title: &#x27;检查最符合实测的治疗状态&#x27;,
+            copy: &#x27;先看最佳全局 Buff 状态和总误差，再到逐项结果核对战斗攻击、治疗倍率与治疗加成。只有误差在 ±20 内的解释才会汇报。&#x27;
+          },
+          formula
+        ];
+        if (type === &#x27;inclination&#x27;) return [
+          choose,
+          {
+            target: &#x27;.inclination-preset&#x27;, open: &#x27;cdc-inclination-section&#x27;,
+            title: &#x27;先确认倾陷敌人与小队规则&#x27;,
+            copy: &#x27;当前预设为塞润尼缇（高危6）：敌人 90 级、倾陷上限区 70 ÷ 3、咒抗性 16%、其他属性抗性 20%。倾陷不读取当前角色的普通攻击面板，也不使用 OCR。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-inclination-effect&#x27;, open: &#x27;cdc-inclination-section&#x27;,
+            title: &#x27;添加倾陷专用 Buff&#x27;,
+            copy: &#x27;倾陷 Buff 与普通伤害 Buff 完全分开；每个来源使用一张卡片，便于独立设置生效状态和作用角色。&#x27;,
+            action: &#x27;点击高亮的“添加倾陷 Buff”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-inclination-effects [data-effect-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-inclination-effect&#x27;, open: &#x27;cdc-inclination-section&#x27;,
+            title: &#x27;填写倾陷 Buff 的数值与作用角色&#x27;,
+            copy: &#x27;个人穿透、无视抗性和倾陷增伤只进入指定贡献角色；抗性削弱会共享给同属性角色并与其他来源叠加。&#x27;,
+            action: &#x27;在高亮卡片填写数值，并用“倾陷：全队/指定角色”设置作用范围。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-inclination-contributor&#x27;, open: &#x27;cdc-inclination-section&#x27;,
+            title: &#x27;为小队添加贡献角色&#x27;,
+            copy: &#x27;倾陷会逐角色计算，所以每个参与贡献的人都要有一张独立角色卡。&#x27;,
+            action: &#x27;点击高亮的“添加贡献角色”，添加后教学会自动进入填写步骤；其余角色可在教学后继续添加。&#x27;
+          },
+          {
+            target: &#x27;#cdc-inclination-contributors [data-inclination-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-inclination-contributor&#x27;, open: &#x27;cdc-inclination-section&#x27;,
+            title: &#x27;填写这名角色的个人乘区&#x27;,
+            copy: &#x27;填写角色名称、等级、属性、基础倾陷增伤、个人穿透、触发减抗、个人无视抗性和倾陷专属特殊增伤。&#x27;,
+            action: &#x27;按游戏面板与效果文本填写高亮卡片；不参与本次合计时取消“计入合计”。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-skill&#x27;, open: &#x27;cdc-skill-section&#x27;,
+            title: &#x27;添加一条倾陷实测记录&#x27;,
+            copy: &#x27;倾陷不能暴击，游戏显示的是整队合计；不同测试条件可以分别添加多条合计值。&#x27;,
+            action: &#x27;点击高亮的“添加倾陷实测”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-skills [data-skill-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-skill&#x27;, open: &#x27;cdc-skill-section&#x27;,
+            title: &#x27;填写游戏显示的倾陷合计值&#x27;,
+            copy: &#x27;各角色先保留精确贡献，求和后统一四舍五入。这里填写游戏最终显示的整队倾陷伤害。&#x27;,
+            action: &#x27;在高亮记录中填写名称和实测显示伤害，并保持“纳入验算”勾选。&#x27;
+          },
+          {
+            target: &#x27;.verification-toolbar&#x27;,
+            title: &#x27;开始倾陷小队验算&#x27;,
+            copy: &#x27;程序会把同一套倾陷 Buff 状态应用到整队，并按每名角色自己的防御区与属性抗性区分别计算。&#x27;,
+            action: &#x27;确认搜索强度后，点击高亮区域中的“确定并开始验算”。&#x27;
+          },
+          {
+            target: &#x27;.result-row &gt; .card:first-child&#x27;,
+            title: &#x27;从合计追到每名角色的贡献&#x27;,
+            copy: &#x27;最佳状态先给出小队合计是否对齐；逐项公式会继续展开每名角色的基础值、增伤、上限、防御、抗性和倾陷专属特殊区。&#x27;
+          },
+          formula
+        ];
+        return [
+          choose,
+          {
+            target: &#x27;#cdc-panel-section .compact-fields:first-of-type&#x27;, open: &#x27;cdc-panel-section&#x27;,
+            title: &#x27;填写角色与目标面板&#x27;,
+            copy: &#x27;填写非战斗面板攻击、基础攻击、战斗攻击加成、角色等级、敌人等级和敌人基础抗性；下方基础乘区按面板原值填写。&#x27;,
+            action: &#x27;现在可以直接点击高亮区域中的输入框填写数值。&#x27;
+          },
+          {
+            target: &#x27;#cdc-open-ocr&#x27;, fallback: &#x27;#cdc-panel-section .compact-fields:first-of-type&#x27;, open: &#x27;cdc-panel-section&#x27;,
+            title: &#x27;桌面版可以自动读取面板&#x27;,
+            copy: &#x27;程序会倒计时切回游戏、截取窗口并在本机 OCR。环合强度仍需按反应双方较高值手动填写。&#x27;,
+            action: &#x27;桌面版可直接点击高亮的“自动读取游戏面板”；HTML 版请手动填写。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-effect&#x27;, open: &#x27;cdc-effect-section&#x27;,
+            title: &#x27;先添加一张候选 Buff 卡片&#x27;,
+            copy: &#x27;觉醒、被动、弧盘、共鸣、武器和队友效果分别使用独立卡片，程序才能组合判断它们是否生效。&#x27;,
+            action: &#x27;点击高亮的“添加候选效果”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-effects [data-effect-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-effect&#x27;, open: &#x27;cdc-effect-section&#x27;,
+            title: &#x27;填写这张 Buff 卡片&#x27;,
+            copy: &#x27;填写名称、验算状态和实际数值。锁定表示必须生效，挂起表示完全不参与；层数型效果再开启“叠层 Buff”。&#x27;,
+            action: &#x27;在高亮卡片中填写效果，并用“作用：全部技能”设置适用范围。&#x27;
+          },
+          {
+            target: &#x27;#cdc-add-skill&#x27;, open: &#x27;cdc-skill-section&#x27;,
+            title: &#x27;添加需要验证的伤害记录&#x27;,
+            copy: &#x27;一个技能的不同段可以分别记录，也可以添加多个倍率来排查误用了其他技能倍率。&#x27;,
+            action: &#x27;点击高亮的“添加伤害技能”，添加后教学会自动进入填写步骤。&#x27;
+          },
+          {
+            target: &#x27;#cdc-skills [data-skill-row]&#x27;, lastVisible: true, fallback: &#x27;#cdc-add-skill&#x27;, open: &#x27;cdc-skill-section&#x27;,
+            title: &#x27;填写技能倍率与实测跳字&#x27;,
+            copy: &#x27;选择伤害模型，填写倍率和游戏实测值；持续伤害选择对应 Tag，创生花、浊燃和黯星直接选择反应模型。&#x27;,
+            action: &#x27;在高亮卡片中填写并确认暴击状态，同时保持“纳入验算”勾选。&#x27;
+          },
+          {
+            target: &#x27;.verification-toolbar&#x27;,
+            title: &#x27;已知来源用验算，未知来源用溯源&#x27;,
+            copy: &#x27;常规验算固定基础区，只判断 Buff；狂暴溯源会把技能来源、暴击、倍率和相关基础区失效一起纳入搜索。&#x27;,
+            action: &#x27;选择模式与搜索强度后，点击高亮区域中的“确定并开始验算”。&#x27;
+          },
+          {
+            target: &#x27;.result-row &gt; .card:first-child&#x27;,
+            title: &#x27;先看全局状态，再看逐项公式&#x27;,
+            copy: &#x27;最上方是按误差与先验排序后的最佳共同解释。下方逐项验算会展开每条跳字实际使用的乘区；误差超过 ±20 的候选不会汇报。&#x27;
+          },
+          formula
+        ];
+      }
+
+      function tourTarget(step) {
+        const visible = (element) =&gt; element &amp;&amp; !element.hidden &amp;&amp; element.getClientRects().length &amp;&amp; getComputedStyle(element).display !== &#x27;none&#x27;;
+        const candidates = step.lastVisible ? Array.from(root.querySelectorAll(step.target)).reverse() : [root.querySelector(step.target)];
+        const target = candidates.find(visible);
+        if (visible(target)) return target;
+        return visible(root.querySelector(step.fallback || &#x27;&#x27;)) ? root.querySelector(step.fallback) : root.querySelector(&#x27;.app-masthead&#x27;);
+      }
+
+      function setTourShade(element, left, top, width, height) {
+        Object.assign(element.style, {
+          left: `${Math.max(0, left)}px`, top: `${Math.max(0, top)}px`,
+          width: `${Math.max(0, width)}px`, height: `${Math.max(0, height)}px`
+        });
+      }
+
+      function positionTour() {
+        if (!tourActive) return;
+        const step = activeTourSteps[tourIndex];
+        const target = tourTarget(step);
+        if (!target) return;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const raw = target.getBoundingClientRect();
+        const gap = 7;
+        const left = Math.max(7, raw.left - gap);
+        const top = Math.max(7, raw.top - gap);
+        const right = Math.min(viewportWidth - 7, raw.right + gap);
+        const bottom = Math.min(viewportHeight - 7, raw.bottom + gap);
+        const width = Math.max(1, right - left);
+        const height = Math.max(1, bottom - top);
+        const focus = byId(&#x27;cdc-tour-focus&#x27;);
+        Object.assign(focus.style, { left: `${left}px`, top: `${top}px`, width: `${width}px`, height: `${height}px` });
+        setTourShade(root.querySelector(&#x27;[data-tour-shade=&quot;top&quot;]&#x27;), 0, 0, viewportWidth, top);
+        setTourShade(root.querySelector(&#x27;[data-tour-shade=&quot;left&quot;]&#x27;), 0, top, left, height);
+        setTourShade(root.querySelector(&#x27;[data-tour-shade=&quot;right&quot;]&#x27;), right, top, viewportWidth - right, height);
+        setTourShade(root.querySelector(&#x27;[data-tour-shade=&quot;bottom&quot;]&#x27;), 0, bottom, viewportWidth, viewportHeight - bottom);
+
+        const card = byId(&#x27;cdc-tour-card&#x27;);
+        const cardWidth = Math.min(390, viewportWidth - 24);
+        card.style.width = `${cardWidth}px`;
+        const cardHeight = card.offsetHeight || 220;
+        let cardLeft = Math.min(Math.max(12, left), viewportWidth - cardWidth - 12);
+        let cardTop = bottom + 12;
+        if (cardTop + cardHeight &gt; viewportHeight - 12) cardTop = top - cardHeight - 12;
+        if (cardTop &lt; 12) {
+          cardTop = Math.min(viewportHeight - cardHeight - 12, Math.max(12, top));
+          if (right + cardWidth + 12 &lt;= viewportWidth) cardLeft = right + 12;
+          else if (left - cardWidth - 12 &gt;= 0) cardLeft = left - cardWidth - 12;
+        }
+        Object.assign(card.style, { left: `${Math.max(12, cardLeft)}px`, top: `${Math.max(12, cardTop)}px` });
+      }
+
+      function showTourStep(index) {
+        if (tourIndex === 0 &amp;&amp; index &gt; 0) {
+          tourType = workspaceMode;
+          activeTourSteps = tourStepsForType(tourType);
+        }
+        tourIndex = Math.max(0, Math.min(activeTourSteps.length - 1, index));
+        const step = activeTourSteps[tourIndex];
+        if (step.open) byId(step.open).open = true;
+        const routeLabel = tourType === &#x27;heal&#x27; ? &#x27;治疗路线&#x27; : tourType === &#x27;inclination&#x27; ? &#x27;倾陷路线&#x27; : &#x27;伤害路线&#x27;;
+        byId(&#x27;cdc-tour-progress&#x27;).textContent = `${routeLabel} · STEP ${tourIndex + 1} / ${activeTourSteps.length}`;
+        byId(&#x27;cdc-tour-title&#x27;).textContent = step.title;
+        byId(&#x27;cdc-tour-copy&#x27;).textContent = step.copy;
+        byId(&#x27;cdc-tour-action&#x27;).textContent = step.action || &#x27;&#x27;;
+        byId(&#x27;cdc-tour-action&#x27;).hidden = !step.action;
+        byId(&#x27;cdc-tour-prev&#x27;).disabled = tourIndex === 0;
+        byId(&#x27;cdc-tour-next&#x27;).textContent = tourIndex === activeTourSteps.length - 1 ? &#x27;打开公式教学&#x27; : &#x27;下一步&#x27;;
+        const target = tourTarget(step);
+        target?.scrollIntoView({ block: &#x27;center&#x27;, inline: &#x27;nearest&#x27;, behavior: &#x27;smooth&#x27; });
+        clearTimeout(tourPositionTimer);
+        tourPositionTimer = setTimeout(positionTour, 180);
+      }
+
+      function tutorialModeStorageKey(type) {
+        return `${TUTORIAL_MODE_STORAGE_PREFIX}${type}`;
+      }
+
+      function tutorialModeSeen(type) {
+        return localStorage.getItem(tutorialModeStorageKey(type)) === &#x27;true&#x27;;
+      }
+
+      function markTutorialModeSeen(type) {
+        localStorage.setItem(tutorialModeStorageKey(type), &#x27;true&#x27;);
+      }
+
+      function advanceTourAfterControl(controlId) {
+        if (!tourActive) return;
+        const step = activeTourSteps[tourIndex];
+        if (!step || step.target !== `#${controlId}`) return;
+        showTourStep(tourIndex + 1);
+      }
+
+      function finishOperationTour(openFormula = false) {
+        if (!tourActive) return;
+        tourActive = false;
+        byId(&#x27;cdc-tour-layer&#x27;).hidden = true;
+        clearTimeout(tourPositionTimer);
+        window.removeEventListener(&#x27;resize&#x27;, positionTour);
+        window.removeEventListener(&#x27;scroll&#x27;, positionTour, true);
+        localStorage.setItem(TUTORIAL_STORAGE_KEY, &#x27;true&#x27;);
+        markTutorialModeSeen(tourType);
+        if (openFormula) openFormulaGuide(formulaGuidePageForCalculator(tourType));
+      }
+
+      function startOperationTour(type = workspaceMode, startIndex = 0) {
+        if (tourActive) return;
+        [byId(&#x27;cdc-formula-dialog&#x27;), byId(&#x27;cdc-formula-guide-dialog&#x27;)].forEach((dialog) =&gt; { if (dialog.open) dialog.close(); });
+        tourType = [&#x27;damage&#x27;, &#x27;heal&#x27;, &#x27;inclination&#x27;].includes(type) ? type : workspaceMode;
+        activeTourSteps = tourStepsForType(tourType);
+        tourIndex = 0;
+        tourActive = true;
+        byId(&#x27;cdc-tour-layer&#x27;).hidden = false;
+        window.addEventListener(&#x27;resize&#x27;, positionTour);
+        window.addEventListener(&#x27;scroll&#x27;, positionTour, true);
+        showTourStep(startIndex);
       }
 
       function syncFormulaEditor() {
@@ -2668,8 +3560,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         byId(&#x27;cdc-formula-turbid-base&#x27;).value = formulaSettings.turbidBase;
         byId(&#x27;cdc-formula-darkstar-base&#x27;).value = formulaSettings.darkstarBase;
         byId(&#x27;cdc-formula-fusion-divisor&#x27;).value = formulaSettings.fusionDivisor;
-        byId(&#x27;cdc-formula-special-base-bonus&#x27;).value = formulaSettings.specialBaseBonus * 100;
-        byId(&#x27;cdc-formula-special-fusion-divisor&#x27;).value = formulaSettings.specialFusionDivisor;
+        byId(&#x27;cdc-formula-special-base-multiplier&#x27;).value = formulaSettings.specialBaseMultiplier;
+        byId(&#x27;cdc-formula-special-fusion-coefficient&#x27;).value = formulaSettings.specialFusionCoefficient * 100;
+        byId(&#x27;cdc-formula-special-fusion-offset&#x27;).value = formulaSettings.specialFusionOffset;
         byId(&#x27;cdc-formula-inclination-base&#x27;).value = formulaSettings.inclinationBase;
         byId(&#x27;cdc-formula-inclination-cap-divisor&#x27;).value = formulaSettings.inclinationCapDivisor;
         renderSpecialEffectCard();
@@ -2687,8 +3580,9 @@ html&gt;body{padding:0}&lt;/style&gt;
           turbidBase: byId(&#x27;cdc-formula-turbid-base&#x27;).value,
           darkstarBase: byId(&#x27;cdc-formula-darkstar-base&#x27;).value,
           fusionDivisor: byId(&#x27;cdc-formula-fusion-divisor&#x27;).value,
-          specialBaseBonus: Number(byId(&#x27;cdc-formula-special-base-bonus&#x27;).value) / 100,
-          specialFusionDivisor: byId(&#x27;cdc-formula-special-fusion-divisor&#x27;).value,
+          specialBaseMultiplier: byId(&#x27;cdc-formula-special-base-multiplier&#x27;).value,
+          specialFusionCoefficient: Number(byId(&#x27;cdc-formula-special-fusion-coefficient&#x27;).value) / 100,
+          specialFusionOffset: byId(&#x27;cdc-formula-special-fusion-offset&#x27;).value,
           inclinationBase: byId(&#x27;cdc-formula-inclination-base&#x27;).value,
           inclinationCapDivisor: byId(&#x27;cdc-formula-inclination-cap-divisor&#x27;).value
         });
@@ -2899,7 +3793,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           const target = row &amp;&amp; OCR_TARGETS[row.field];
           if (!target) return;
           const input = byId(target.input);
-          const value = row.field === &#x27;fusion_strength&#x27; ? Math.min(360, Math.max(0, Number(row.value))) : Number(row.value);
+          const value = Number(row.value);
           input.value = Number.isInteger(value) ? String(value) : String(Number(value.toFixed(4)));
           applied += 1;
         });
@@ -3611,12 +4505,23 @@ html&gt;body{padding:0}&lt;/style&gt;
         updateEffectStackFields(row);
       }
 
-      function addEffect(name = &#x27;&#x27;, values = {}) {
-        if (root.querySelectorAll(&#x27;[data-effect-row]&#x27;).length &gt;= 12) return;
+      function effectContainer(workspace = &#x27;damage&#x27;) {
+        return byId(workspace === &#x27;inclination&#x27; ? &#x27;cdc-inclination-effects&#x27; : &#x27;cdc-effects&#x27;);
+      }
+
+      function effectRowsForWorkspace(workspace = workspaceMode) {
+        return Array.from(effectContainer(workspace === &#x27;inclination&#x27; ? &#x27;inclination&#x27; : &#x27;damage&#x27;).querySelectorAll(&#x27;[data-effect-row]&#x27;));
+      }
+
+      function addEffect(name = &#x27;&#x27;, values = {}, workspace = &#x27;damage&#x27;) {
+        const effectWorkspace = workspace === &#x27;inclination&#x27; ? &#x27;inclination&#x27; : &#x27;damage&#x27;;
+        const container = effectContainer(effectWorkspace);
+        if (container.querySelectorAll(&#x27;[data-effect-row]&#x27;).length &gt;= 12) return;
         rowCounter += 1;
         const row = document.createElement(&#x27;div&#x27;);
         row.className = &#x27;entry-row effect-row&#x27;;
         row.dataset.effectRow = String(rowCounter);
+        row.dataset.effectWorkspace = effectWorkspace;
         row.dataset.searchState = normalizedEffectSearchState(values.searchState);
         row.dataset.scopeMode = normalizedScopeMode(values.scopeMode);
         row.dataset.scopeSkillIds = JSON.stringify(Array.isArray(values.scopeSkillIds) ? values.scopeSkillIds : []);
@@ -3648,6 +4553,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             &lt;label class=&quot;form-label&quot;&gt;攻击加成（%）&lt;input class=&quot;form-control&quot; data-effect-attack type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.attack || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-damage-field&gt;防御穿透（%）&lt;input class=&quot;form-control&quot; data-effect-penetration type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.penetration || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-damage-field&gt;抗性削弱（%）&lt;input class=&quot;form-control&quot; data-effect-res-shred type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resShred || 0}&quot;&gt;&lt;/label&gt;
+            &lt;label class=&quot;form-label&quot; data-effect-damage-field&gt;无视抗性（%）&lt;input class=&quot;form-control&quot; data-effect-res-ignore type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resIgnore || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-damage-field&gt;增伤（%）&lt;input class=&quot;form-control&quot; data-effect-damage type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.damage || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-damage-field&gt;持续伤害强化（%）&lt;input class=&quot;form-control&quot; data-effect-dot-damage type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.dotDamage || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-inclination-field hidden&gt;倾陷增伤（%）&lt;input class=&quot;form-control&quot; data-effect-inclination-damage type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.inclinationDamage || 0}&quot;&gt;&lt;/label&gt;
@@ -3658,7 +4564,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             &lt;label class=&quot;form-label&quot; data-effect-fusion-field hidden&gt;环合强度固定提升&lt;input class=&quot;form-control&quot; data-effect-fusion-flat type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.fusionFlat || 0}&quot;&gt;&lt;/label&gt;
             &lt;label class=&quot;form-label&quot; data-effect-heal-field hidden&gt;治疗加成（%）&lt;input class=&quot;form-control&quot; data-effect-heal-bonus type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.healBonus ?? values.heal ?? 0}&quot;&gt;&lt;/label&gt;
           &lt;/div&gt;`;
-        byId(&#x27;cdc-effects&#x27;).appendChild(row);
+        container.appendChild(row);
         row.querySelector(&#x27;[data-effect-search-state]&#x27;).value = row.dataset.searchState;
         updateEffectStackFields(row);
         updateEffectSearchState(row);
@@ -3707,7 +4613,8 @@ html&gt;body{padding:0}&lt;/style&gt;
           &lt;label class=&quot;form-label&quot;&gt;角色属性&lt;select class=&quot;form-select&quot; data-inclination-attribute&gt;&lt;option value=&quot;light&quot;&gt;光&lt;/option&gt;&lt;option value=&quot;phase&quot;&gt;相&lt;/option&gt;&lt;option value=&quot;dark&quot;&gt;暗&lt;/option&gt;&lt;option value=&quot;spirit&quot;&gt;灵&lt;/option&gt;&lt;option value=&quot;soul&quot;&gt;魂&lt;/option&gt;&lt;option value=&quot;curse&quot;&gt;咒&lt;/option&gt;&lt;option value=&quot;mind&quot;&gt;心灵&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;
           &lt;label class=&quot;form-label&quot;&gt;基础倾陷增伤（%）&lt;input class=&quot;form-control&quot; data-inclination-damage type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.damage || 0}&quot;&gt;&lt;/label&gt;
           &lt;label class=&quot;form-label&quot;&gt;基础防御穿透（%）&lt;input class=&quot;form-control&quot; data-inclination-penetration type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.penetration || 0}&quot;&gt;&lt;/label&gt;
-          &lt;label class=&quot;form-label&quot;&gt;基础抗性削弱（%）&lt;input class=&quot;form-control&quot; data-inclination-res-shred type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resShred || 0}&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;触发属性减抗（%）&lt;input class=&quot;form-control&quot; data-inclination-res-shred type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resShred || 0}&quot; title=&quot;同属性角色触发的减抗会叠加，并共享给该属性的全部贡献角色&quot;&gt;&lt;/label&gt;
+          &lt;label class=&quot;form-label&quot;&gt;基础无视抗性（%）&lt;input class=&quot;form-control&quot; data-inclination-res-ignore type=&quot;number&quot; step=&quot;0.01&quot; value=&quot;${values.resIgnore || 0}&quot;&gt;&lt;/label&gt;
           &lt;label class=&quot;form-label&quot;&gt;倾陷专属特殊增伤（%）&lt;input class=&quot;form-control&quot; data-inclination-special type=&quot;number&quot; min=&quot;0&quot; step=&quot;0.01&quot; value=&quot;${specialBonus}&quot;&gt;&lt;/label&gt;
           &lt;label class=&quot;form-check&quot;&gt;&lt;input class=&quot;form-check-input&quot; data-inclination-enabled type=&quot;checkbox&quot; ${values.enabled !== false ? &#x27;checked&#x27; : &#x27;&#x27;}&gt;&lt;span class=&quot;form-check-label&quot;&gt;计入合计&lt;/span&gt;&lt;/label&gt;
           &lt;button class=&quot;btn btn-ghost&quot; type=&quot;button&quot; data-remove-inclination&gt;删除角色&lt;/button&gt;`;
@@ -3725,6 +4632,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           damage: Number(row.querySelector(&#x27;[data-inclination-damage]&#x27;).value) / 100 || 0,
           penetration: Number(row.querySelector(&#x27;[data-inclination-penetration]&#x27;).value) / 100 || 0,
           resShred: Number(row.querySelector(&#x27;[data-inclination-res-shred]&#x27;).value) / 100 || 0,
+          resIgnore: Number(row.querySelector(&#x27;[data-inclination-res-ignore]&#x27;).value) / 100 || 0,
           specialBonus: Number(row.querySelector(&#x27;[data-inclination-special]&#x27;).value) / 100 || 0,
           enabled: row.querySelector(&#x27;[data-inclination-enabled]&#x27;).checked
         })).map((item) =&gt; ({ ...item, special: 1 + item.specialBonus }));
@@ -3745,8 +4653,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         byId(&#x27;cdc-heals&#x27;).appendChild(row);
       }
 
-      function readEffects() {
-        return Array.from(root.querySelectorAll(&#x27;[data-effect-row]&#x27;)).map((row, index) =&gt; ({
+      function readEffects(workspace = workspaceMode) {
+        return effectRowsForWorkspace(workspace).map((row, index) =&gt; ({
           name: row.querySelector(&#x27;[data-effect-name]&#x27;).value.trim() || `候选效果${index + 1}`,
           searchState: normalizedEffectSearchState(row.querySelector(&#x27;[data-effect-search-state]&#x27;).value),
           priority: row.querySelector(&#x27;[data-effect-priority]&#x27;).checked,
@@ -3761,6 +4669,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           attack: Number(row.querySelector(&#x27;[data-effect-attack]&#x27;).value) / 100 || 0,
           penetration: Number(row.querySelector(&#x27;[data-effect-penetration]&#x27;).value) / 100 || 0,
           resShred: Number(row.querySelector(&#x27;[data-effect-res-shred]&#x27;).value) / 100 || 0,
+          resIgnore: Number(row.querySelector(&#x27;[data-effect-res-ignore]&#x27;).value) / 100 || 0,
           damage: Number(row.querySelector(&#x27;[data-effect-damage]&#x27;).value) / 100 || 0,
           dotDamage: Number(row.querySelector(&#x27;[data-effect-dot-damage]&#x27;).value) / 100 || 0,
           inclinationDamage: Number(row.querySelector(&#x27;[data-effect-inclination-damage]&#x27;).value) / 100 || 0,
@@ -3818,7 +4727,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (specialEffect === &#x27;none&#x27;) return;
         const name = specialEffect === &#x27;overlay&#x27; ? &#x27;覆纹&#x27; : &#x27;浸染&#x27;;
         byId(&#x27;cdc-special-effect-name&#x27;).textContent = name;
-        byId(&#x27;cdc-special-effect-formula&#x27;).textContent = `独立倍率 = 1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合强度 / ${format(formulaSettings.specialFusionDivisor)}`;
+        byId(&#x27;cdc-special-effect-formula&#x27;).textContent = `独立倍率 = ${specialZoneFormulaText()}`;
       }
 
       function setSpecialEffect(value) {
@@ -3864,6 +4773,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         root.querySelectorAll(&#x27;[data-effect-damage-field]&#x27;).forEach((element) =&gt; { element.hidden = !damageMode; });
         root.querySelectorAll(&#x27;[data-effect-heal-field]&#x27;).forEach((element) =&gt; { element.hidden = damageMode; });
         byId(&#x27;cdc-panel-section&#x27;).hidden = inclinationMode;
+        byId(&#x27;cdc-effect-section&#x27;).hidden = inclinationMode;
         const ordinaryDamageSelectors = [
           &#x27;[data-effect-attack]&#x27;, &#x27;[data-effect-damage]&#x27;, &#x27;[data-effect-dot-damage]&#x27;, &#x27;[data-effect-crit]&#x27;,
           &#x27;[data-effect-skill]&#x27;, &#x27;[data-effect-skill-multiply]&#x27;, &#x27;[data-edit-effect-scope]&#x27;
@@ -3966,11 +4876,11 @@ html&gt;body{padding:0}&lt;/style&gt;
       function captureData() {
         const scalarIds = [&#x27;cdc-character&#x27;, &#x27;cdc-version&#x27;, &#x27;cdc-panel&#x27;, &#x27;cdc-base&#x27;, &#x27;cdc-atk-bonus&#x27;,
           &#x27;cdc-heal-bonus&#x27;, &#x27;cdc-char-level&#x27;, &#x27;cdc-enemy-level&#x27;, &#x27;cdc-resistance&#x27;, &#x27;cdc-fusion&#x27;,
-          &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;, &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;,
+          &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;, &#x27;cdc-res-ignore&#x27;, &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;,
           &#x27;cdc-rage-values&#x27;, &#x27;cdc-search-strength&#x27;];
         const scalars = {};
         scalarIds.forEach((id) =&gt; { scalars[id] = byId(id).value; });
-        const effects = Array.from(root.querySelectorAll(&#x27;[data-effect-row]&#x27;)).map((row) =&gt; ({
+        const serializeEffectRow = (row) =&gt; ({
           name: row.querySelector(&#x27;[data-effect-name]&#x27;).value,
           searchState: normalizedEffectSearchState(row.querySelector(&#x27;[data-effect-search-state]&#x27;).value),
           priority: row.querySelector(&#x27;[data-effect-priority]&#x27;).checked,
@@ -3985,6 +4895,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           attack: Number(row.querySelector(&#x27;[data-effect-attack]&#x27;).value) || 0,
           penetration: Number(row.querySelector(&#x27;[data-effect-penetration]&#x27;).value) || 0,
           resShred: Number(row.querySelector(&#x27;[data-effect-res-shred]&#x27;).value) || 0,
+          resIgnore: Number(row.querySelector(&#x27;[data-effect-res-ignore]&#x27;).value) || 0,
           damage: Number(row.querySelector(&#x27;[data-effect-damage]&#x27;).value) || 0,
           dotDamage: Number(row.querySelector(&#x27;[data-effect-dot-damage]&#x27;).value) || 0,
           inclinationDamage: Number(row.querySelector(&#x27;[data-effect-inclination-damage]&#x27;).value) || 0,
@@ -3994,7 +4905,9 @@ html&gt;body{padding:0}&lt;/style&gt;
           fusionPercent: Number(row.querySelector(&#x27;[data-effect-fusion-percent]&#x27;).value) || 0,
           fusionFlat: Number(row.querySelector(&#x27;[data-effect-fusion-flat]&#x27;).value) || 0,
           healBonus: Number(row.querySelector(&#x27;[data-effect-heal-bonus]&#x27;).value) || 0
-        }));
+        });
+        const effects = effectRowsForWorkspace(&#x27;damage&#x27;).map(serializeEffectRow);
+        const inclinationEffects = effectRowsForWorkspace(&#x27;inclination&#x27;).map(serializeEffectRow);
         const skills = Array.from(root.querySelectorAll(&#x27;[data-skill-row]&#x27;)).map((row) =&gt; ({
           id: row.dataset.skillId,
           name: row.querySelector(&#x27;[data-skill-name]&#x27;).value,
@@ -4016,10 +4929,11 @@ html&gt;body{padding:0}&lt;/style&gt;
           damage: item.damage * 100,
           penetration: item.penetration * 100,
           resShred: item.resShred * 100,
+          resIgnore: item.resIgnore * 100,
           specialBonus: item.specialBonus * 100
         }));
         return {
-          schema: 10,
+          schema: 13,
           calculatorType,
           workspaceMode,
           mode: verificationMode,
@@ -4029,6 +4943,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             specialEffect
           },
           effects,
+          inclinationEffects,
           skills,
           heals,
           inclinationContributors
@@ -4040,6 +4955,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         restoring = true;
         byId(&#x27;cdc-heal-bonus&#x27;).value = &#x27;0&#x27;;
         byId(&#x27;cdc-fusion&#x27;).value = &#x27;360&#x27;;
+        byId(&#x27;cdc-res-ignore&#x27;).value = &#x27;0&#x27;;
         Object.entries(data.scalars).forEach(([id, value]) =&gt; {
           const element = byId(id);
           if (element) element.value = value;
@@ -4057,10 +4973,15 @@ html&gt;body{padding:0}&lt;/style&gt;
           syncFormulaEditor();
         }
         byId(&#x27;cdc-effects&#x27;).innerHTML = &#x27;&#x27;;
+        byId(&#x27;cdc-inclination-effects&#x27;).innerHTML = &#x27;&#x27;;
         byId(&#x27;cdc-skills&#x27;).innerHTML = &#x27;&#x27;;
         byId(&#x27;cdc-heals&#x27;).innerHTML = &#x27;&#x27;;
         byId(&#x27;cdc-inclination-contributors&#x27;).innerHTML = &#x27;&#x27;;
-        (data.effects || []).forEach((effect) =&gt; addEffect(effect.name, effect));
+        (data.effects || []).forEach((effect) =&gt; addEffect(effect.name, effect, &#x27;damage&#x27;));
+        const storedInclinationEffects = Array.isArray(data.inclinationEffects)
+          ? data.inclinationEffects
+          : ((data.skills || []).some((skill) =&gt; skill.model === &#x27;inclination&#x27;) ? (data.effects || []) : []);
+        storedInclinationEffects.forEach((effect) =&gt; addEffect(effect.name, effect, &#x27;inclination&#x27;));
         (data.skills || []).forEach((skill) =&gt; addSkill(skill.name, skill.model, skill.multiplier, skill.observed, skill.critical, skill.enabled, skill.tag, skill.id));
         (data.heals || []).forEach((heal) =&gt; addHeal(heal.name, heal.multiplier, heal.observed, heal.enabled));
         (data.inclinationContributors || []).forEach((item) =&gt; addInclinationContributor(item.name, item, item.id));
@@ -4086,12 +5007,12 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (!window.confirm(&#x27;清空当前输入和当前草稿？已保存的角色/版本配置不会删除。&#x27;)) return;
         const scalarIds = [&#x27;cdc-character&#x27;, &#x27;cdc-version&#x27;, &#x27;cdc-panel&#x27;, &#x27;cdc-base&#x27;, &#x27;cdc-atk-bonus&#x27;,
           &#x27;cdc-heal-bonus&#x27;, &#x27;cdc-char-level&#x27;, &#x27;cdc-enemy-level&#x27;, &#x27;cdc-resistance&#x27;, &#x27;cdc-fusion&#x27;,
-          &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;, &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;,
+          &#x27;cdc-penetration&#x27;, &#x27;cdc-res-shred&#x27;, &#x27;cdc-res-ignore&#x27;, &#x27;cdc-general&#x27;, &#x27;cdc-elemental&#x27;, &#x27;cdc-extra&#x27;, &#x27;cdc-crit&#x27;,
           &#x27;cdc-rage-values&#x27;, &#x27;cdc-search-strength&#x27;];
         const scalars = {};
         scalarIds.forEach((id) =&gt; { scalars[id] = &#x27;&#x27;; });
         scalars[&#x27;cdc-search-strength&#x27;] = &#x27;deep&#x27;;
-        applyData({ schema: 10, calculatorType: &#x27;damage&#x27;, workspaceMode: &#x27;damage&#x27;, mode: &#x27;normal&#x27;, formulaSettings: { ...formulaSettings }, scalars, options: { specialEffect: &#x27;none&#x27; }, effects: [], skills: [], heals: [], inclinationContributors: [] });
+        applyData({ schema: 13, calculatorType: &#x27;damage&#x27;, workspaceMode: &#x27;damage&#x27;, mode: &#x27;normal&#x27;, formulaSettings: { ...formulaSettings }, scalars, options: { specialEffect: &#x27;none&#x27; }, effects: [], inclinationEffects: [], skills: [], heals: [], inclinationContributors: [] });
         clearTimeout(draftTimer);
         try {
           localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(captureData()));
@@ -4144,6 +5065,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         { id: &#x27;base-attack&#x27;, label: &#x27;基础攻击加成&#x27;, component: &#x27;baseAttack&#x27;, modes: [&#x27;damage&#x27;, &#x27;heal&#x27;] },
         { id: &#x27;base-penetration&#x27;, label: &#x27;基础防御穿透&#x27;, component: &#x27;basePenetration&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-res-shred&#x27;, label: &#x27;基础抗性削弱&#x27;, component: &#x27;baseResShred&#x27;, modes: [&#x27;damage&#x27;] },
+        { id: &#x27;base-res-ignore&#x27;, label: &#x27;基础无视抗性&#x27;, component: &#x27;baseResIgnore&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-general&#x27;, label: &#x27;通用增伤&#x27;, component: &#x27;baseGeneral&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-elemental&#x27;, label: &#x27;属性增伤&#x27;, component: &#x27;baseElemental&#x27;, modes: [&#x27;damage&#x27;] },
         { id: &#x27;base-extra&#x27;, label: &#x27;额外增伤&#x27;, component: &#x27;baseExtra&#x27;, modes: [&#x27;damage&#x27;] },
@@ -4160,7 +5082,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         { id: &#x27;zone-heal-bonus&#x27;, label: &#x27;治疗加成区整体&#x27;, component: &#x27;zoneHealBonus&#x27;, modes: [&#x27;heal&#x27;] }
       ];
       const componentLabels = {
-        attack: &#x27;攻击加成&#x27;, penetration: &#x27;防御穿透&#x27;, resShred: &#x27;抗性削弱&#x27;, damage: &#x27;增伤&#x27;, dotDamage: &#x27;持续伤害强化&#x27;,
+        attack: &#x27;攻击加成&#x27;, penetration: &#x27;防御穿透&#x27;, resShred: &#x27;抗性削弱&#x27;, resIgnore: &#x27;无视抗性&#x27;, damage: &#x27;增伤&#x27;, dotDamage: &#x27;持续伤害强化&#x27;,
         inclinationDamage: &#x27;倾陷增伤&#x27;,
         crit: &#x27;暴击伤害&#x27;, skill: &#x27;技能倍率&#x27;, fusionPercent: &#x27;环合强度百分比提升&#x27;,
         fusionFlat: &#x27;环合强度固定提升&#x27;, healBonus: &#x27;治疗加成&#x27;
@@ -4171,21 +5093,40 @@ html&gt;body{padding:0}&lt;/style&gt;
           || (effect.inclinationContributorIds || []).includes(String(contributor.id));
       }
 
+      function inclinationShredApplies(effect, contributor, contributors) {
+        if (effect.inclinationScopeMode !== &#x27;custom&#x27;) return true;
+        const selectedIds = new Set((effect.inclinationContributorIds || []).map(String));
+        const affectedAttributes = new Set(contributors
+          .filter((item) =&gt; item.enabled &amp;&amp; selectedIds.has(String(item.id)))
+          .map((item) =&gt; item.attribute));
+        return affectedAttributes.has(contributor.attribute);
+      }
+
+      function inclinationBaseShredByAttribute(contributors) {
+        return contributors.filter((item) =&gt; item.enabled).reduce((totals, contributor) =&gt; {
+          totals[contributor.attribute] = (totals[contributor.attribute] || 0) + contributor.resShred;
+          return totals;
+        }, {});
+      }
+
       function componentAffectsDamageTarget(component, effect, target, contributors = []) {
         if (target.model === &#x27;inclination&#x27;) {
-          return [&#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;inclinationDamage&#x27;].includes(component)
-            &amp;&amp; contributors.some((contributor) =&gt; contributor.enabled &amp;&amp; inclinationScopeApplies(effect, contributor));
+          return [&#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;resIgnore&#x27;, &#x27;inclinationDamage&#x27;].includes(component)
+            &amp;&amp; contributors.some((contributor) =&gt; contributor.enabled
+              &amp;&amp; (component === &#x27;resShred&#x27;
+                ? inclinationShredApplies(effect, contributor, contributors)
+                : inclinationScopeApplies(effect, contributor)));
         }
         if (!scopeAppliesToSkill(effect, target)) return false;
         const canCrit = verificationMode === &#x27;rage&#x27; || target.critical;
         if (target.model === &#x27;skill&#x27;) {
-          if ([&#x27;attack&#x27;, &#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;damage&#x27;, &#x27;skill&#x27;].includes(component)) return true;
+          if ([&#x27;attack&#x27;, &#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;resIgnore&#x27;, &#x27;damage&#x27;, &#x27;skill&#x27;].includes(component)) return true;
           if (component === &#x27;crit&#x27;) return canCrit;
           if (component === &#x27;dotDamage&#x27;) return target.tag === &#x27;dot&#x27;;
           if ([&#x27;fusionPercent&#x27;, &#x27;fusionFlat&#x27;].includes(component)) return specialEffect !== &#x27;none&#x27;;
           return false;
         }
-        if (component === &#x27;resShred&#x27;) return true;
+        if (component === &#x27;resShred&#x27; || component === &#x27;resIgnore&#x27;) return true;
         if (component === &#x27;penetration&#x27;) return target.model !== &#x27;darkstar&#x27;;
         if (component === &#x27;crit&#x27;) return canCrit;
         if ([&#x27;fusionPercent&#x27;, &#x27;fusionFlat&#x27;].includes(component)) return true;
@@ -4200,7 +5141,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           return heals.some((heal) =&gt; heal.enabled) ? [&#x27;attack&#x27;, &#x27;healBonus&#x27;] : [];
         }
         const targets = skills.filter((skill) =&gt; skill.enabled);
-        return [&#x27;attack&#x27;, &#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;damage&#x27;, &#x27;dotDamage&#x27;, &#x27;inclinationDamage&#x27;, &#x27;crit&#x27;, &#x27;skill&#x27;, &#x27;fusionPercent&#x27;, &#x27;fusionFlat&#x27;]
+        return [&#x27;attack&#x27;, &#x27;penetration&#x27;, &#x27;resShred&#x27;, &#x27;resIgnore&#x27;, &#x27;damage&#x27;, &#x27;dotDamage&#x27;, &#x27;inclinationDamage&#x27;, &#x27;crit&#x27;, &#x27;skill&#x27;, &#x27;fusionPercent&#x27;, &#x27;fusionFlat&#x27;]
           .filter((component) =&gt; effect[component] &amp;&amp; targets.some((target) =&gt; componentAffectsDamageTarget(component, effect, target, contributors)));
       }
 
@@ -4224,6 +5165,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (atom.id === &#x27;base-attack&#x27;) return normalTargets.length &gt; 0 &amp;&amp; percent(&#x27;cdc-atk-bonus&#x27;) !== 0;
         if (atom.id === &#x27;base-penetration&#x27;) return panelPenetrationTargets.length &gt; 0 &amp;&amp; percent(&#x27;cdc-penetration&#x27;) !== 0;
         if (atom.id === &#x27;base-res-shred&#x27;) return targets.some((target) =&gt; target.model !== &#x27;inclination&#x27;) &amp;&amp; percent(&#x27;cdc-res-shred&#x27;) !== 0;
+        if (atom.id === &#x27;base-res-ignore&#x27;) return targets.some((target) =&gt; target.model !== &#x27;inclination&#x27;) &amp;&amp; percent(&#x27;cdc-res-ignore&#x27;) !== 0;
         if (atom.id === &#x27;base-general&#x27;) return normalTargets.length &gt; 0 &amp;&amp; percent(&#x27;cdc-general&#x27;) !== 0;
         if (atom.id === &#x27;base-elemental&#x27;) return normalTargets.length &gt; 0 &amp;&amp; percent(&#x27;cdc-elemental&#x27;) !== 0;
         if (atom.id === &#x27;base-extra&#x27;) return normalTargets.length &gt; 0 &amp;&amp; percent(&#x27;cdc-extra&#x27;) !== 0;
@@ -4316,6 +5258,20 @@ html&gt;body{padding:0}&lt;/style&gt;
         return Object.entries(atom.values).map(([component, value]) =&gt; [component, value * scale]);
       }
 
+      function resistanceZoneMultiplier(baseResistance, resistanceIgnore = 0, resistanceShred = 0) {
+        const effectiveResistance = baseResistance - resistanceIgnore - resistanceShred;
+        const multiplier = effectiveResistance &gt;= 0
+          ? 1 - effectiveResistance
+          : 1 - effectiveResistance / (1 - effectiveResistance);
+        return { effectiveResistance, multiplier };
+      }
+
+      function resistanceZoneFormulaText(effectiveResistance) {
+        return effectiveResistance &gt;= 0
+          ? `有效抗性 ${format(effectiveResistance)} ≥ 0：1 - 有效抗性`
+          : `有效抗性 ${format(effectiveResistance)} &lt; 0：1 - 有效抗性 / (1 - 有效抗性)`;
+      }
+
       function finalizeState(state) {
         const enabled = (id) =&gt; state.active.has(id);
         state.combatAttack = number(&#x27;cdc-panel&#x27;) + number(&#x27;cdc-base&#x27;) * state.attackBonus;
@@ -4323,9 +5279,10 @@ html&gt;body{padding:0}&lt;/style&gt;
         const characterFactor = 100 + number(&#x27;cdc-char-level&#x27;);
         const enemyFactor = (100 + number(&#x27;cdc-enemy-level&#x27;)) * (1 - state.penetration);
         const calculatedDefense = characterFactor / (characterFactor + enemyFactor);
-        const calculatedResistance = 1 - percent(&#x27;cdc-resistance&#x27;) + state.resShred;
+        const resistanceResult = resistanceZoneMultiplier(percent(&#x27;cdc-resistance&#x27;), state.resIgnore, state.resShred);
         state.defenseZone = enabled(&#x27;zone-defense&#x27;) ? calculatedDefense : 1;
-        state.resistanceZone = enabled(&#x27;zone-resistance&#x27;) ? calculatedResistance : 1;
+        state.effectiveResistance = resistanceResult.effectiveResistance;
+        state.resistanceZone = enabled(&#x27;zone-resistance&#x27;) ? resistanceResult.multiplier : 1;
         state.damageZoneEnabled = enabled(&#x27;zone-damage&#x27;);
         state.damageZone = enabled(&#x27;zone-damage&#x27;) ? 1 + state.damageBonus : 1;
         state.dotDamageZone = 1 + state.dotDamageBonus;
@@ -4334,7 +5291,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         state.healBonusZone = enabled(&#x27;zone-heal-bonus&#x27;) ? 1 + state.healBonus : 1;
         state.creationFusionZone = enabled(&#x27;zone-fusion&#x27;) ? 1 + state.fusionStrength / formulaSettings.fusionDivisor : 1;
         state.specialZone = specialEffect !== &#x27;none&#x27; &amp;&amp; enabled(&#x27;base-special&#x27;) &amp;&amp; enabled(&#x27;zone-fusion&#x27;)
-          ? 1 + formulaSettings.specialBaseBonus + state.fusionStrength / formulaSettings.specialFusionDivisor
+          ? specialZoneMultiplier(state.fusionStrength)
           : 1;
         return state;
       }
@@ -4346,6 +5303,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           attackBonus: enabled(&#x27;base-attack&#x27;) ? percent(&#x27;cdc-atk-bonus&#x27;) : 0,
           penetration: enabled(&#x27;base-penetration&#x27;) ? percent(&#x27;cdc-penetration&#x27;) : 0,
           resShred: enabled(&#x27;base-res-shred&#x27;) ? percent(&#x27;cdc-res-shred&#x27;) : 0,
+          resIgnore: enabled(&#x27;base-res-ignore&#x27;) ? percent(&#x27;cdc-res-ignore&#x27;) : 0,
           damageBonus: (enabled(&#x27;base-general&#x27;) ? percent(&#x27;cdc-general&#x27;) : 0)
             + (enabled(&#x27;base-elemental&#x27;) ? percent(&#x27;cdc-elemental&#x27;) : 0)
             + (enabled(&#x27;base-extra&#x27;) ? percent(&#x27;cdc-extra&#x27;) : 0),
@@ -4374,6 +5332,7 @@ html&gt;body{padding:0}&lt;/style&gt;
             if (component === &#x27;attack&#x27;) state.attackBonus += value;
             if (component === &#x27;penetration&#x27;) state.penetration += value;
             if (component === &#x27;resShred&#x27;) state.resShred += value;
+            if (component === &#x27;resIgnore&#x27;) state.resIgnore += value;
             if (component === &#x27;damage&#x27;) state.damageBonus += value;
             if (component === &#x27;dotDamage&#x27;) state.dotDamageBonus += value;
             if (component === &#x27;crit&#x27;) state.critDamage += value;
@@ -4412,6 +5371,7 @@ html&gt;body{padding:0}&lt;/style&gt;
               if (component === &#x27;attack&#x27;) state.attackBonus -= value;
               if (component === &#x27;penetration&#x27;) state.penetration -= value;
               if (component === &#x27;resShred&#x27;) state.resShred -= value;
+              if (component === &#x27;resIgnore&#x27;) state.resIgnore -= value;
               if (component === &#x27;damage&#x27;) state.damageBonus -= value;
               if (component === &#x27;dotDamage&#x27;) state.dotDamageBonus -= value;
               if (component === &#x27;crit&#x27;) state.critDamage -= value;
@@ -4499,24 +5459,48 @@ html&gt;body{padding:0}&lt;/style&gt;
       function inclinationPrediction(state, contributors) {
         const enabled = contributors.filter((item) =&gt; item.enabled);
         const capZone = INCLINATION_PRESET.cap / formulaSettings.inclinationCapDivisor;
+        const sharedBaseShred = inclinationBaseShredByAttribute(enabled);
         const contributions = enabled.map((contributor) =&gt; {
-          const totals = { penetration: contributor.penetration, resShred: contributor.resShred, damage: contributor.damage };
-          state.activeEffectAtoms.filter((atom) =&gt; inclinationScopeApplies(atom, contributor)).forEach((atom) =&gt; {
+          const totals = {
+            penetration: contributor.penetration,
+            resShred: sharedBaseShred[contributor.attribute] || 0,
+            resIgnore: contributor.resIgnore,
+            damage: contributor.damage
+          };
+          state.activeEffectAtoms.forEach((atom) =&gt; {
             effectAtomEntries(atom).forEach(([component, value]) =&gt; {
+              const applies = component === &#x27;resShred&#x27;
+                ? inclinationShredApplies(atom, contributor, enabled)
+                : inclinationScopeApplies(atom, contributor);
+              if (!applies) return;
               if (component === &#x27;penetration&#x27;) totals.penetration += value;
               if (component === &#x27;resShred&#x27;) totals.resShred += value;
+              if (component === &#x27;resIgnore&#x27;) totals.resIgnore += value;
               if (component === &#x27;inclinationDamage&#x27;) totals.damage += value;
             });
           });
           const characterFactor = 100 + contributor.level;
           const enemyFactor = (100 + INCLINATION_PRESET.enemyLevel) * (1 - totals.penetration);
           const defense = state.active.has(&#x27;zone-defense&#x27;) ? characterFactor / (characterFactor + enemyFactor) : 1;
-          const resistance = state.active.has(&#x27;zone-resistance&#x27;)
-            ? 1 - INCLINATION_PRESET.resistances[contributor.attribute] + totals.resShred
-            : 1;
+          const resistanceResult = resistanceZoneMultiplier(
+            INCLINATION_PRESET.resistances[contributor.attribute],
+            totals.resIgnore,
+            totals.resShred
+          );
+          const resistance = state.active.has(&#x27;zone-resistance&#x27;) ? resistanceResult.multiplier : 1;
           const bonusZone = 1 + totals.damage;
           const exact = formulaSettings.inclinationBase * bonusZone * capZone * defense * resistance * contributor.special;
-          return { contributor, exact, defense, resistance, bonusZone, penetration: totals.penetration, resShred: totals.resShred };
+          return {
+            contributor,
+            exact,
+            defense,
+            resistance,
+            effectiveResistance: resistanceResult.effectiveResistance,
+            bonusZone,
+            penetration: totals.penetration,
+            resShred: totals.resShred,
+            resIgnore: totals.resIgnore
+          };
         });
         const exact = contributions.reduce((sum, item) =&gt; sum + item.exact, 0);
         const factors = contributions.map((item, index) =&gt; ({
@@ -4524,7 +5508,7 @@ html&gt;body{padding:0}&lt;/style&gt;
           label: item.contributor.name,
           value: item.exact,
           operator: index ? &#x27;+&#x27; : &#x27;&#x27;,
-          note: `${format(formulaSettings.inclinationBase)} × ${format(item.bonusZone)} × ${format(capZone)} × ${format(item.defense)} × ${format(item.resistance)} × ${format(item.contributor.special)}`
+          note: `${format(formulaSettings.inclinationBase)} × ${format(item.bonusZone)} × ${format(capZone)} × ${format(item.defense)} × ${format(item.resistance)} × ${format(item.contributor.special)}；个人穿透 ${format(item.penetration)}，个人无视抗性 ${format(item.resIgnore)}，${INCLINATION_ATTRIBUTE_LABELS[item.contributor.attribute] || item.contributor.attribute}属性共享减抗 ${format(item.resShred)}`
         }));
         return { exact, displayed: Math.round(exact), formula: factors, inclinationContributions: contributions };
       }
@@ -4536,30 +5520,30 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (target.model === &#x27;creation&#x27;) {
           push(&#x27;base&#x27;, &#x27;固定基础&#x27;, formulaSettings.creationBase);
           push(&#x27;defense&#x27;, &#x27;防御区&#x27;, state.defenseZone);
-          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone);
+          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone, resistanceZoneFormulaText(state.effectiveResistance));
           push(&#x27;fusion&#x27;, &#x27;环合修正&#x27;, state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
         } else if (target.model === &#x27;turbid&#x27;) {
           push(&#x27;base&#x27;, &#x27;固定基础&#x27;, formulaSettings.turbidBase);
           push(&#x27;defense&#x27;, &#x27;防御区&#x27;, state.defenseZone);
-          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone);
+          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone, resistanceZoneFormulaText(state.effectiveResistance));
           push(&#x27;fusion&#x27;, &#x27;环合修正&#x27;, state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
           push(&#x27;dot&#x27;, &#x27;持续伤害区&#x27;, state.dotDamageZone);
         } else if (target.model === &#x27;darkstar&#x27;) {
           push(&#x27;base&#x27;, &#x27;固定基础&#x27;, formulaSettings.darkstarBase);
           push(&#x27;defense&#x27;, &#x27;防御区&#x27;, 1, &#x27;黯星无视防御，防御乘区固定为 1&#x27;);
-          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone);
+          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone, resistanceZoneFormulaText(state.effectiveResistance));
           push(&#x27;fusion&#x27;, &#x27;环合修正&#x27;, state.creationFusionZone, `最终环合强度 ${format(state.fusionStrength)}`);
         } else {
           const calculatedMultiplier = (source.multiplier + state.skillAdd) * state.skillProduct;
           const finalMultiplier = state.skillZoneEnabled ? calculatedMultiplier : 1;
           push(&#x27;attack&#x27;, &#x27;战斗面板攻击&#x27;, state.combatAttack);
           push(&#x27;defense&#x27;, &#x27;防御区&#x27;, state.defenseZone);
-          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone);
+          push(&#x27;resistance&#x27;, &#x27;抗性区&#x27;, state.resistanceZone, resistanceZoneFormulaText(state.effectiveResistance));
           push(&#x27;damage&#x27;, &#x27;增伤区&#x27;, state.damageZone);
           push(&#x27;skill&#x27;, &#x27;技能倍率&#x27;, finalMultiplier);
           if (specialEffect !== &#x27;none&#x27;) {
             const specialName = specialEffect === &#x27;overlay&#x27; ? &#x27;覆纹区&#x27; : &#x27;浸染区&#x27;;
-            push(&#x27;independent&#x27;, specialName, state.specialZone, `1 + ${format(formulaSettings.specialBaseBonus * 100)}% + 最终环合强度 ${format(state.fusionStrength)} / ${format(formulaSettings.specialFusionDivisor)}`);
+            push(&#x27;independent&#x27;, specialName, state.specialZone, specialZoneFormulaText(`最终环合强度 ${format(state.fusionStrength)}`));
           }
           if (target.tag === &#x27;dot&#x27;) push(&#x27;dot&#x27;, &#x27;持续伤害区&#x27;, state.dotDamageZone);
         }
@@ -5078,6 +6062,25 @@ html&gt;body{padding:0}&lt;/style&gt;
         }, 20);
       }
 
+      root.addEventListener(&#x27;mouseover&#x27;, (event) =&gt; {
+        const factor = event.target.closest?.(&#x27;[data-formula-help]&#x27;);
+        if (factor &amp;&amp; !factor.contains(event.relatedTarget)) showFormulaTooltip(factor);
+      });
+      root.addEventListener(&#x27;mouseout&#x27;, (event) =&gt; {
+        const factor = event.target.closest?.(&#x27;[data-formula-help]&#x27;);
+        if (factor &amp;&amp; !factor.contains(event.relatedTarget)) hideFormulaTooltip(factor);
+      });
+      root.addEventListener(&#x27;focusin&#x27;, (event) =&gt; {
+        const factor = event.target.closest?.(&#x27;[data-formula-help]&#x27;);
+        if (factor) showFormulaTooltip(factor);
+      });
+      root.addEventListener(&#x27;focusout&#x27;, (event) =&gt; {
+        const factor = event.target.closest?.(&#x27;[data-formula-help]&#x27;);
+        if (factor) hideFormulaTooltip(factor);
+      });
+      root.addEventListener(&#x27;scroll&#x27;, () =&gt; hideFormulaTooltip(), true);
+      window.addEventListener(&#x27;resize&#x27;, () =&gt; formulaTooltipTarget &amp;&amp; positionFormulaTooltip());
+
       root.addEventListener(&#x27;input&#x27;, (event) =&gt; {
         if (event.target.matches(&#x27;input, select, textarea&#x27;)) {
           if (event.target.matches(&#x27;[data-skill-name]&#x27;)) updateAllEffectScopeSummaries();
@@ -5133,7 +6136,18 @@ html&gt;body{padding:0}&lt;/style&gt;
           scheduleDraftSave();
         }
       });
-      byId(&#x27;cdc-add-effect&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { addEffect(); markDirty(); scheduleDraftSave(); });
+      byId(&#x27;cdc-add-effect&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        addEffect(&#x27;&#x27;, {}, &#x27;damage&#x27;);
+        markDirty();
+        scheduleDraftSave();
+        advanceTourAfterControl(&#x27;cdc-add-effect&#x27;);
+      });
+      byId(&#x27;cdc-add-inclination-effect&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        addEffect(&#x27;&#x27;, {}, &#x27;inclination&#x27;);
+        markDirty();
+        scheduleDraftSave();
+        advanceTourAfterControl(&#x27;cdc-add-inclination-effect&#x27;);
+      });
       root.querySelectorAll(&#x27;[data-special-effect-option]&#x27;).forEach((button) =&gt; {
         button.addEventListener(&#x27;click&#x27;, () =&gt; {
           setSpecialEffect(button.dataset.specialEffectOption);
@@ -5146,9 +6160,20 @@ html&gt;body{padding:0}&lt;/style&gt;
         updateSkillPagination(true);
         markDirty();
         scheduleDraftSave();
+        advanceTourAfterControl(&#x27;cdc-add-skill&#x27;);
       });
-      byId(&#x27;cdc-add-heal&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { addHeal(); markDirty(); scheduleDraftSave(); });
-      byId(&#x27;cdc-add-inclination-contributor&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { addInclinationContributor(); markDirty(); scheduleDraftSave(); });
+      byId(&#x27;cdc-add-heal&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        addHeal();
+        markDirty();
+        scheduleDraftSave();
+        advanceTourAfterControl(&#x27;cdc-add-heal&#x27;);
+      });
+      byId(&#x27;cdc-add-inclination-contributor&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        addInclinationContributor();
+        markDirty();
+        scheduleDraftSave();
+        advanceTourAfterControl(&#x27;cdc-add-inclination-contributor&#x27;);
+      });
       byId(&#x27;cdc-skill-prev&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { skillPage -= 1; updateSkillPagination(); });
       byId(&#x27;cdc-skill-next&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { skillPage += 1; updateSkillPagination(); });
       byId(&#x27;cdc-detail-prev&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { detailPage -= 1; renderDetailPage(); });
@@ -5156,9 +6181,23 @@ html&gt;body{padding:0}&lt;/style&gt;
       byId(&#x27;cdc-run-verification&#x27;).addEventListener(&#x27;click&#x27;, runVerification);
       root.querySelectorAll(&#x27;[data-calculator-type]&#x27;).forEach((button) =&gt; {
         button.addEventListener(&#x27;click&#x27;, () =&gt; {
-          workspaceMode = button.dataset.calculatorType;
+          const nextWorkspaceMode = button.dataset.calculatorType;
+          const switchedMode = workspaceMode !== nextWorkspaceMode;
+          workspaceMode = nextWorkspaceMode;
           calculatorType = workspaceMode === &#x27;heal&#x27; ? &#x27;heal&#x27; : &#x27;damage&#x27;;
           updateCalculatorType();
+          if (tourActive &amp;&amp; tourIndex === 0) {
+            tourType = workspaceMode;
+            activeTourSteps = tourStepsForType(tourType);
+            showTourStep(0);
+          } else if (!tourActive &amp;&amp; switchedMode &amp;&amp; [&#x27;heal&#x27;, &#x27;inclination&#x27;].includes(workspaceMode) &amp;&amp; !tutorialModeSeen(workspaceMode)) {
+            const requestedMode = workspaceMode;
+            setTimeout(() =&gt; {
+              if (!tourActive &amp;&amp; workspaceMode === requestedMode &amp;&amp; !tutorialModeSeen(requestedMode)) {
+                startOperationTour(requestedMode, 1);
+              }
+            }, 180);
+          }
           markDirty();
           scheduleDraftSave();
         });
@@ -5204,17 +6243,43 @@ html&gt;body{padding:0}&lt;/style&gt;
         }
       });
       byId(&#x27;cdc-clear-current&#x27;).addEventListener(&#x27;click&#x27;, clearCurrentConfiguration);
+      byId(&#x27;cdc-open-tour&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; startOperationTour());
       byId(&#x27;cdc-open-formula&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
         syncFormulaEditor();
         byId(&#x27;cdc-formula-dialog&#x27;).showModal();
       });
-      byId(&#x27;cdc-close-formula&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; byId(&#x27;cdc-formula-dialog&#x27;).close());
+      byId(&#x27;cdc-open-formula-guide&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; openFormulaGuide(formulaGuidePageForCalculator()));
+      byId(&#x27;cdc-close-formula&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { hideFormulaTooltip(); byId(&#x27;cdc-formula-dialog&#x27;).close(); });
+      byId(&#x27;cdc-close-formula-guide&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; { hideFormulaTooltip(); byId(&#x27;cdc-formula-guide-dialog&#x27;).close(); });
+      byId(&#x27;cdc-back-to-formula-editor&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        byId(&#x27;cdc-formula-guide-dialog&#x27;).close();
+        syncFormulaEditor();
+        byId(&#x27;cdc-formula-dialog&#x27;).showModal();
+      });
+      root.querySelectorAll(&#x27;[data-formula-guide-page]&#x27;).forEach((button) =&gt; {
+        button.addEventListener(&#x27;click&#x27;, () =&gt; renderFormulaGuide(button.dataset.formulaGuidePage));
+      });
+      byId(&#x27;cdc-tour-prev&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; showTourStep(tourIndex - 1));
+      byId(&#x27;cdc-tour-next&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
+        if (tourIndex === activeTourSteps.length - 1) finishOperationTour(true);
+        else showTourStep(tourIndex + 1);
+      });
+      byId(&#x27;cdc-tour-skip&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; finishOperationTour(false));
+      window.addEventListener(&#x27;keydown&#x27;, (event) =&gt; {
+        if (!tourActive) return;
+        if (event.key === &#x27;Escape&#x27;) finishOperationTour(false);
+        if (event.key === &#x27;ArrowLeft&#x27; &amp;&amp; tourIndex &gt; 0) showTourStep(tourIndex - 1);
+        if (event.key === &#x27;ArrowRight&#x27;) {
+          if (tourIndex === activeTourSteps.length - 1) finishOperationTour(true);
+          else showTourStep(tourIndex + 1);
+        }
+      });
       byId(&#x27;cdc-apply-formula&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; applyFormulaEditor(true));
       byId(&#x27;cdc-reset-formula&#x27;).addEventListener(&#x27;click&#x27;, () =&gt; {
         formulaSettings = { ...DEFAULT_FORMULA_SETTINGS };
         persistFormulaSettings();
         syncFormulaEditor();
-        byId(&#x27;cdc-formula-status&#x27;).textContent = &#x27;已恢复默认公式：创生花 9000、浊燃 2700、黯星 45000、倾陷单人基础 3603、倾陷上限区 70/3、环合反应除数 600、浸染/覆纹为 20% + 最终环合强度 / 1400。&#x27;;
+        byId(&#x27;cdc-formula-status&#x27;).textContent = &#x27;已恢复默认公式：创生花 9000、浊燃 2700、黯星 45000、倾陷单人基础 3603、倾陷上限区 70/3、环合反应除数 600、浸染/覆纹为 1.2 × [1 + (20% × 最终环合强度) / (180 + 最终环合强度)]。&#x27;;
         markDirty();
         scheduleDraftSave();
       });
@@ -5353,8 +6418,8 @@ html&gt;body{padding:0}&lt;/style&gt;
         restoredDraft = false;
       }
       if (!restoredDraft) {
-        addEffect(&#x27;觉醒A&#x27;, { damage: 20 });
-        addEffect(&#x27;武器B&#x27;, { attack: 20 });
+        addEffect(&#x27;觉醒A&#x27;, { damage: 20 }, &#x27;damage&#x27;);
+        addEffect(&#x27;武器B&#x27;, { attack: 20 }, &#x27;damage&#x27;);
         addSkill(&#x27;技能一&#x27;, &#x27;skill&#x27;, 240, 4413, false);
         addSkill(&#x27;技能二&#x27;, &#x27;skill&#x27;, 315, 5793, false, true, &#x27;dot&#x27;);
         addHeal(&#x27;治疗一&#x27;, 120, 2520);
@@ -5363,6 +6428,9 @@ html&gt;body{padding:0}&lt;/style&gt;
         markDirty();
         scheduleDraftSave();
       }
+      setTimeout(() =&gt; {
+        if (localStorage.getItem(TUTORIAL_STORAGE_KEY) !== &#x27;true&#x27;) startOperationTour();
+      }, 550);
     })();
   &lt;/script&gt;
 &lt;/div&gt;
