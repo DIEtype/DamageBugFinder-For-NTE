@@ -2,9 +2,18 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 const path = new URL('../index.html', import.meta.url);
 const fragmentPath = new URL('../src/app.fragment.html', import.meta.url);
+const skillDatabasePath = new URL('../data/official-skill-segments.json', import.meta.url);
 const appTitle = 'Damage Bug Finder for NTE / 异环NTE数值验算器';
 let html = readFileSync(path, 'utf8');
-const fragment = readFileSync(fragmentPath, 'utf8').trim();
+const skillDatabase = readFileSync(skillDatabasePath, 'utf8').trim();
+JSON.parse(skillDatabase);
+const fragment = readFileSync(fragmentPath, 'utf8')
+  .replace('/*__OFFICIAL_SKILL_DATABASE__*/ null', `/* embedded official skill database */ ${skillDatabase}`)
+  .trim();
+
+if (fragment.includes('/*__OFFICIAL_SKILL_DATABASE__*/ null')) {
+  throw new Error('Official skill database placeholder was not replaced');
+}
 
 function decodeAttribute(value) {
   return value
